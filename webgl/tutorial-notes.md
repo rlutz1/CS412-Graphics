@@ -25,8 +25,6 @@ https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
 + my job is to PROVIDE CLIP SPACE COORDINATES AND COLORS
 
 
-
-
 ## [tutorial vid walk through](https://www.youtube.com/watch?v=y2UsQB3WSvo)
 
 drawing a triangle
@@ -57,7 +55,9 @@ drawing a triangle
 	+ cpu has only one real option for storing the data -- ram
 	+ gpu has multiple options that are better for different things???
 
-QUESTIONS:
+[further reading](https://indigocode.dev/tutorials/webgl/01-hello-triangle)
+
+### QUESTIONS:
 
 + *3 different buffers: color, depth, stencil -- why?? and what do they do*
 + *look into the reasons buffers could just not be created -- space? gl.createBuffer()*
