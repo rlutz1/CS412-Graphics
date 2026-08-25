@@ -69,8 +69,32 @@ function build_triangle() {
   gl.clearColor(0.5, 0.5, 0.5, 0.8); // set the clear color
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // clear with the set clear color
 
+  // going to make a javascript array that has x, y of each of the 
+  // triangle corners.
+  // coordinates of x, y in webgl are -1, 1 (left, right; down, up)
+  const triangle_coords = [
+    // top middle
+    0.0, 0.5,
+    // middle left
+    -0.5, 0.0,
+    // middle right
+    0.5, 0.0
+    // kind of a squishy triangle.
+  ];
+  // gpus like 32 bit floats, js uses 64 bit floats!
+  // also js arrays can have values scattered in memory
+  const tri_to_gpu = new Float32Array(triangle_coords);
+  // now, we need to send this float array to the gpu.
+  // first, make a landing buffer on the gpu
+  const tri_gpu_buffer = gl.createBuffer(); // webgl buffer type
+  if (!tri_gpu_buffer) {
+    // check for null return, implies you can't make any more buffers on gpu
+    show_error("Cannot create anymore buffers! Exiting!");
+    return;
+  }
 
 }
+
 
 try {
   build_triangle();

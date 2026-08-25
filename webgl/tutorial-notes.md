@@ -60,4 +60,5 @@ drawing a triangle
 QUESTIONS:
 
 + *3 different buffers: color, depth, stencil -- why?? and what do they do*
++ *look into the reasons buffers could just not be created -- space? gl.createBuffer()*
 
