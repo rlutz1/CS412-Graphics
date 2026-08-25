@@ -24,7 +24,10 @@ https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
 	+ varyings
 + my job is to PROVIDE CLIP SPACE COORDINATES AND COLORS
 
-https://www.youtube.com/watch?v=y2UsQB3WSvo
+
+
+
+## [tutorial vid walk through](https://www.youtube.com/watch?v=y2UsQB3WSvo)
 
 drawing a triangle
 
@@ -44,8 +47,7 @@ drawing a triangle
 	+ ![[Pasted image 20260820170620.png]]
 4. primitive assembly: webgl starts grouping together 3 points as triangles somewhat automatically? but sounds like can customize potentially
 5. rasterization: looks at the dimension of the canvas and then figures out what pixels should be the color we told it to be
-	+ 
-		![[Pasted image 20260820171004.png]]
+
 	6. each of the pixels goes through the fragment shader and colors as is told the given pixels
 
 + coords are -1, 1??? oof
@@ -57,3 +59,5 @@ drawing a triangle
 QUESTIONS:
 
 + 3 different buffers: color, depth, stencil -- why??
+
+![alt text](images/image.png)
