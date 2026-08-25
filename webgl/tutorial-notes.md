@@ -1,3 +1,8 @@
+# tutorial notes
+
+[tutorial vid](https://www.youtube.com/watch?v=y2UsQB3WSvo)
+
+
 https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
 + webgl is a **rasterization engine**
 	+ draws based on supplied code 
