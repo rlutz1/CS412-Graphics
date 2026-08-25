@@ -92,6 +92,49 @@ function build_triangle() {
     show_error("Cannot create anymore buffers! Exiting!");
     return;
   }
+  // now we need to attach the buffer to an attachment point.
+  // array buffer deals with vertex information (apparently)
+  gl.bindBuffer(gl.ARRAY_BUFFER, tri_gpu_buffer);
+  // now, the thing that's attached to this point? give it this data.
+  // STATIC_DRAW is a hint to indicate what we're going to do with the data
+  // so that it can be held in the optimal memory spot on GPU.
+  // CPU only has ram, gpu has many spots!
+  // STATIC_DRAW is likely not updated often, but may be drawn often.
+  gl.bufferData(gl.ARRAY_BUFFER, tri_to_gpu, gl.STATIC_DRAW);
+
+  // now we need to run shaders!
+  // we have to write the shader in glsl as a js string and then send it off
+  // to compile to run.
+
+  // #version HAS to be first, with NOTHING before it
+  // mediump -> controls the precision of arithmetic in the gpu; mediump is good middle
+  // in vec2 vert_position -> glsl takes inputs as an attribute
+  //   in -> keyword to signify we're getting something from a buffer
+  //   vec2 -> the TYPE of the input; 2 floating point numbers (x and y!)
+  //   vert_position -> var name
+  // job: tell where the vertex image should be showing up on our clip space (canvas)
+  // we've given part of it: vert_position
+  // vert shader MUST set the gl_Position
+  //   gl_Pos is  vec4 -> first is x, y
+  //   third is the z, depth information. about the overlap of images.
+  //   fourth number divides all x, y, z given before processing
+  const vert_shader = `#version 300 es
+  precision mediump float; 
+
+  in vec2 vert_position;
+
+  void main() {
+    gl_Position = vec4(vert_position, 0.0, 1.0);
+  }
+  `;
+
+  // now just need tp
+  // 1. create the shader
+  // 2. set the source for the shader
+  // 3. compile the shader
+
+
+  
 
 }
 

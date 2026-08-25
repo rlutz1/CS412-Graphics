@@ -61,4 +61,5 @@ QUESTIONS:
 
 + *3 different buffers: color, depth, stencil -- why?? and what do they do*
 + *look into the reasons buffers could just not be created -- space? gl.createBuffer()*
++ *the fourth number here. gl_Position = vec4(vert_position, 0.0, 1.0);*
 
