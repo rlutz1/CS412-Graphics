@@ -59,5 +59,5 @@ drawing a triangle
 
 QUESTIONS:
 
-+ 3 different buffers: color, depth, stencil -- why??
++ *3 different buffers: color, depth, stencil -- why?? and what do they do*
 

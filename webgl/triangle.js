@@ -43,9 +43,33 @@ function build_triangle() {
   
   // check to make sure the context was created correctly!
   if (!gl) {
-    show_error("Something went wrong when creating webgl2 context!");
+    show_error("Something went wrong when creating webgl2 context! browser doesn't likely support.");
     return; // for now, just stop this from working.
+    // could try to recover by loading webgl(1) instead.
   }
+
+  // first, clear the canvas.
+  // webgl starts with a clear transparent image covering.
+  // this is why we have the salmon color -- to make sure the 
+  // clearing of the transparent covering WORKS.
+
+  // webgl doesn't draw to one image, but instead draws to 
+  // THREE BUFFERS:
+  // 1. image (pict with colors)
+  // 2. depth (depth info for each pixel in the output image)
+  // 3. stencil buffer (graphics effects -> not covered here.)
+  // below, we are setting the clear bits to ensure the buffers are cleared out
+  // and webgl picks up from opengl the high-bit control for signalling
+  // what to clear.
+  // so, bitwise or can be used to tell to clear multiple buffers.
+  // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  // nothing happens.
+  // if we want to clear with a color need to specify the color:
+  // format: R, G, B, alpha; [0, 1]
+  gl.clearColor(0.5, 0.5, 0.5, 0.8); // set the clear color
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // clear with the set clear color
+
+
 }
 
 try {
