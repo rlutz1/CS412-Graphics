@@ -60,4 +60,3 @@ QUESTIONS:
 
 + 3 different buffers: color, depth, stencil -- why??
 
-![alt text](images/image.png)
