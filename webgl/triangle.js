@@ -118,7 +118,7 @@ function build_triangle() {
   //   gl_Pos is  vec4 -> first is x, y
   //   third is the z, depth information. about the overlap of images.
   //   fourth number divides all x, y, z given before processing
-  const vert_shader = `#version 300 es
+  const vert_shader_src = `#version 300 es
   precision mediump float; 
 
   in vec2 vert_position;
@@ -132,9 +132,16 @@ function build_triangle() {
   // 1. create the shader
   // 2. set the source for the shader
   // 3. compile the shader
+  const vert_shader = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vert_shader, vert_shader_src);
+  gl.compileShader(vert_shader);
 
-
-  
+  // check for compilation problems so you don't lose your mind
+  if (!gl.getShaderParameter(vert_shader, gl.COMPILE_STATUS)) {
+    const compile_error = gl.getShaderInfoLog(vert_shader);
+    show_error(`Compilation failed on vertex shader: ${compile_error}`);
+    return;
+  }
 
 }
 
