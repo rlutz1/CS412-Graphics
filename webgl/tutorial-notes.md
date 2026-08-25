@@ -32,7 +32,7 @@ drawing a triangle
 1. triangle defined as 3 points
 ```
 [
-/# vertex == POINT
+// vertex == POINT
 0.0,  0.0
 0.5, -0.5,
 0.5, -0.5 
@@ -40,7 +40,7 @@ drawing a triangle
 ```
 2. buffer that to a series of bytes to be palatable by the gpu -- **vertex buffer**
 3. have to define how the gpu reads data out of the buffer by **declaring attributes**
-4. primitive assembly: webgl starts grouping together 3 points as triangles somewhat automatically? but sounds like can customize potentially
+4. **primitive assembly**: webgl starts grouping together 3 points as triangles somewhat automatically? but sounds like can customize potentially
 	+ *webgl organizes vertices in groups of 3*
 5. **rasterization**: looks at the dimension of the canvas and then figures out what pixels should be the color we told it to be
   + figure out the pixels that NEED fragment shading
@@ -49,13 +49,15 @@ drawing a triangle
 
 ### general notes
 
+**below are some little notes, please refer to triangle.js for full notes, step by step with the code to draw a simple triangle.**
+
+[further reading](https://indigocode.dev/tutorials/webgl/01-hello-triangle)
+
 + coords are -1, 1??? oof
 + javascript does not make arrays meaning data is not guaranteed to be consecutive, hence the Float32Array conversions
 + the STATIC DRAW hint is basically so you know where the data can go for the gpu
 	+ cpu has only one real option for storing the data -- ram
 	+ gpu has multiple options that are better for different things???
-
-[further reading](https://indigocode.dev/tutorials/webgl/01-hello-triangle)
 
 ### QUESTIONS:
 
