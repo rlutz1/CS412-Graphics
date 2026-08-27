@@ -124,6 +124,69 @@ void main() {
 void main() {
   gl_Position = vec4(aPosition.x * cos(uTime) - aPosition.y * sin(uTime), aPosition.y * sin(uTime) + aPosition.x * cos(uTime) , aPosition.z, 1.0);
   vColor = aColor;
-}
-  
+} 
 ```
+
+```
+void main() {
+  gl_Position = vec4(aPosition.x * sin(uTime) - sin(uTime) * aPosition.y * sin(uTime), aPosition.y * sin(uTime) + aPosition.x , aPosition.z, 1.0);
+  vColor = aColor;
+}
+```
+
+move triangle as a whole unit
+```
+void main() {
+  gl_Position = vec4(aPosition.x + (sin(uTime)), aPosition.y + cos(uTime), aPosition.z, 1.0);
+  vColor = aColor;
+}
+```
+
+matrix version
+```
+#version 300 es
+  // precision highp float;
+  in vec3 aPosition;
+  in vec3 aColor;
+
+  uniform float uTime; //time in sec
+  out vec3 vColor;
+
+  void main() {
+    //vec3 something = aPosition + 0.5;
+    
+    mat3 test = mat3(
+      sin(uTime), 0.0, 0.0,
+      0.0, 1.0, 0.0,
+      0.0, 0.0, 1.0
+    );
+
+    vec3 something = test * aPosition;
+
+     gl_Position = vec4(something, 1.0);
+
+    //gl_Position = vec4(aPosition.y, aPosition.x, aPosition.z, 1.0);
+    vColor = aColor;
+
+    
+  }
+```
+
+## side quest
+
+different period colors:
+
+```
+// comment out the uTime in vertext shader
+#version 300 es
+  precision mediump float;
+  in vec3 vColor;
+  uniform float uTime;
+  
+  out vec4 fragColor;
+
+  void main() {
+    fragColor = vec4(vColor.x * (sin(uTime)), vColor.y * (sin(uTime + 1.57)), vColor.z * (sin(uTime + 3.14)), 1.0);
+  }
+```
+
