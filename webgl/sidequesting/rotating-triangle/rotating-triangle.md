@@ -172,6 +172,98 @@ matrix version
   }
 ```
 
+rotated on side with matrix
+```
+#version 300 es
+  // precision highp float;
+  in vec3 aPosition;
+  in vec3 aColor;
+
+  uniform float uTime; //time in sec
+  out vec3 vColor;
+
+  void main() {
+    //vec3 something = aPosition + 0.5;
+    
+    // also neat, cos(in second row)
+    mat3 test = mat3(
+      0.0, sin(uTime), 0.0,
+      sin(uTime), 0.0, 0.0,
+      0.0, 0.0, 1.0
+    );
+
+    vec3 something = test * aPosition;
+
+     gl_Position = vec4(something, 1.0);
+
+    //gl_Position = vec4(aPosition.y, aPosition.x, aPosition.z, 1.0);
+    vColor = aColor;
+
+    
+  }
+  
+// FOR ABOVE: cool 3d rotation effect:
+
+/*
+mat3 test = mat3(
+  cos(uTime), sin(uTime), 0.0,
+  sin(uTime), cos(uTime), 0.0,
+  0.0, 0.0, 1.0
+);
+
+*/
+
+```
+
+this is a rotation of the whole triangle too 
+```
+vec3 test = vec3(-cos(uTime), sin(uTime), 0.0);
+
+vec3 something = test + aPosition;
+
+gl_Position = vec4(something, 1.0);
+```
+
+
+leaving off for minute
+#version 300 es
+  // precision highp float;
+  in vec3 aPosition;
+  in vec3 aColor;
+
+  uniform float uTime; //time in sec
+  out vec3 vColor;
+
+  void main() {
+    //vec3 something = aPosition + 0.5;
+    /*
+    mat3 test = mat3(
+      sin(uTime), 0.0, 0.0,
+      0.0, -cos(uTime), 0.0,
+      0.0, 0.0, 0.0
+    );
+    */
+
+    vec3 test = vec3(
+      -cos(uTime), 
+      sin(uTime), 
+      0.0
+    );
+
+    vec3 axis = vec3(0.0, 0.0, 0.0);
+
+    vec3 something = (test * aPosition)  + axis;
+
+    gl_Position = vec4(something, 1.0);
+
+    //gl_Position = vec4(aPosition.y, aPosition.x, aPosition.z, 1.0);
+    vColor = aColor;
+
+    
+  }
+  
+
+
 ## side quest
 
 different period colors:
