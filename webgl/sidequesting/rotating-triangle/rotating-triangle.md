@@ -218,10 +218,19 @@ mat3 test = mat3(
 this is a rotation of the whole triangle too 
 ```
 vec3 test = vec3(-cos(uTime), sin(uTime), 0.0);
-
+// fun:
+// vec3 test = vec3(-cos(uTime) / aPosition.y, sin(uTime), 0.0); 
+// makes it elliptical
+// vec3 test = vec3(-cos(uTime), sin(uTime + 2.0), 0.0);
 vec3 something = test + aPosition;
 
 gl_Position = vec4(something, 1.0);
+```
+
+```
+    vec3 test = vec3(-sin(uTime), sin(uTime), 0.0);
+
+    vec3 something = test * aPosition;
 ```
 
 
@@ -261,8 +270,94 @@ leaving off for minute
 
     
   }
+
+final: needed different rotation vectors:  
+```
+#version 300 es
+  in vec3 aPosition;
+  in vec3 aColor;
+
+  uniform float uTime; //time in sec
+  out vec3 vColor;
+
+  void main() {
+    vec3 rot_y = vec3(sin(uTime), cos(uTime), 0.0);
+    vec3 rot_x = vec3(-cos(uTime), sin(uTime), 0.0);    
+    vec3 trans = vec3(aPosition.x - 0.0, aPosition.y - 0.0, 1.0);
+
+    float new_x = dot(rot_x, trans);
+    float new_y = dot(rot_y, trans);
+
+    vec3 new_pos = vec3(new_x, new_y, aPosition.z);
+
+    // vec3 something = rot * trans;
+    // vec3 something = test * aPosition; 
   
 
+    // anchors to the green point:
+    // new_pos += rot_x;
+
+
+    gl_Position = vec4(new_pos, 1.0);
+    //gl_Position = vec4(aPosition, 1.0);
+    vColor = aColor;
+  }
+    
+  
+```
+[rotation geometry proof](https://inginious.org/course/competitive-programming/geometry-rotation)
+
+![rot](images/image-1.png)
+
+![rot3](images/image-3.png)
+
+![rot2](images/image-2.png)
+
+
+```
+#version 300 es
+  in vec3 aPosition;
+  in vec3 aColor;
+
+  uniform float uTime; //time in sec
+  out vec3 vColor;
+
+  vec2 center = vec2(0.0, 0.0);
+
+  void main() {
+
+
+
+    vec3 rot_y = vec3(sin(uTime), cos(uTime), 0.0);
+    vec3 rot_x = vec3(-cos(uTime), sin(uTime), 0.0);    
+
+    vec2 original_points = vec2(aPosition.x, aPosition.y);
+   
+    vec2 translated_points = original_points - center;
+    
+    vec3 trans = vec3(translated_points, 1.0);
+   
+    vec2 rotations = vec2(dot(rot_x, trans), dot(rot_y, trans));
+
+    rotations = center - rotations;
+
+    //float new_x = dot(rot_x, trans);
+    //float new_y = dot(rot_y, trans);
+
+    vec3 new_pos = vec3(rotations, aPosition.z);
+
+    // vec3 something = rot * trans;
+    // vec3 something = test * aPosition; 
+
+    //new_pos += rot_y;
+
+    gl_Position = vec4(new_pos, 1.0);
+    //gl_Position = vec4(aPosition, 1.0);
+    vColor = aColor;
+  }
+    
+  
+```
 
 ## side quest
 
