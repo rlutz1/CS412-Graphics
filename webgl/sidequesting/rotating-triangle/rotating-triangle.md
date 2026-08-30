@@ -339,7 +339,7 @@ final: needed different rotation vectors:
    
     vec2 rotations = vec2(dot(rot_x, trans), dot(rot_y, trans));
 
-    rotations = center - rotations;
+    rotations = center + rotations;
 
     //float new_x = dot(rot_x, trans);
     //float new_y = dot(rot_y, trans);
