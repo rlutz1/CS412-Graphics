@@ -102,3 +102,23 @@ mat3 rot = mat3(
 
   
 ```
+
+washing machine back and forth, change to frequency
+```
+mat3 rot = mat3(
+      cos(2.0 * uTime) , -sin(uTime), sin(uTime),
+      sin(uTime), cos(2.0 * uTime), -sin(uTime),
+      -sin(uTime), sin(uTime), cos(2.0 * uTime)
+    );
+```
+
+changing the colors to the following changes their periods of rotation enough to get what daddy needs
+
+```
+// 
+const colors = new Float32Array([
+  -1.0, 1.0, 0.0,  // green -> red -> black
+  1.0, 0.0, -1.0,  // red -> blue -> black
+  0.0, -1.0, 1.0   // blue -> green -> black
+]);
+```

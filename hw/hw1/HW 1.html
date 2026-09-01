@@ -109,9 +109,22 @@
       -sin(uTime), sin(uTime), cos(uTime)
     );
 
+    // not quite what i wanted
+   /*
+   float cos_adjusted = cos(uTime) / 2.0 + 0.5;
+   float sin_adjusted = sin(uTime) / 2.0 + 0.5;
+
+    mat3 rot = mat3(
+      cos_adjusted , -sin_adjusted, sin_adjusted,
+      sin_adjusted, cos_adjusted, -sin_adjusted,
+      -sin_adjusted, sin_adjusted, cos_adjusted
+    );
+    */
+
     vec3 new_color = rot * vColor;  
 
-    fragColor = vec4(new_color, 1.0);
+    //fragColor = vec4(new_color, 1.0); // UNCOMMENT FOR FINAL
+    fragColor = vec4(vColor, 1.0);
   }
   </script>
 
