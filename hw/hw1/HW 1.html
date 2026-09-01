@@ -51,14 +51,17 @@
   <!-- MAKE SURE YOU UPDATE YOUR EDITS HERE -->
   <!-- Vertex Shader -->
   <script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
+  precision mediump float;
   in vec3 aPosition;
   in vec3 aColor;
 
-  uniform float uTime; //time in sec
+  uniform float uTime; // time in sec
   out vec3 vColor;
 
   void main() {
     gl_Position = vec4(aPosition, 1.0);
+    // interesting:
+    // vColor = vec3(aColor.r * sin(uTime), aColor.g, aColor);
     vColor = aColor;
   }
   </script>
@@ -69,9 +72,21 @@
   precision mediump float;
   in vec3 vColor;
 
+  uniform float uTime; // shared time in seconds
+
   out vec4 fragColor;
 
   void main() {
+    // cool effect:
+    // fragColor = vec4(vColor * tan(uTime), 1.0);
+    // fragColor = vec4(vColor * (1.0 / tan(uTime)), 1.0);  
+    // cot(x) + tan(x) -> interesting as well
+    // cool color period
+    //  fragColor = vec4(vColor.x + sin(uTime), vColor.y + cos(uTime), vColor.z + sin(uTime + 3.14), 1.0); 
+
+    // my fave: 
+    // fragColor = vec4(vColor.r * sin(uTime), vColor.b * sin(uTime + 1.57), vColor.g * sin(uTime + 3.14), 1.0);
+
     fragColor = vec4(vColor, 1.0);
   }
   </script>
