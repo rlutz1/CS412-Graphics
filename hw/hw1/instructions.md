@@ -41,3 +41,64 @@ silly color swapping:
   }
   
 ```
+
+
++ making a change in either vertex shader or frag shader changes the color of a vertex. is it possible to make change to just one though?
++ change to frag color makes changes on all vertices
+
+wait a minute.
+
+this changes the top and bottom left corners
+```
+fragColor = vec4(vColor.r * cos(uTime), vColor.g, vColor.b * cos(uTime), 1.0);
+```
+
+so this in vertex shader
+
+```
+vColor = vec3(aColor.r, aColor.g * sin(uTime), aColor.b * sin(uTime));
+```
+
+intersting thing is that adding the .g manipulation caused:
+1. bottom left vertex to pulse where it had not before
+2. the green tint to be back in the bottom right corner where it was only hella blue
+
+the reason for this, just confirmed by adding a blue value to the bottom left corner and remving the .g manip: **the .b manip affects all vertices' blue value. if there is no blue value, it will appear to be completely unaffected.**
+
+*and changing in vertex shader or frag shader has same effect.*
+
+what if i wanted to rotate the colors? it would feel like a 3d rotation, right?
+
+3d rotation almost working:
+
+```
+ mat3 rot = mat3(
+  1.0, 0.0, 0.0,
+  0.0, cos(uTime), -sin(uTime),
+  0.0, sin(uTime), cos(uTime)
+);
+
+vec3 new_color = rot * vColor;  
+
+fragColor = vec4(new_color, 1.0);
+```
+
+change to this and we do get a decent swirl
+```
+ mat3 rot = mat3(
+      cos(uTime), -sin(uTime), 0.0,
+      sin(uTime), cos(uTime), -sin(uTime),
+      0.0, sin(uTime), cos(uTime)
+    );
+```
+
+also cool
+```
+mat3 rot = mat3(
+      cos(uTime) , -sin(uTime), sin(uTime),
+      sin(uTime), cos(uTime), -sin(uTime),
+      -sin(uTime), sin(uTime), cos(uTime)
+    );
+
+  
+```

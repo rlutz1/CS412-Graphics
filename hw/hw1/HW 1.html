@@ -55,23 +55,30 @@
   in vec3 aPosition;
   in vec3 aColor;
 
-  uniform float uTime; // time in sec
+  uniform float uTime; //time in sec
   out vec3 vColor;
 
   void main() {
-    gl_Position = vec4(aPosition, 1.0);
-    // interesting:
-    // vColor = vec3(aColor.r * sin(uTime), aColor.g, aColor);
-    // changing the order of the vertices:
-    // vColor = vec3(aColor.g, aColor.b, aColor.r); 
-    // this pulls out the r'th elemnt ([1, 0, 0]) as an rgb value to color the vertex as
-    // so if triangles is [1.0, 0, 0] [0, 1.0, 0], [0, 0, 1.0]
-    // the vector colors aColor.g will be as an rgb color (straight green): 0, 1.0, 0 
-    // changing [0, 1.0, 0 ] -> [1.0, 1.0, 0] -> purple in bottom left
-    // vColor = vec3(aColor.g, aColor.g, aColor.g);
+    vec3 rot_y = vec3(sin(uTime), cos(uTime), 0.0);
+    vec3 rot_x = vec3(-cos(uTime), sin(uTime), 0.0);    
+    vec3 trans = vec3(aPosition.x - 0.0, aPosition.y - 0.0, 1.0);
 
-    vColor = vec3(aColor.r, aColor.b, aColor.g);
-    //vColor = aColor;
+    float new_x = dot(rot_x, trans);
+    float new_y = dot(rot_y, trans);
+
+    vec3 new_pos = vec3(new_x, new_y, aPosition.z);
+
+    // vec3 something = rot * trans;
+    // vec3 something = test * aPosition; 
+  
+
+    // anchors to the green point:
+    // new_pos += rot_x;
+
+
+    gl_Position = vec4(new_pos, 1.0);
+    //gl_Position = vec4(aPosition, 1.0);
+    vColor = aColor;
   }
   </script>
 
@@ -96,9 +103,15 @@
     // my fave: 
     // fragColor = vec4(vColor.r * sin(uTime), vColor.b * sin(uTime + 1.57), vColor.g * sin(uTime + 3.14), 1.0);
 
-    
+    mat3 rot = mat3(
+      cos(uTime) , -sin(uTime), sin(uTime),
+      sin(uTime), cos(uTime), -sin(uTime),
+      -sin(uTime), sin(uTime), cos(uTime)
+    );
 
-    fragColor = vec4(vColor, 1.0);
+    vec3 new_color = rot * vColor;  
+
+    fragColor = vec4(new_color, 1.0);
   }
   </script>
 
