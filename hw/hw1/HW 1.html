@@ -213,11 +213,13 @@
       // Position buffer binding
       gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
       gl.enableVertexAttribArray(posLoc);
+      // 3 -> how many elements in each pos array (ie,  apoint is x, y, z -> 3)
       gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
 
       // Color buffer binding
       gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
       gl.enableVertexAttribArray(colorLoc);
+      // 3 -> how many elements in the color array
       gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
 
       //delta time in ms
@@ -226,6 +228,7 @@
       gl.uniform1f(timeLoc, deltaTime/1000.0);
 
       // Draw content
+      // 4 -> how many points in the pos array
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
