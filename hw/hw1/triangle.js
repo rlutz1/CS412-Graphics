@@ -1,18 +1,18 @@
 // square
-const positions = new Float32Array([
-    0.0,  1.0,   // vertex 1
-    1.0,  0.0,   // vertex 2
-   -1.0,  0.0,   // vertex 3
-    0.0, -1.0    // vertex 4
-]);
+// const positions = new Float32Array([
+//     0.0,  1.0,   // vertex 1
+//     1.0,  0.0,   // vertex 2
+//    -1.0,  0.0,   // vertex 3
+//     0.0, -1.0    // vertex 4
+// ]);
 
 // turns back to triangle
-// const positions = new Float32Array([
-//     0.0,  1.0, 0.0,  // vertex 1
-//     1.0,  0.0, 0.0,  // vertex 2
-//    -1.0,  0.0, 0.0,  // vertex 3
-//     0.0, -1.0, 0.0   // vertex 4
-// ]);
+const positions = new Float32Array([
+    0.0,  1.0, 0.0,  // vertex 1
+    1.0,  0.0, 0.0,  // vertex 2
+   -1.0,  0.0, 0.0,  // vertex 3
+    0.0, -1.0, 0.0   // vertex 4
+]);
 
 
 // acheives full rotation to all vertices as desired but
