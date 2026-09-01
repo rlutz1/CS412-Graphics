@@ -76,8 +76,8 @@
     // new_pos += rot_x;
 
 
-    gl_Position = vec4(new_pos, 1.0);
-    //gl_Position = vec4(aPosition, 1.0);
+    //gl_Position = vec4(new_pos, 1.0); // UNCOMMENT FOR FINAL
+    gl_Position = vec4(aPosition, 1.0);
     vColor = aColor;
   }
   </script>
@@ -218,7 +218,7 @@
       // Color buffer binding
       gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
       gl.enableVertexAttribArray(colorLoc);
-      gl.vertexAttribPointer(colorLoc, 1, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
 
       //delta time in ms
       let deltaTime = Date.now() - startTime;
