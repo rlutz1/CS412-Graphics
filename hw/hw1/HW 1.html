@@ -62,7 +62,16 @@
     gl_Position = vec4(aPosition, 1.0);
     // interesting:
     // vColor = vec3(aColor.r * sin(uTime), aColor.g, aColor);
-    vColor = aColor;
+    // changing the order of the vertices:
+    // vColor = vec3(aColor.g, aColor.b, aColor.r); 
+    // this pulls out the r'th elemnt ([1, 0, 0]) as an rgb value to color the vertex as
+    // so if triangles is [1.0, 0, 0] [0, 1.0, 0], [0, 0, 1.0]
+    // the vector colors aColor.g will be as an rgb color (straight green): 0, 1.0, 0 
+    // changing [0, 1.0, 0 ] -> [1.0, 1.0, 0] -> purple in bottom left
+    // vColor = vec3(aColor.g, aColor.g, aColor.g);
+
+    vColor = vec3(aColor.r, aColor.b, aColor.g);
+    //vColor = aColor;
   }
   </script>
 
@@ -86,6 +95,8 @@
 
     // my fave: 
     // fragColor = vec4(vColor.r * sin(uTime), vColor.b * sin(uTime + 1.57), vColor.g * sin(uTime + 3.14), 1.0);
+
+    
 
     fragColor = vec4(vColor, 1.0);
   }
