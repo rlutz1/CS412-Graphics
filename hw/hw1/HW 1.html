@@ -59,25 +59,23 @@
   out vec3 vColor;
 
   void main() {
-    vec3 rot_y = vec3(sin(uTime), cos(uTime), 0.0);
-    vec3 rot_x = vec3(-cos(uTime), sin(uTime), 0.0);    
-    vec3 trans = vec3(aPosition.x - 0.0, aPosition.y - 0.0, 1.0);
+    
+    // rotation matrix
+    mat3 rot = mat3(
+      cos(uTime), sin(uTime), 0.0,
+      -sin(uTime), cos(uTime), 0.0,
+      0.0, 0.0, 1.0
+    );
 
-    float new_x = dot(rot_x, trans);
-    float new_y = dot(rot_y, trans);
+    // shearing matrix
+    mat3 shear = mat3(
+      1.0, cos(uTime), 0.0,
+      sin(uTime), 1.0, 0.0,
+      0.0, 0.0, 1.0
+    );
 
-    vec3 new_pos = vec3(new_x, new_y, aPosition.z);
-
-    // vec3 something = rot * trans;
-    // vec3 something = test * aPosition; 
-  
-
-    // anchors to the green point:
-    // new_pos += rot_x;
-
-
-    //gl_Position = vec4(new_pos, 1.0); // UNCOMMENT FOR FINAL
-    gl_Position = vec4(aPosition, 1.0);
+    // final position
+    gl_Position = vec4(rot * shear * aPosition, 1.0); // UNCOMMENT FOR FINAL
     vColor = aColor;
   }
   </script>
@@ -93,38 +91,17 @@
   out vec4 fragColor;
 
   void main() {
-    // cool effect:
-    // fragColor = vec4(vColor * tan(uTime), 1.0);
-    // fragColor = vec4(vColor * (1.0 / tan(uTime)), 1.0);  
-    // cot(x) + tan(x) -> interesting as well
-    // cool color period
-    //  fragColor = vec4(vColor.x + sin(uTime), vColor.y + cos(uTime), vColor.z + sin(uTime + 3.14), 1.0); 
-
-    // my fave: 
-    // fragColor = vec4(vColor.r * sin(uTime), vColor.b * sin(uTime + 1.57), vColor.g * sin(uTime + 3.14), 1.0);
-
+    // 3d color rotation matrix
     mat3 rot = mat3(
       cos(uTime) , -sin(uTime), sin(uTime),
       sin(uTime), cos(uTime), -sin(uTime),
       -sin(uTime), sin(uTime), cos(uTime)
     );
 
-    // not quite what i wanted
-   /*
-   float cos_adjusted = cos(uTime) / 2.0 + 0.5;
-   float sin_adjusted = sin(uTime) / 2.0 + 0.5;
-
-    mat3 rot = mat3(
-      cos_adjusted , -sin_adjusted, sin_adjusted,
-      sin_adjusted, cos_adjusted, -sin_adjusted,
-      -sin_adjusted, sin_adjusted, cos_adjusted
-    );
-    */
-
+    // final color of vertex
     vec3 new_color = rot * vColor;  
 
-    //fragColor = vec4(new_color, 1.0); // UNCOMMENT FOR FINAL
-    fragColor = vec4(vColor, 1.0);
+    fragColor = vec4(new_color, 1.0); 
   }
   </script>
 
@@ -154,6 +131,10 @@
       return prog;
     }
 
+    // constant for sanity
+    const vals_per_color = 3
+    const vals_per_vertex = 3
+    const num_triangle_vertices = positions.length / vals_per_vertex
 
     // --- WebGL init ---
     const canvas = document.getElementById("glcanvas");
@@ -214,13 +195,13 @@
       gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
       gl.enableVertexAttribArray(posLoc);
       // 3 -> how many elements in each pos array (ie,  apoint is x, y, z -> 3)
-      gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribPointer(posLoc, vals_per_color, gl.FLOAT, false, 0, 0);
 
       // Color buffer binding
       gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
       gl.enableVertexAttribArray(colorLoc);
       // 3 -> how many elements in the color array
-      gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
+      gl.vertexAttribPointer(colorLoc, vals_per_vertex, gl.FLOAT, false, 0, 0);
 
       //delta time in ms
       let deltaTime = Date.now() - startTime;
@@ -229,7 +210,7 @@
 
       // Draw content
       // 4 -> how many points in the pos array
-      gl.drawArrays(gl.TRIANGLES, 0, 12);
+      gl.drawArrays(gl.TRIANGLES, 0, num_triangle_vertices);
     }
 
     // Initialize when page loads

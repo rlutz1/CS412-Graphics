@@ -122,3 +122,88 @@ const colors = new Float32Array([
   0.0, -1.0, 1.0   // blue -> green -> black
 ]);
 ```
+## old scripts
+
+### vert
+```js
+ <script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
+  precision mediump float;
+  in vec3 aPosition;
+  in vec3 aColor;
+
+  uniform float uTime; //time in sec
+  out vec3 vColor;
+
+  void main() {
+    vec3 rot_y = vec3(sin(uTime), cos(uTime), 0.0);
+    vec3 rot_x = vec3(-cos(uTime), sin(uTime), 0.0);    
+    vec3 trans = vec3(aPosition.x - 0.0, aPosition.y - 0.0, 1.0);
+
+    float new_x = dot(rot_x, trans);
+    float new_y = dot(rot_y, trans);
+
+    vec3 new_pos = vec3(new_x, new_y, aPosition.z);
+
+    // vec3 something = rot * trans;
+    // vec3 something = test * aPosition; 
+  
+
+    // anchors to the green point:
+    // new_pos += rot_x;
+
+
+    //gl_Position = vec4(new_pos, 1.0); // UNCOMMENT FOR FINAL
+    gl_Position = vec4(aPosition, 1.0);
+    vColor = aColor;
+  }
+  </script>
+  ```
+
+  ### frag
+
+
+```js
+ <script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
+  precision mediump float;
+  in vec3 vColor;
+
+  uniform float uTime; // shared time in seconds
+
+  out vec4 fragColor;
+
+  void main() {
+    // cool effect:
+    // fragColor = vec4(vColor * tan(uTime), 1.0);
+    // fragColor = vec4(vColor * (1.0 / tan(uTime)), 1.0);  
+    // cot(x) + tan(x) -> interesting as well
+    // cool color period
+    //  fragColor = vec4(vColor.x + sin(uTime), vColor.y + cos(uTime), vColor.z + sin(uTime + 3.14), 1.0); 
+
+    // my fave: 
+    // fragColor = vec4(vColor.r * sin(uTime), vColor.b * sin(uTime + 1.57), vColor.g * sin(uTime + 3.14), 1.0);
+
+    mat3 rot = mat3(
+      cos(uTime) , -sin(uTime), sin(uTime),
+      sin(uTime), cos(uTime), -sin(uTime),
+      -sin(uTime), sin(uTime), cos(uTime)
+    );
+
+    // not quite what i wanted
+   /*
+   float cos_adjusted = cos(uTime) / 2.0 + 0.5;
+   float sin_adjusted = sin(uTime) / 2.0 + 0.5;
+
+    mat3 rot = mat3(
+      cos_adjusted , -sin_adjusted, sin_adjusted,
+      sin_adjusted, cos_adjusted, -sin_adjusted,
+      -sin_adjusted, sin_adjusted, cos_adjusted
+    );
+    */
+
+    vec3 new_color = rot * vColor;  
+
+    //fragColor = vec4(new_color, 1.0); // UNCOMMENT FOR FINAL
+    fragColor = vec4(vColor, 1.0);
+  }
+  </script>
+```
