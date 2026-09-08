@@ -6,32 +6,53 @@
   main object affine transformations.
  */
 
+/* READABILITY CONSTANTS*/
+const header_tag = `/*===== END HEADER ======*/`
+const library_tag = `/*===== LIBRARY FUNCS ======*/`
+const main_tag = `/*===== MAIN ======*/`
 
-// rotation by d degrees function.
-// TODO: specify directionality. (clockwise...)
-
-const header_end = `/*===== END HEADER ======*/`
-
+/* A BASIC MEDIUM P HEADER */
 const medium_p_header = `#version 300 es 
   precision mediump float;
-  ${header_end}
+  ${header_tag}
   `
 
-const rotation = `
-  vec3 rotate(float d, vec3 to_rotate) {
+/* ROTATION FUNCTION */
+const rotation = `/* rotate a 3 element vector in a given direction */
+  vec3 rotate(float d, vec3 to_rotate, bool clockwise) {
     // rotation matrix 
-     mat3 rot = mat3(
-      cos(d), sin(d), 0.0,
-      -sin(d), cos(d), 0.0,
-      0.0, 0.0, 1.0
-    );
+    mat3 rot;
+
+    if (clockwise) {
+      // clockwise rotation matrix
+      rot = mat3(
+        cos(d), -sin(d), 0.0,
+        sin(d), cos(d), 0.0,
+        0.0, 0.0, 1.0
+      );
+    } else {
+      // counter clockwise rotation matrix
+      rot = mat3(
+        cos(d), sin(d), 0.0,
+        -sin(d), cos(d), 0.0,
+        0.0, 0.0, 1.0
+      );
+    } // end if
 
     return  rot * to_rotate;
   } // end method
   `
 
-const vert_shader = `${medium_p_header}
+/* OPTIONAL: entire library of transformation functions together */
+
+const library = `${library_tag}
   ${rotation}
+  `
+
+/* VERT SHADER USED BY DEFAULT */
+const vert_shader = `${medium_p_header}
+  ${library}
+  ${main_tag}
   in vec3 aPosition;
   in vec3 aColor;
 
@@ -40,7 +61,7 @@ const vert_shader = `${medium_p_header}
 
   void main() {
     // final position
-    gl_Position = vec4(rotate(uTime, aPosition), 1.0);
+    gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
     vColor = aColor;
   }
   `
