@@ -59,7 +59,7 @@ const scaling = `/* scale a 3 element vector by factors sx, sy */
   } // end method
   `
 
-/* ROTATION FUNCTION */
+/* ROTATION FUNCTIONS */
 const rotation = `/* rotate a 3 element vector in a given direction */
   vec3 rotate(float radians, vec3 to_rotate, bool clockwise) {
     // rotation matrix 
@@ -115,6 +115,18 @@ const reflection = `/* reflect a shape by d radians */
     return reflection(deg_to_rad(45.0), to_reflect);
   } // end method
   `
+/* SHEAR/SKEW FUNCTIONS */
+const shearing = `/* shear/skew a shape by shx, shy */
+  vec3 shear(float shx, float shy, vec3 to_shear) {
+    mat3 sh = mat3(
+      1.0, shy, 0.0,
+      shx, 1.0, 0.0,
+      0.0, 0.0, 1.0
+    );
+
+    return sh * to_shear;
+  } // end method
+  `
 
 /* OPTIONAL: entire library of transformation functions together */
 const library = `${library_tag}
@@ -123,6 +135,7 @@ const library = `${library_tag}
   ${scaling}
   ${rotation}
   ${reflection}
+  ${shearing}
   `
 
 /* VERT SHADER USED BY DEFAULT */
@@ -141,10 +154,12 @@ const vert_shader = `${medium_p_header}
     // gl_Position = vec4(translate(0.5, 1.0, aPosition), 1.0);
     // gl_Position = vec4(scale(1.0, 1.0, aPosition), 1.0);
 
-    gl_Position = vec4(aPosition, 1.0);
+    // gl_Position = vec4(aPosition, 1.0);
     //gl_Position = vec4(reflection_x_axis(aPosition), 1.0); // x axis
     //gl_Position = vec4(reflection_y_axis(aPosition), 1.0); // y axis
     //gl_Position = vec4(reflection_yx_axis(aPosition), 1.0); // y=x axis
+
+    gl_Position = vec4(shear(0.0, 0.0, aPosition), 1.0);
 
     vColor = aColor;
   }
