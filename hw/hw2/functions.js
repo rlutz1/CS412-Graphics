@@ -85,9 +85,9 @@ const rotation = `/* rotate a 3 element vector in a given direction */
   } // end method
   `
 
-/* REFLECTION FUNCTION */
+/* REFLECTION FUNCTIONS */
 const reflection = `/* reflect a shape by d radians */
-  vec3 reflect_it(float radians, vec3 to_reflect) {
+  vec3 reflection(float radians, vec3 to_reflect) {
     float two_theta = 2.0 * radians; // for ease of computation below
 
     // reflection matrix
@@ -99,8 +99,22 @@ const reflection = `/* reflect a shape by d radians */
 
     return refl * to_reflect;
   } // end method
-  `
 
+  /* reflect a shape over the x axis, convenience */
+  vec3 reflection_x_axis(vec3 to_reflect) {
+    return reflection(deg_to_rad(0.0), to_reflect);
+  } // end method
+
+  /* reflect a shape over the y axis, convenience */
+  vec3 reflection_y_axis(vec3 to_reflect) {
+    return reflection(deg_to_rad(90.0), to_reflect);
+  } // end method
+
+  /* reflect a shape over the y=x axis, convenience */
+  vec3 reflection_yx_axis(vec3 to_reflect) {
+    return reflection(deg_to_rad(45.0), to_reflect);
+  } // end method
+  `
 
 /* OPTIONAL: entire library of transformation functions together */
 const library = `${library_tag}
@@ -128,9 +142,9 @@ const vert_shader = `${medium_p_header}
     // gl_Position = vec4(scale(1.0, 1.0, aPosition), 1.0);
 
     gl_Position = vec4(aPosition, 1.0);
-    //gl_Position = vec4(reflect_it(deg_to_rad(0.0), aPosition), 1.0); // x axis
-    //gl_Position = vec4(reflect_it(deg_to_rad(90.0), aPosition), 1.0); // y axis
-    //gl_Position = vec4(reflect_it(deg_to_rad(45.0), aPosition), 1.0); // y=x axis
+    //gl_Position = vec4(reflection_x_axis(aPosition), 1.0); // x axis
+    //gl_Position = vec4(reflection_y_axis(aPosition), 1.0); // y axis
+    //gl_Position = vec4(reflection_yx_axis(aPosition), 1.0); // y=x axis
 
     vColor = aColor;
   }
