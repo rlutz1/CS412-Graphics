@@ -99,6 +99,8 @@ Here is how you implement this in JavaScript using WebGL2:
 
 [no, think this is a thing, source](https://stackoverflow.com/questions/33615819/multiple-shaders-in-opengl)
 
+TODO: change to return a MATRIX, not the vec3 perhaps
+
 ## neat things only
 
 ```js
@@ -196,3 +198,4 @@ Here is how you implement this in JavaScript using WebGL2:
   }
   
 ```
+
