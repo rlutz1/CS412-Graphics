@@ -150,7 +150,7 @@ const vert_shader = `${medium_p_header}
 
   /* transform the shape with the usual TRS pattern */
   vec3 transform_combination(vec3 to_transform) {
-    return reflection(sin(uTime), to_transform); // pendulum
+    //return reflection(sin(uTime), to_transform); // pendulum
     return reflection(sin(uTime/2.0) * 3.14, to_transform); // more pendulum hehe
 
     // return translate(sin(uTime), sin(uTime), rotate(uTime, reflection(deg_to_rad(-uTime), to_transform), true));
