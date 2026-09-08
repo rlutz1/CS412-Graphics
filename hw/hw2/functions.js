@@ -145,32 +145,24 @@ const vert_shader = `${medium_p_header}
   in vec3 aPosition;
   in vec3 aColor;
 
+  vec3 pt = vec3(-0.2, -0.2, 0.0); // point to rotate around, arbitrary
+  
   uniform float uTime; //time in sec
   out vec3 vColor;
 
   /* transform the shape with the usual TRS pattern */
   vec3 transform_combination(vec3 to_transform) {
-    //return reflection(sin(uTime), to_transform); // pendulum
-    return reflection(sin(uTime/2.0) * 3.14, to_transform); // more pendulum hehe
+    vec3 transformed = to_transform; // for ease of stacking
 
-    // return translate(sin(uTime), sin(uTime), rotate(uTime, reflection(deg_to_rad(-uTime), to_transform), true));
-    // return translate(sin(uTime), cos(uTime), rotate(uTime, translate(-sin(uTime), -cos(uTime), scale(sin(uTime), cos(uTime), to_transform)), true));
+    transformed = translate(-pt.x, -pt.y, transformed); // 
+    transformed = rotate(uTime, transformed, true);
+    transformed = shear(0.5, 0.5, transformed);
+    transformed = translate(pt.x, pt.y, transformed);    
+
+    return transformed;
   } // end method
 
   void main() {
-    // final position -- TESTING, commented for now.
-    // gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
-    // gl_Position = vec4(translate(0.5, 1.0, aPosition), 1.0);
-    // gl_Position = vec4(scale(1.0, 1.0, aPosition), 1.0);
-
-    // gl_Position = vec4(reflection_x_axis(aPosition), 1.0); // x axis
-    // gl_Position = vec4(reflection_y_axis(aPosition), 1.0); // y axis
-    // gl_Position = vec4(reflection_yx_axis(aPosition), 1.0); // y=x axis
-
-    // gl_Position = vec4(shear(0.0, 0.0, aPosition), 1.0);
-
-    // gl_Position = vec4(aPosition, 1.0);
-
     // final transformation combining multiple changes.
     gl_Position = vec4(transform_combination(aPosition), 1.0);
 

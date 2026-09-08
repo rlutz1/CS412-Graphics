@@ -101,6 +101,32 @@ Here is how you implement this in JavaScript using WebGL2:
 
 TODO: change to return a MATRIX, not the vec3 perhaps
 
+pulling this out
+
+```C
+// final position -- TESTING, commented for now.
+// gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
+// gl_Position = vec4(translate(0.5, 1.0, aPosition), 1.0);
+// gl_Position = vec4(scale(1.0, 1.0, aPosition), 1.0);
+
+// gl_Position = vec4(reflection_x_axis(aPosition), 1.0); // x axis
+// gl_Position = vec4(reflection_y_axis(aPosition), 1.0); // y axis
+// gl_Position = vec4(reflection_yx_axis(aPosition), 1.0); // y=x axis
+
+// gl_Position = vec4(shear(0.0, 0.0, aPosition), 1.0);
+
+// gl_Position = vec4(aPosition, 1.0);
+```
+
+basically what im going to submit is 
+1. translate all points back to a predefined "origin" point (pt)
+   + this effectively makes the defined point the new origin
+2. rotate
+3. shear in both x, y
+4. translate back
+
+creates an effect of a tilted triangle plane spinning around a predefined point.
+
 ## neat things only
 
 ```js
@@ -198,4 +224,6 @@ TODO: change to return a MATRIX, not the vec3 perhaps
   }
   
 ```
+
+
 
