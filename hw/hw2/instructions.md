@@ -121,7 +121,7 @@ pulling this out
 
 basically what im going to submit is 
 1. translate all points back to a predefined "origin" point (pt)
-   + this effectively makes the defined point the new origin
+   + this effectively makes the defined point the new origin. and ALL points will rotate around it in a circle. note that this does NOT make the point the new "center of the triangle"! it creates a new non-(0, 0) anchor point to rotate every vertex around!
 2. rotate
 3. shear in both x, y
 4. translate back
