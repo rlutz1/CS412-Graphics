@@ -9,20 +9,20 @@ const positions = new Float32Array([
     1.0, -1.0, 0.0,  // bottom right
     0.0, 0.0, 0.0,   // middle
 
-    // left triangle
-    -1.0, -1.0, 0.0, // bottom left
-    -1.0, 1.0, 0.0,  // top left 
-    0.0, 0.0, 0.0,   // middle
+    // // left triangle
+    // -1.0, -1.0, 0.0, // bottom left
+    // -1.0, 1.0, 0.0,  // top left 
+    // 0.0, 0.0, 0.0,   // middle
     
-    // top triangle
-    -1.0, 1.0, 0.0, // top left
-    1.0, 1.0, 0.0,  // top right
-    0.0, 0.0, 0.0,  // middle
+    // // top triangle
+    // -1.0, 1.0, 0.0, // top left
+    // 1.0, 1.0, 0.0,  // top right
+    // 0.0, 0.0, 0.0,  // middle
 
-    // right triangle
-    1.0, -1.0, 0.0, // bottom right
-    1.0, 1.0, 0.0,  // top right
-    0.0, 0.0, 0.0,  // middle
+    // // right triangle
+    // 1.0, -1.0, 0.0, // bottom right
+    // 1.0, 1.0, 0.0,  // top right
+    // 0.0, 0.0, 0.0,  // middle
 
 ]);
 
@@ -47,19 +47,19 @@ const colors = new Float32Array([
   ...bottom_right_color,  // bottom right
   ...middle_color,        // middle
   
-  // left triangle
-  ...bottom_left_color,   // bottom left
-  ...top_left_color,      // top left
-  ...middle_color,        // middle
+  // // left triangle
+  // ...bottom_left_color,   // bottom left
+  // ...top_left_color,      // top left
+  // ...middle_color,        // middle
   
-  // top triangle
-  ...top_left_color,      // top left
-  ...top_right_color,     // top right
-  ...middle_color,        // middle
+  // // top triangle
+  // ...top_left_color,      // top left
+  // ...top_right_color,     // top right
+  // ...middle_color,        // middle
 
-  // right
-  ...bottom_right_color,  // bottom right
-  ...top_right_color,     // top right
-  ...middle_color,        // middle
+  // // right
+  // ...bottom_right_color,  // bottom right
+  // ...top_right_color,     // top right
+  // ...middle_color,        // middle
 
 ]);

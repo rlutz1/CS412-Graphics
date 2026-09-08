@@ -17,24 +17,39 @@ const medium_p_header = `#version 300 es
   ${header_tag}
   `
 
+/* TRANSLATION FUNCTIOIN */
+// Translation (tx, ty)
+const translation = `/* translate 3 element vector by tx, ty */
+  vec3 translate(float tx, float ty, vec3 to_translate) {
+    // translation matrix
+    mat3 trans = mat3(
+    1.0, 0.0, 0.0,  
+    0.0, 1.0, 0.0,
+     tx,  ty, 1.0 // 1.0 -> 0.0
+    );
+
+    return trans * to_translate;
+  } // end method
+  `
+
 /* ROTATION FUNCTION */
 const rotation = `/* rotate a 3 element vector in a given direction */
-  vec3 rotate(float d, vec3 to_rotate, bool clockwise) {
+  vec3 rotate(float degrees, vec3 to_rotate, bool clockwise) {
     // rotation matrix 
     mat3 rot;
 
     if (clockwise) {
       // clockwise rotation matrix
       rot = mat3(
-        cos(d), -sin(d), 0.0,
-        sin(d), cos(d), 0.0,
+        cos(degrees), -sin(degrees), 0.0,
+        sin(degrees), cos(degrees), 0.0,
         0.0, 0.0, 1.0
       );
     } else {
       // counter clockwise rotation matrix
       rot = mat3(
-        cos(d), sin(d), 0.0,
-        -sin(d), cos(d), 0.0,
+        cos(degrees), sin(degrees), 0.0,
+        -sin(degrees), cos(degrees), 0.0,
         0.0, 0.0, 1.0
       );
     } // end if
@@ -47,6 +62,7 @@ const rotation = `/* rotate a 3 element vector in a given direction */
 
 const library = `${library_tag}
   ${rotation}
+  ${translation}
   `
 
 /* VERT SHADER USED BY DEFAULT */
@@ -61,7 +77,11 @@ const vert_shader = `${medium_p_header}
 
   void main() {
     // final position
-    gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
+    // gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
+
+    vec3 trans = translate(0.5, 1.0, vec3(aPosition.x, aPosition.y, 1.0));
+
+    gl_Position = vec4(trans.x, trans.y, aPosition.z, 1.0);
     vColor = aColor;
   }
   `

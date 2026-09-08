@@ -91,12 +91,9 @@
     }
     
     function createProgram(gl, vsSource, fsSource) {
-      console.log(rotation);
-      // let library = createShader(gl, gl.VERTEX_SHADER, rotation);
       let vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
       let fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
       let prog = gl.createProgram();
-      // gl.attachShader(prog, library);
       gl.attachShader(prog, vs);
       gl.attachShader(prog, fs);
       gl.linkProgram(prog);
