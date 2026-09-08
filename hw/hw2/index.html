@@ -121,8 +121,7 @@
 
     const vsEditor = document.getElementById("vsEditor");
     const fsEditor = document.getElementById("fsEditor");
-    // vsEditor.value = document.getElementById("vertex-shader").textContent;
-    vsEditor.value = vert_shader;
+    vsEditor.value = vert_shader; // see functions.js
     fsEditor.value = document.getElementById("fragment-shader").textContent;
 
     let program, posLoc, colorLoc, timeLoc;
