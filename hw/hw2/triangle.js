@@ -5,9 +5,9 @@
  */
 const positions = new Float32Array([
     // bottom triangle
-    -1.0, -1.0, 0.0, // bottom left
-    1.0, -1.0, 0.0,  // bottom right
-    0.0, 0.0, 0.0,   // middle
+    -1.0, -0.5, 0.0, // bottom left
+    1.0, -0.5, 0.0,  // bottom right
+    0.0, 0.5, 0.0,   // middle
 
     // // left triangle
     // -1.0, -1.0, 0.0, // bottom left

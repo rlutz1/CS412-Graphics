@@ -38,6 +38,20 @@ const translation = `/* translate 3 element vector by tx, ty */
   } // end method
   `
 
+/* SCALING FUNCTION */
+const scaling = `/* scale a 3 element vector by factors sx, sy */
+  vec3 scale(float sx, float sy, vec3 to_scale) {
+    // scaling matrix
+    mat3 scale = mat3(
+       sx, 0.0, 0.0,  
+      0.0,  sy, 0.0,
+      0.0, 0.0, 1.0
+    );
+
+    return scale * to_scale;
+  } // end method
+  `
+
 /* ROTATION FUNCTION */
 const rotation = `/* rotate a 3 element vector in a given direction */
   vec3 rotate(float degrees, vec3 to_rotate, bool clockwise) {
@@ -65,10 +79,10 @@ const rotation = `/* rotate a 3 element vector in a given direction */
   `
 
 /* OPTIONAL: entire library of transformation functions together */
-
 const library = `${library_tag}
-  ${rotation}
   ${translation}
+  ${scaling}
+  ${rotation}
   `
 
 /* VERT SHADER USED BY DEFAULT */
@@ -84,7 +98,8 @@ const vert_shader = `${medium_p_header}
   void main() {
     // final position
     // gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
-    gl_Position = vec4(translate(0.5, 1.0, aPosition), 1.0);
+    // gl_Position = vec4(translate(0.5, 1.0, aPosition), 1.0);
+    gl_Position = vec4(scale(1.0, 1.0, aPosition), 1.0);
     vColor = aColor;
   }
   `
