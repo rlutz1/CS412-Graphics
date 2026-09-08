@@ -89,6 +89,7 @@
   </script>
 
   <script src="triangle.js"></script>
+  <script src="functions.js"></script> <!-- importing library of transformations. -->
 
   <script>
     function createShader(gl, type, source) {
@@ -100,11 +101,14 @@
       }
       return shader;
     }
-
+    
     function createProgram(gl, vsSource, fsSource) {
+      console.log(rotation);
+      let library = createShader(gl, gl.VERTEX_SHADER, rotation);
       let vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
       let fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
       let prog = gl.createProgram();
+      gl.attachShader(prog, library);
       gl.attachShader(prog, vs);
       gl.attachShader(prog, fs);
       gl.linkProgram(prog);
