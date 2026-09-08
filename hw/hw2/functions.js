@@ -17,18 +17,24 @@ const medium_p_header = `#version 300 es
   ${header_tag}
   `
 
-/* TRANSLATION FUNCTIOIN */
-// Translation (tx, ty)
+/* TRANSLATION FUNCTION */
 const translation = `/* translate 3 element vector by tx, ty */
   vec3 translate(float tx, float ty, vec3 to_translate) {
+    // transform in such a way to carry out a point translation
+    vec3 to_translate_transformed = vec3(to_translate.x, to_translate.y, 1.0);
+
     // translation matrix
     mat3 trans = mat3(
     1.0, 0.0, 0.0,  
     0.0, 1.0, 0.0,
-     tx,  ty, 1.0 // 1.0 -> 0.0
+     tx,  ty, 1.0 
     );
 
-    return trans * to_translate;
+    // conduct the translation
+    vec3 translated = trans * to_translate_transformed;
+
+    // return with the original third dimension
+    return vec3(translated.x, translated.y, to_translate.z);
   } // end method
   `
 
@@ -78,10 +84,7 @@ const vert_shader = `${medium_p_header}
   void main() {
     // final position
     // gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
-
-    vec3 trans = translate(0.5, 1.0, vec3(aPosition.x, aPosition.y, 1.0));
-
-    gl_Position = vec4(trans.x, trans.y, aPosition.z, 1.0);
+    gl_Position = vec4(translate(0.5, 1.0, aPosition), 1.0);
     vColor = aColor;
   }
   `
