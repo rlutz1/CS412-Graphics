@@ -148,18 +148,30 @@ const vert_shader = `${medium_p_header}
   uniform float uTime; //time in sec
   out vec3 vColor;
 
+  /* transform the shape with the usual TRS pattern */
+  vec3 transform_combination(vec3 to_transform) {
+    
+
+    // return translate(sin(uTime), sin(uTime), rotate(uTime, reflection(deg_to_rad(-uTime), to_transform), true));
+    // return translate(sin(uTime), cos(uTime), rotate(uTime, translate(-sin(uTime), -cos(uTime), scale(sin(uTime), cos(uTime), to_transform)), true));
+  } // end method
+
   void main() {
-    // final position
+    // final position -- TESTING, commented for now.
     // gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
     // gl_Position = vec4(translate(0.5, 1.0, aPosition), 1.0);
     // gl_Position = vec4(scale(1.0, 1.0, aPosition), 1.0);
 
-    // gl_Position = vec4(aPosition, 1.0);
-    //gl_Position = vec4(reflection_x_axis(aPosition), 1.0); // x axis
-    //gl_Position = vec4(reflection_y_axis(aPosition), 1.0); // y axis
-    //gl_Position = vec4(reflection_yx_axis(aPosition), 1.0); // y=x axis
+    // gl_Position = vec4(reflection_x_axis(aPosition), 1.0); // x axis
+    // gl_Position = vec4(reflection_y_axis(aPosition), 1.0); // y axis
+    // gl_Position = vec4(reflection_yx_axis(aPosition), 1.0); // y=x axis
 
-    gl_Position = vec4(shear(0.0, 0.0, aPosition), 1.0);
+    // gl_Position = vec4(shear(0.0, 0.0, aPosition), 1.0);
+
+    // gl_Position = vec4(aPosition, 1.0);
+
+    // final transformation combining multiple changes.
+    gl_Position = vec4(transform_combination(aPosition), 1.0);
 
     vColor = aColor;
   }
