@@ -58,19 +58,7 @@
 
   <!-- MAKE SURE YOU UPDATE YOUR EDITS HERE -->
   <!-- Vertex Shader -->
-  <script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
-  precision mediump float;
-  in vec3 aPosition;
-  in vec3 aColor;
-
-  uniform float uTime; //time in sec
-  out vec3 vColor;
-
-  void main() {
-    // final position
-    gl_Position = vec4(rotate(uTime, aPosition), 1.0);
-    vColor = aColor;
-  }
+  <script id="vertex-shader" type="x-shader/x-vertex">
   </script>
 
   <!-- MAKE SURE YOU UPDATE YOUR EDITS HERE -->
@@ -104,11 +92,11 @@
     
     function createProgram(gl, vsSource, fsSource) {
       console.log(rotation);
-      let library = createShader(gl, gl.VERTEX_SHADER, rotation);
+      // let library = createShader(gl, gl.VERTEX_SHADER, rotation);
       let vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
       let fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
       let prog = gl.createProgram();
-      gl.attachShader(prog, library);
+      // gl.attachShader(prog, library);
       gl.attachShader(prog, vs);
       gl.attachShader(prog, fs);
       gl.linkProgram(prog);
@@ -136,7 +124,8 @@
 
     const vsEditor = document.getElementById("vsEditor");
     const fsEditor = document.getElementById("fsEditor");
-    vsEditor.value = document.getElementById("vertex-shader").textContent;
+    // vsEditor.value = document.getElementById("vertex-shader").textContent;
+    vsEditor.value = vert_shader;
     fsEditor.value = document.getElementById("fragment-shader").textContent;
 
     let program, posLoc, colorLoc, timeLoc;

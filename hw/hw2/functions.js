@@ -9,10 +9,15 @@
 
 // rotation by d degrees function.
 // TODO: specify directionality. (clockwise...)
-const rotation = `#version 300 es
+
+const header_end = `/*===== END HEADER ======*/`
+
+const medium_p_header = `#version 300 es 
   precision mediump float;
+  ${header_end}
+  `
 
-
+const rotation = `
   vec3 rotate(float d, vec3 to_rotate) {
     // rotation matrix 
      mat3 rot = mat3(
@@ -23,4 +28,19 @@ const rotation = `#version 300 es
 
     return  rot * to_rotate;
   } // end method
-`
+  `
+
+const vert_shader = `${medium_p_header}
+  ${rotation}
+  in vec3 aPosition;
+  in vec3 aColor;
+
+  uniform float uTime; //time in sec
+  out vec3 vColor;
+
+  void main() {
+    // final position
+    gl_Position = vec4(rotate(uTime, aPosition), 1.0);
+    vColor = aColor;
+  }
+  `
