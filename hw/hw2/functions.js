@@ -78,11 +78,29 @@ const rotation = `/* rotate a 3 element vector in a given direction */
   } // end method
   `
 
+/* REFLECTION FUNCTION */
+const reflection = `/* reflect a shape by d degrees */
+  vec3 reflect_it(float degrees, vec3 to_reflect) {
+    float two_theta = 2.0 * degrees; // for ease of computation below
+
+    // reflection matrix
+    mat3 refl = mat3(
+      cos(two_theta),  sin(two_theta), 0.0,
+      sin(two_theta), -cos(two_theta), 0.0,
+                 0.0,             0.0, 1.0
+    );
+
+    return refl * to_reflect;
+  } // end method
+  `
+
+
 /* OPTIONAL: entire library of transformation functions together */
 const library = `${library_tag}
   ${translation}
   ${scaling}
   ${rotation}
+  ${reflection}
   `
 
 /* VERT SHADER USED BY DEFAULT */
@@ -99,7 +117,9 @@ const vert_shader = `${medium_p_header}
     // final position
     // gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
     // gl_Position = vec4(translate(0.5, 1.0, aPosition), 1.0);
-    gl_Position = vec4(scale(1.0, 1.0, aPosition), 1.0);
+    // gl_Position = vec4(scale(1.0, 1.0, aPosition), 1.0);
+    gl_Position = vec4(reflect_it(0.0, aPosition), 1.0);
+
     vColor = aColor;
   }
   `
