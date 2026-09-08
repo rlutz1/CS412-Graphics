@@ -8,6 +8,7 @@ Define each of the following 2D transformations as a **3x3 matrix** (or equivale
   3. Rotation (angle)
   4. Mirroring/reflection (across the x-axis, y-axis, both, or anything you prefer)
   5. Shearing/skewing (shx, shy)
+
 Animate at least two transformation continuously, for example a triangle that rotates over time, pulses in scale, or shears back and forth. You're welcome to combine more transformations in your animation (2 pts).
 
 It is highly recommended to host your homework assignments on GitHub Pages (not required for now).
