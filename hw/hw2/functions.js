@@ -17,6 +17,13 @@ const medium_p_header = `#version 300 es
   ${header_tag}
   `
 
+/* HELPER FUNCTIONS */
+const deg_to_rad = `/* degree to radian helper */
+  float deg_to_rad(float degrees) {
+    return degrees * (3.14159 / 180.0);
+  } // end method
+  `
+
 /* TRANSLATION FUNCTION */
 const translation = `/* translate 3 element vector by tx, ty */
   vec3 translate(float tx, float ty, vec3 to_translate) {
@@ -54,22 +61,22 @@ const scaling = `/* scale a 3 element vector by factors sx, sy */
 
 /* ROTATION FUNCTION */
 const rotation = `/* rotate a 3 element vector in a given direction */
-  vec3 rotate(float degrees, vec3 to_rotate, bool clockwise) {
+  vec3 rotate(float radians, vec3 to_rotate, bool clockwise) {
     // rotation matrix 
     mat3 rot;
 
     if (clockwise) {
       // clockwise rotation matrix
       rot = mat3(
-        cos(degrees), -sin(degrees), 0.0,
-        sin(degrees), cos(degrees), 0.0,
+        cos(radians), -sin(radians), 0.0,
+        sin(radians), cos(radians), 0.0,
         0.0, 0.0, 1.0
       );
     } else {
       // counter clockwise rotation matrix
       rot = mat3(
-        cos(degrees), sin(degrees), 0.0,
-        -sin(degrees), cos(degrees), 0.0,
+        cos(radians), sin(radians), 0.0,
+        -sin(radians), cos(radians), 0.0,
         0.0, 0.0, 1.0
       );
     } // end if
@@ -79,9 +86,9 @@ const rotation = `/* rotate a 3 element vector in a given direction */
   `
 
 /* REFLECTION FUNCTION */
-const reflection = `/* reflect a shape by d degrees */
-  vec3 reflect_it(float degrees, vec3 to_reflect) {
-    float two_theta = 2.0 * degrees; // for ease of computation below
+const reflection = `/* reflect a shape by d radians */
+  vec3 reflect_it(float radians, vec3 to_reflect) {
+    float two_theta = 2.0 * radians; // for ease of computation below
 
     // reflection matrix
     mat3 refl = mat3(
@@ -97,6 +104,7 @@ const reflection = `/* reflect a shape by d degrees */
 
 /* OPTIONAL: entire library of transformation functions together */
 const library = `${library_tag}
+  ${deg_to_rad}
   ${translation}
   ${scaling}
   ${rotation}
@@ -118,7 +126,11 @@ const vert_shader = `${medium_p_header}
     // gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
     // gl_Position = vec4(translate(0.5, 1.0, aPosition), 1.0);
     // gl_Position = vec4(scale(1.0, 1.0, aPosition), 1.0);
-    gl_Position = vec4(reflect_it(0.0, aPosition), 1.0);
+
+    gl_Position = vec4(aPosition, 1.0);
+    //gl_Position = vec4(reflect_it(deg_to_rad(0.0), aPosition), 1.0); // x axis
+    //gl_Position = vec4(reflect_it(deg_to_rad(90.0), aPosition), 1.0); // y axis
+    //gl_Position = vec4(reflect_it(deg_to_rad(45.0), aPosition), 1.0); // y=x axis
 
     vColor = aColor;
   }

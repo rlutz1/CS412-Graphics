@@ -5,9 +5,9 @@
  */
 const positions = new Float32Array([
     // bottom triangle
-    -1.0, -0.5, 0.0, // bottom left
-    1.0, -0.5, 0.0,  // bottom right
-    0.0, 0.5, 0.0,   // middle
+    -1.0, 0.0, 0.0, // bottom left
+    1.0, 0.0, 0.0,  // bottom right
+    0.0, 1.0, 0.0,   // middle
 
     // // left triangle
     // -1.0, -1.0, 0.0, // bottom left
@@ -33,9 +33,9 @@ const positions = new Float32Array([
  */
 
 // declare some colors up here to ease the pain of changing.
-const bottom_left_color =  [1.0, 0.0, 1.0]
-const bottom_right_color = [1.0, 1.0, 0.0]
-const middle_color =       [0.0, 1.0, 1.0]
+const bottom_left_color =  [0.0, 0.0, 1.0]
+const bottom_right_color = [0.0, 1.0, 0.0]
+const middle_color =       [1.0, 0.0, 0.0]
 const top_left_color = bottom_right_color // want these to match
 const top_right_color = bottom_left_color // want these to match
 

@@ -98,3 +98,101 @@ Here is how you implement this in JavaScript using WebGL2:
 [but also: contradiction, cannot do this](https://stackoverflow.com/questions/64252651/link-with-a-functions-library-shader)
 
 [no, think this is a thing, source](https://stackoverflow.com/questions/33615819/multiple-shaders-in-opengl)
+
+## neat things only
+
+```js
+#version 300 es 
+  precision mediump float;
+  /*===== END HEADER ======*/
+  
+  /*===== LIBRARY FUNCS ======*/
+  /* translate 3 element vector by tx, ty */
+  vec3 translate(float tx, float ty, vec3 to_translate) {
+    // transform in such a way to carry out a point translation
+    vec3 to_translate_transformed = vec3(to_translate.x, to_translate.y, 1.0);
+
+    // translation matrix
+    mat3 trans = mat3(
+    1.0, 0.0, 0.0,  
+    0.0, 1.0, 0.0,
+     tx,  ty, 1.0 
+    );
+
+    // conduct the translation
+    vec3 translated = trans * to_translate_transformed;
+
+    // return with the original third dimension
+    return vec3(translated.x, translated.y, to_translate.z);
+  } // end method
+  
+  /* scale a 3 element vector by factors sx, sy */
+  vec3 scale(float sx, float sy, vec3 to_scale) {
+    // scaling matrix
+    mat3 scale = mat3(
+       sx, 0.0, 0.0,  
+      0.0,  sy, 0.0,
+      0.0, 0.0, 1.0
+    );
+
+    return scale * to_scale;
+  } // end method
+  
+  /* rotate a 3 element vector in a given direction */
+  vec3 rotate(float degrees, vec3 to_rotate, bool clockwise) {
+    // rotation matrix 
+    mat3 rot;
+
+    if (clockwise) {
+      // clockwise rotation matrix
+      rot = mat3(
+        cos(degrees), -sin(degrees), 0.0,
+        sin(degrees), cos(degrees), 0.0,
+        0.0, 0.0, 1.0
+      );
+    } else {
+      // counter clockwise rotation matrix
+      rot = mat3(
+        cos(degrees), sin(degrees), 0.0,
+        -sin(degrees), cos(degrees), 0.0,
+        0.0, 0.0, 1.0
+      );
+    } // end if
+
+    return  rot * to_rotate;
+  } // end method
+  
+  /* reflect a shape by d degrees */
+  vec3 reflect_it(float degrees, vec3 to_reflect) {
+    float two_theta = 2.0 * degrees; // for ease of computation below
+
+    // reflection matrix
+    mat3 refl = mat3(
+      cos(two_theta),  sin(two_theta), 0.0,
+      sin(two_theta), -cos(two_theta), 0.0,
+                 0.0,             0.0, 1.0
+    );
+
+    return refl * to_reflect;
+  } // end method
+  
+  
+  /*===== MAIN ======*/
+  in vec3 aPosition;
+  in vec3 aColor;
+
+  uniform float uTime; //time in sec
+  out vec3 vColor;
+
+  void main() {
+    // final position
+    // gl_Position = vec4(rotate(uTime, aPosition, true), 1.0);
+    // gl_Position = vec4(translate(0.5, 1.0, aPosition), 1.0);
+    // gl_Position = vec4(scale(1.0, 1.0, aPosition), 1.0);
+    gl_Position = vec4(reflect_it(uTime, aPosition), 1.0);
+    //gl_Position = vec4(aPosition, 1.0);
+
+    vColor = reflect_it(uTime, aColor);
+  }
+  
+```
