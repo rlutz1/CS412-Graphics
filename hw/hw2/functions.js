@@ -145,19 +145,16 @@ const vert_shader = `${medium_p_header}
   in vec3 aPosition;
   in vec3 aColor;
 
-  vec3 pt = vec3(-0.3, 0.2, 0.0); // point to rotate around, arbitrary
-  
   uniform float uTime; //time in sec
   out vec3 vColor;
 
-  /* transform the shape with the usual TRS pattern */
+  /* transform the shape wrt time */
   vec3 transform_combination(vec3 to_transform) {
     vec3 transformed = to_transform; // for ease of stacking
-
-    transformed = translate(-pt.x, -pt.y, transformed); // shift so point is origin
-    transformed = rotate(uTime, transformed, true); // rotate
-    transformed = shear(0.5, 0.5, transformed); // shear
-    transformed = translate(pt.x, pt.y, transformed); // shift back
+    
+    transformed = scale(sin(uTime), 1.0, transformed); // scaling along the x
+    transformed = rotate(uTime, transformed, false); // rotate counterclockwise
+    transformed = translate(sin(uTime), cos(uTime), transformed); // translate in a circle
 
     return transformed;
   } // end method

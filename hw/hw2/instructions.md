@@ -227,4 +227,34 @@ creates an effect of a tilted triangle plane spinning around a predefined point.
 ```
 
 
+first translations -> moves it to the given point
+rotation -> the rotation is each point rotating around the ORIGIN!
+the second translation does move it back to where it was, but the points 
 
+
+actual TRS:
+```js
+transformed = shear(0.5, 0.5, transformed); // shear
+transformed = rotate(uTime, transformed, true); // rotate
+transformed = translate(-pt.x, -pt.y, transformed); // shift so point is origin
+//transformed = translate(pt.x, pt.y, transformed); // shift back
+```
+
+## trashbin
+
+// typical TRS-style pattern
+// transformed = shear(0.5, 0.5, transformed); // shear
+// transformed = rotate(uTime, transformed, false); // rotate counterclockwise
+// transformed = translate(-0.3, 0.2, transformed); // translate
+
+// transformed = shear(0.5, 0.5, transformed); // shear
+// transformed = translate(0.5, 0.5, transformed); // translate
+// transformed = rotate(uTime, transformed, false); // rotate counterclockwise
+// transformed = translate(-0.5, -0.5, transformed); // translate
+
+// transformed = reflection(uTime, transformed); // reflect
+// transformed = translate(0.5, 0.5, transformed); // translate
+// transformed = rotate(uTime, transformed, false); // rotate counterclockwise
+// transformed = translate(-0.5, -0.5, transformed); // translate
+
+//transformed = reflection(uTime, transformed); // reflect
