@@ -1,0 +1,83 @@
+/**
+ * file here is a holder for all point sampling
+ * functions to generate a set of points over an interval
+ * with a specific step.
+ */
+
+
+/**
+ * generate sphere points from parametric representation.
+ * x = x_c + r * sin(v) * cos(u)
+ * y = y_c + r * sin(v) * sin(u)
+ * z = z_c + r * cos(v)
+ * center: (x_c, y_c, z_c)
+ */
+function gen_sphere_points(
+  r=1.0, // radius of the sphere
+  center=[0, 0, 0], // center of the sphere
+  h_step=2, // horizontal step interval
+  v_step=2, // vertical step interval
+  h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
+  v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
+) {
+
+  // save for non-constant indexing
+  const v_min = v_range[0]
+  const v_max = v_range[1]
+  const h_min = h_range[0]
+  const h_max = h_range[1]
+
+
+  // how many steps we are taking in that range.
+  let h_steps = Math.abs(h_max - h_min) / h_step
+  let v_steps = Math.abs(v_max - v_min) / v_step
+
+  const vertices = [] // simple js array for collection of vertices
+  const indeces = [] // js array for collecting indeces
+
+  for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
+    // get our current v, which is the v in (h, v)
+    const v = v_min + (v_i * v_step)
+    const sin_v = Math.sin(v) // save for later
+    const cos_v = Math.cos(v)
+
+    // TODO: starting from 0 gives a repeat point like 63 times
+    // 6.28/0.1 (2pi/step) times. should see about optimizing that unneeded
+    // repetition.
+    for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
+      // get our current h, which is the h in (h, v)
+      const h = h_min + (h_i * h_step)
+      const cos_h = Math.cos(h) // save for later
+      const sin_h = Math.sin(h)
+
+      // gather the points using parametric form
+      const x = center[0] + (r * sin_v * cos_h)
+      const y = center[1] + (r * sin_v * sin_h)
+      const z = center[2] + (r * cos_v)
+      // console.log(x, y, z)
+      vertices.push(x, y, z) // save the points
+
+    } // end loop
+  } // end loop
+
+  for (let v_i = 0; v_i < v_steps - 1; v_i++) { // TODO: -1 is important
+    for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
+      // TODO: explain this from the derivation on paper
+      const bottom_vert = h_i + (Math.round(h_steps) * v_i) 
+      const top_vert = h_i + (Math.round(h_steps) * (v_i + 1)) 
+      const top_next_vert = top_vert + 1
+      const bottom_next_vert = bottom_vert + 1
+
+      indeces.push(
+        bottom_vert, top_vert, top_next_vert,
+        bottom_vert, bottom_next_vert, top_next_vert
+      )
+    } // end loop
+  } // end loop
+    
+
+  console.log(vertices)
+  console.log("=======================")
+  console.log(indeces)
+  return {"vertices": vertices, "indeces": indeces} // return as a js dict
+}
