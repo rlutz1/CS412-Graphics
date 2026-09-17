@@ -15,8 +15,8 @@
 function gen_sphere_points(
   r=1.0, // radius of the sphere
   center=[0, 0, 0], // center of the sphere
-  h_step=2, // horizontal step interval
-  v_step=2, // vertical step interval
+  h_step=0.5, // horizontal step interval
+  v_step=0.5, // vertical step interval
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
   v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
 ) {
@@ -76,8 +76,13 @@ function gen_sphere_points(
   } // end loop
     
 
-  console.log(vertices)
-  console.log("=======================")
-  console.log(indeces)
+  // console.log(vertices)
+  // console.log("=======================")
+  // console.log(indeces)
   return {"vertices": vertices, "indeces": indeces} // return as a js dict
 }
+
+
+const sphere_color = new Float32Array([
+  1,0,0 // red
+]);
