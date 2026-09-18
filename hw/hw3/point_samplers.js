@@ -96,14 +96,27 @@ function gen_sphere_points(
   // console.log("=======================")
   // console.log(indeces)
   // testing only
-  for (let i = 0; i < indeces.length; i += 3) {
-    console.log(`(${indeces[i]}, ${indeces[i+1]}, ${indeces[i+2]})`)
-  }
+  // for (let i = 0; i < indeces.length; i += 3) {
+  //   console.log(`(${indeces[i]}, ${indeces[i+1]}, ${indeces[i+2]})`)
+  // }
 
   return {"vertices": vertices, "indeces": indeces} // return as a js dict
 }
 
+// testing only to ensure different colors to distinguish/debug
+function sphere_colors(num_vertices) {
+  let sphere_color = []
 
-const sphere_color = new Float32Array([
-  1,0,0 // red
-]);
+  for (let v = 0; v < num_vertices; v++) {
+    if (v % 3 == 0) {
+      sphere_color.push(1, 0, 0)
+    } else if (v % 3 == 1) {
+      sphere_color.push(0, 1, 0)
+    } else {
+      sphere_color.push(0, 0, 1)
+    }
+  }
+
+  return sphere_color
+}
+

@@ -83,10 +83,6 @@ void main() {
   <script src="point_samplers.js"></script>
 
   <script>
-    // remove later
-    // gen_sphere_points()
-    console.log(gen_sphere_points())
-    let verts_and_indeces = gen_sphere_points()
 
     function createShader(gl, type, source) {
       let shader = gl.createShader(type);
@@ -121,23 +117,25 @@ void main() {
     vertEditor.value = document.getElementById("vertex-shader").textContent;
     fragEditor.value = document.getElementById("fragment-shader").textContent;
 
+    let verts_and_indeces = gen_sphere_points() // sphere point generator
+    let sphere_color = sphere_colors(verts_and_indeces.vertices.length) // all points are red
     let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM;
-    let vbo, nbo, ibo;
+    // let vbo, nbo, ibo;
     let sphere_pos_buff, sphere_color_buff, sphere_indeces_buff
 
     // Buffers
     function initBuffers() {
-      vbo = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+      // vbo = gl.createBuffer();
+      // gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+      // gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
-      nbo = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, nbo);
-      gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
+      // nbo = gl.createBuffer();
+      // gl.bindBuffer(gl.ARRAY_BUFFER, nbo);
+      // gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
 
-      ibo = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo); 
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+      // ibo = gl.createBuffer();
+      // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo); 
+      // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
       // sphere
       // verts_and_indeces = gen_sphere_points()
@@ -148,12 +146,11 @@ void main() {
 
       sphere_color_buff = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, sphere_color_buff);
-      gl.bufferData(gl.ARRAY_BUFFER, sphere_color, gl.STATIC_DRAW);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sphere_color), gl.STATIC_DRAW);
 
       sphere_indeces_buff = gl.createBuffer();
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphere_indeces_buff); 
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Float32Array(verts_and_indeces.indeces), gl.STATIC_DRAW);
-
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(verts_and_indeces.indeces), gl.STATIC_DRAW);
 
     }
     initBuffers();
@@ -220,7 +217,7 @@ void main() {
 
     function render() {
       gl.enable(gl.DEPTH_TEST);
-      gl.clearColor(0, 0, 0, 1);
+      gl.clearColor(0.5, 0.5, 0.5, 1);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
       // rotation matrices
@@ -264,7 +261,7 @@ void main() {
       gl.bindBuffer(gl.ARRAY_BUFFER, sphere_color_buff);
       gl.enableVertexAttribArray(colorLoc);
       gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
-      
+
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphere_indeces_buff);
 
       // draw the object by the index order
