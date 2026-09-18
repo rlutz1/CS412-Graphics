@@ -71,7 +71,7 @@ function gen_sphere_points(
   for (let v_i = 0; v_i < v_steps; v_i++) { // TODO: -1 is important
     for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
       if (v_i == 0) { // north pole
-        indeces.push(v_i, h_i + 1, (h_i + 2) % h_steps + 1)
+        indeces.push(v_i, h_i + 1, (h_i + 2) % (h_steps + 1))
        //else if (v_i == v_steps - 1) { // south pole
       //   const bottom_vert = h_i + (h_steps * v_i)
       //   const bottom_next_vert = bottom_vert + 1
