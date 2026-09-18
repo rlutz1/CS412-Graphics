@@ -106,3 +106,7 @@ these points are being generated with a MAth.floor drop, looking the most sane:
 (0.4241191192817572, -0.42224623139591594, -0.8011436155469337) 
 (0, 0, -1)
 ```
+
+using a higher step, offcenter: 
+
+![points on desmos](images/image-1.png)

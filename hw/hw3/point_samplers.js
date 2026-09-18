@@ -13,10 +13,10 @@
  * center: (x_c, y_c, z_c)
  */
 function gen_sphere_points(
-  r=2.0, // radius of the sphere
-  center=[0, 1, 0], // center of the sphere
-  h_step=0.1, // horizontal step interval
-  v_step=0.1, // vertical step interval
+  r=1.0, // radius of the sphere
+  center=[0, 0, 0], // center of the sphere
+  h_step=0.5, // horizontal step interval
+  v_step=0.5, // vertical step interval
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
   v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
 ) {
@@ -37,9 +37,9 @@ function gen_sphere_points(
   const indeces = [] // js array for collecting indeces
 
   for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
-    if (v_i == 0) {
+    if (v_i == 0) { // south pole
       vertices.push(center[0], center[1], r) // save the polar cap
-    } else if (v_i == v_steps) {
+    } else if (v_i == v_steps) { // north pole
       vertices.push(center[0], center[1], -r) // save the polar cap
     } else {
        // get our current v, which is the v in (h, v)
@@ -68,18 +68,26 @@ function gen_sphere_points(
     }
    
 
-  for (let v_i = 0; v_i < v_steps - 1; v_i++) { // TODO: -1 is important
+  for (let v_i = 0; v_i < v_steps; v_i++) { // TODO: -1 is important
     for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
-      // TODO: explain this from the derivation on paper
-      const bottom_vert = h_i + (Math.round(h_steps) * v_i) 
-      const top_vert = h_i + (Math.round(h_steps) * (v_i + 1)) 
-      const top_next_vert = top_vert + 1
-      const bottom_next_vert = bottom_vert + 1
+      if (v_i == 0) { // south pole
+        indeces.push(v_i, h_i + 1, h_i + 2)
+      } else if (v_i == v_steps - 1) { // north pole
+        const bottom_vert = h_i + (h_steps * v_i)
+        const bottom_next_vert = bottom_vert + 1
+        indeces.push(bottom_vert, bottom_next_vert, vertices.length / 3)
+      } else {
+        // TODO: explain this from the derivation on paper
+        const bottom_vert = h_i + (h_steps * v_i) 
+        const top_vert = h_i + (h_steps * (v_i + 1)) 
+        const top_next_vert = top_vert + 1
+        const bottom_next_vert = bottom_vert + 1
 
-      indeces.push(
-        bottom_vert, top_vert, top_next_vert,
-        bottom_vert, bottom_next_vert, top_next_vert
-      )
+        indeces.push(
+          bottom_vert, top_vert, top_next_vert,
+          bottom_vert, bottom_next_vert, top_next_vert
+        )
+      } // end if
     } // end loop
   } // end loop
     
@@ -88,8 +96,8 @@ function gen_sphere_points(
   // console.log("=======================")
   // console.log(indeces)
   // testing only
-  for (let i = 0; i < vertices.length; i += 3) {
-    console.log(`(${vertices[i]}, ${vertices[i+1]}, ${vertices[i+2]})`)
+  for (let i = 0; i < indeces.length; i += 3) {
+    console.log(`(${indeces[i]}, ${indeces[i+1]}, ${indeces[i+2]})`)
   }
 
   return {"vertices": vertices, "indeces": indeces} // return as a js dict
