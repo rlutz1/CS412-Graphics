@@ -29,17 +29,17 @@ function gen_sphere_points(
 
 
   // how many steps we are taking in that range.
-  let h_steps = Math.floor(Math.abs(h_max - h_min) / h_step)
-  let v_steps = Math.floor(Math.abs(v_max - v_min) / v_step)
+  let h_steps = Math.round(Math.abs(h_max - h_min) / h_step)
+  let v_steps = Math.round(Math.abs(v_max - v_min) / v_step)
   // console.log(Math.ceil(v_steps))
 
   const vertices = [] // simple js array for collection of vertices
   const indeces = [] // js array for collecting indeces
 
   for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
-    if (v_i == 0) { // south pole
+    if (v_i == 0) { // north pole
       vertices.push(center[0], center[1], r) // save the polar cap
-    } else if (v_i == v_steps) { // north pole
+    } else if (v_i == v_steps) { // south pole
       vertices.push(center[0], center[1], -r) // save the polar cap
     } else {
        // get our current v, which is the v in (h, v)
@@ -70,23 +70,30 @@ function gen_sphere_points(
 
   for (let v_i = 0; v_i < v_steps; v_i++) { // TODO: -1 is important
     for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
-      if (v_i == 0) { // south pole
-        indeces.push(v_i, h_i + 1, h_i + 2)
-      } else if (v_i == v_steps - 1) { // north pole
-        const bottom_vert = h_i + (h_steps * v_i)
-        const bottom_next_vert = bottom_vert + 1
-        indeces.push(bottom_vert, bottom_next_vert, vertices.length / 3)
+      if (v_i == 0) { // north pole
+        indeces.push(v_i, h_i + 1, (h_i + 2) % h_steps + 1)
+       //else if (v_i == v_steps - 1) { // south pole
+      //   const bottom_vert = h_i + (h_steps * v_i)
+      //   const bottom_next_vert = bottom_vert + 1
+      //   indeces.push(bottom_vert, bottom_next_vert, vertices.length / 3)
       } else {
         // TODO: explain this from the derivation on paper
-        const bottom_vert = h_i + (h_steps * v_i) 
-        const top_vert = h_i + (h_steps * (v_i + 1)) 
-        const top_next_vert = top_vert + 1
-        const bottom_next_vert = bottom_vert + 1
+        // const bottom_vert = h_i + (h_steps * v_i) 
+        // const top_vert = h_i + (h_steps * (v_i + 1)) 
+        // const top_next_vert = top_vert + 1
+        // const bottom_next_vert = bottom_vert + 1
+        const k1 = (v_i * (h_steps + 1)) + h_i
+        const k2 = k1 + h_steps 
 
         indeces.push(
-          bottom_vert, top_vert, top_next_vert,
-          bottom_vert, bottom_next_vert, top_next_vert
+          k1, k2, k1 + 1,
+          k2, k2 + 1, k1 + 1
         )
+
+        // indeces.push(
+        //   bottom_vert, top_vert, top_next_vert,
+        //   bottom_vert, bottom_next_vert, top_next_vert
+        // )
       } // end if
     } // end loop
   } // end loop
@@ -103,7 +110,7 @@ function gen_sphere_points(
   return {"vertices": vertices, "indeces": indeces} // return as a js dict
 }
 
-// testing only to ensure different colors to distinguish/debug
+// testing only to ensure different colors to distinguish
 function sphere_colors(num_vertices) {
   let sphere_color = []
 
