@@ -68,18 +68,15 @@ function gen_sphere_points(
     }
    
     let stepper = 0
-    for (let v_i = 0; v_i < v_steps; v_i++) { // TODO: -1 is important
-      if (v_i == 0) { // this is the NORTH POLE
-        for (let i = 1; i < h_steps - 1; i++) { // for each horizontal step
-          indeces.push(v_i, i, i + 1)
-        }
-        indeces.push(v_i, h_steps - 1, 1)
-        // console.log(indeces)
-      } else {
-        //  for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
-       
-        // }
-      }
+    // SET UP POLAR NORTH INDECES
+    for (let i = 1; i < h_steps - 1; i++) { // for each horizontal step
+          indeces.push(0, i, i + 1)
+    }
+    indeces.push(0, h_steps - 1, 1)
+    // console.log(indeces)
+
+    for (let v_i = 1; v_i < v_steps; v_i++) { // TODO: -1 is important
+     
      
     }
 
