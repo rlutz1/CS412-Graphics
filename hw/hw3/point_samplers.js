@@ -15,8 +15,8 @@
 function gen_sphere_points(
   r=1.0, // radius of the sphere
   center=[0, 0, 0], // center of the sphere
-  h_step=0.5, // horizontal step interval
-  v_step=0.5, // vertical step interval
+  h_step=0.3, // horizontal step interval
+  v_step=0.3, // vertical step interval
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
   v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
 ) {
@@ -71,9 +71,10 @@ function gen_sphere_points(
     // SET UP POLAR NORTH INDECES
     for (let i = 1; i < h_steps - 1; i++) { // for each horizontal step
       indeces.push(0, i, i + 1)
-    }
+    } // end loop
     indeces.push(0, h_steps - 1, 1)
 
+    // SET UP THE POLAR SOUTH INDECES
     let last_pt_index = (vertices.length / 3) - 1 // 9
     let lower_band = last_pt_index - h_steps // 5
     
@@ -82,7 +83,9 @@ function gen_sphere_points(
     }
     indeces.push(last_pt_index, last_pt_index - 1, lower_band)
 
-    console.log(indeces)
+    // console.log(indeces)
+
+    // SET UP THE MIDDLE VERTICES (general case)
 
 //     for (let v_i = 1; v_i < v_steps; v_i++) { // TODO: -1 is important
 //       // const bottom_vert = h_i + (h_steps * v_i) 
