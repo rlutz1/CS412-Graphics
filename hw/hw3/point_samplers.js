@@ -13,10 +13,10 @@
  * center: (x_c, y_c, z_c)
  */
 function gen_sphere_points(
-  r=1.0, // radius of the sphere
-  center=[0, 0, 0], // center of the sphere
-  h_step=0.5, // horizontal step interval
-  v_step=0.5, // vertical step interval
+  r=2.0, // radius of the sphere
+  center=[0, 1, 0], // center of the sphere
+  h_step=0.1, // horizontal step interval
+  v_step=0.1, // vertical step interval
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
   v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
 ) {
@@ -38,9 +38,9 @@ function gen_sphere_points(
 
   for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
     if (v_i == 0) {
-      vertices.push(0, 0, r) // save the polar cap
+      vertices.push(center[0], center[1], r) // save the polar cap
     } else if (v_i == v_steps) {
-      vertices.push(0, 0, -r) // save the polar cap
+      vertices.push(center[0], center[1], -r) // save the polar cap
     } else {
        // get our current v, which is the v in (h, v)
         const v = v_min + (v_i * v_step)
