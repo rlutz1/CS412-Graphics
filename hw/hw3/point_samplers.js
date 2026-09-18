@@ -29,36 +29,44 @@ function gen_sphere_points(
 
 
   // how many steps we are taking in that range.
-  let h_steps = Math.abs(h_max - h_min) / h_step
-  let v_steps = Math.abs(v_max - v_min) / v_step
+  let h_steps = Math.floor(Math.abs(h_max - h_min) / h_step)
+  let v_steps = Math.floor(Math.abs(v_max - v_min) / v_step)
+  // console.log(Math.ceil(v_steps))
 
   const vertices = [] // simple js array for collection of vertices
   const indeces = [] // js array for collecting indeces
 
   for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
-    // get our current v, which is the v in (h, v)
-    const v = v_min + (v_i * v_step)
-    const sin_v = Math.sin(v) // save for later
-    const cos_v = Math.cos(v)
+    if (v_i == 0) {
+      vertices.push(0, 0, r) // save the polar cap
+    } else if (v_i == v_steps) {
+      vertices.push(0, 0, -r) // save the polar cap
+    } else {
+       // get our current v, which is the v in (h, v)
+        const v = v_min + (v_i * v_step)
+        const sin_v = Math.sin(v) // save for later
+        const cos_v = Math.cos(v)
 
-    // TODO: starting from 0 gives a repeat point like 63 times
-    // 6.28/0.1 (2pi/step) times. should see about optimizing that unneeded
-    // repetition.
-    for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
-      // get our current h, which is the h in (h, v)
-      const h = h_min + (h_i * h_step)
-      const cos_h = Math.cos(h) // save for later
-      const sin_h = Math.sin(h)
+        // TODO: starting from 0 gives a repeat point like 63 times
+        // 6.28/0.1 (2pi/step) times. should see about optimizing that unneeded
+        // repetition.
+        for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
+          // get our current h, which is the h in (h, v)
+          const h = h_min + (h_i * h_step)
+          const cos_h = Math.cos(h) // save for later
+          const sin_h = Math.sin(h)
 
-      // gather the points using parametric form
-      const x = center[0] + (r * sin_v * cos_h)
-      const y = center[1] + (r * sin_v * sin_h)
-      const z = center[2] + (r * cos_v)
-      // console.log(x, y, z)
-      vertices.push(x, y, z) // save the points
+          // gather the points using parametric form
+          const x = center[0] + (r * sin_v * cos_h)
+          const y = center[1] + (r * sin_v * sin_h)
+          const z = center[2] + (r * cos_v)
+          // console.log(x, y, z)
+          vertices.push(x, y, z) // save the points
 
-    } // end loop
-  } // end loop
+        } // end loop
+      } // end loop
+    }
+   
 
   for (let v_i = 0; v_i < v_steps - 1; v_i++) { // TODO: -1 is important
     for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
@@ -79,6 +87,11 @@ function gen_sphere_points(
   // console.log(vertices)
   // console.log("=======================")
   // console.log(indeces)
+  // testing only
+  for (let i = 0; i < vertices.length; i += 3) {
+    console.log(`(${vertices[i]}, ${vertices[i+1]}, ${vertices[i+2]})`)
+  }
+
   return {"vertices": vertices, "indeces": indeces} // return as a js dict
 }
 
