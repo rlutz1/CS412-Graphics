@@ -70,15 +70,27 @@ function gen_sphere_points(
     let stepper = 0
     // SET UP POLAR NORTH INDECES
     for (let i = 1; i < h_steps - 1; i++) { // for each horizontal step
-          indeces.push(0, i, i + 1)
+      indeces.push(0, i, i + 1)
     }
     indeces.push(0, h_steps - 1, 1)
-    // console.log(indeces)
 
-    for (let v_i = 1; v_i < v_steps; v_i++) { // TODO: -1 is important
-     
-     
+    let last_pt_index = (vertices.length / 3) - 1 // 9
+    let lower_band = last_pt_index - h_steps // 5
+    
+    for (let i = lower_band; i < lower_band + h_steps - 1; i++) {
+      indeces.push(last_pt_index, i, i + 1)
     }
+    indeces.push(last_pt_index, last_pt_index - 1, lower_band)
+
+    console.log(indeces)
+
+//     for (let v_i = 1; v_i < v_steps; v_i++) { // TODO: -1 is important
+//       // const bottom_vert = h_i + (h_steps * v_i) 
+// //       // const top_vert = h_i + (h_steps * (v_i + 1)) 
+// //       // const top_next_vert = top_vert + 1
+// //       // const bottom_next_vert = bottom_vert + 1
+     
+//     }
 
 
   // for (let v_i = 0; v_i < v_steps; v_i++) { // TODO: -1 is important
