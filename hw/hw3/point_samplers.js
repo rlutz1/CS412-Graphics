@@ -77,7 +77,7 @@ function gen_sphere_points(
     let last_pt_index = (vertices.length / 3) - 1 // 9
     let lower_band = last_pt_index - h_steps // 5
     
-    for (let i = lower_band; i < lower_band + h_steps - 1; i++) {
+    for (let i = lower_band; i < last_pt_index - 1; i++) {
       indeces.push(last_pt_index, i, i + 1)
     }
     indeces.push(last_pt_index, last_pt_index - 1, lower_band)
