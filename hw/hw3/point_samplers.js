@@ -127,7 +127,7 @@ function sphere_colors(num_vertices) {
 function gen_cylinder_points(
   r=1.5, // radius of the cylinder
   height=2.0, // height of the cylinder
-  center=[0, 0, 0], // center of the sphere
+  center=[0, 2, 0], // center of the sphere
   h_step=0.1, // horizontal step interval (u)
   v_step=0.1, // vertical step interval (v)
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
@@ -139,7 +139,6 @@ function gen_cylinder_points(
   const h_min = h_range[0]
   const h_max = h_range[1]
 
-
   // how many steps we are taking in that range.
   let h_steps = Math.round(Math.abs(h_max - h_min) / h_step)
   let v_steps = Math.round(Math.abs(v_max - v_min) / v_step)
@@ -147,32 +146,31 @@ function gen_cylinder_points(
   const vertices = [] // simple js array for collection of vertices
   const indeces = [] // js array for collecting indeces
 
+  // top middle point
+  vertices.push(center[0], center[1], center[2]) // save the polar cap
+
   for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
-    if (v_i == 0) { // north pole
-      vertices.push(center[0], center[1], center[2]) // save the polar cap
-    } else if (v_i == v_steps) { // south pole
-      vertices.push(center[0], center[1], center[2] + height) // save the polar cap
-    } else {
-       // get our current v, which is the v in (h, v)
-        const v = v_min + (v_i * v_step)
+    // get our current v, which is the v in (h, v)
+    const v = v_min + (v_i * v_step)
 
-        for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
-          // get our current h, which is the h in (h, v)
-          const h = h_min + (h_i * h_step)
-          const cos_h = Math.cos(h) // save for later
-          const sin_h = Math.sin(h)
+    for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
+      // get our current h, which is the h in (h, v)
+      const h = h_min + (h_i * h_step)
+      const cos_h = Math.cos(h) // save for later
+      const sin_h = Math.sin(h)
 
-          // gather the points using parametric form
-          const x = center[0] + (r * cos_h)
-          const y = center[1] + (r * sin_h)
-          const z = center[2] + (height * v)
-          // console.log(x, y, z)
-          vertices.push(x, y, z) // save the points
-
-        } // end if
-      } // end loop
+      // gather the points using parametric form
+      const x = center[0] + (r * cos_h)
+      const y = center[1] + (r * sin_h)
+      const z = center[2] + (height * v)
+      // console.log(x, y, z)
+      vertices.push(x, y, z) // save the points
     } // end loop
-
+  } // end loop
+  
+  // bottom middle point, mimicking last z value created
+  // accounts for anything not quite reaching the actual height value.
+  vertices.push(center[0], center[1], vertices.at(-1)) // save the polar cap
 
   // set up the indeces
   let last_pt_index = (vertices.length / 3) - 1 // 9
