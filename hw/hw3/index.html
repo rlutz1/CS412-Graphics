@@ -59,7 +59,8 @@ Press F12 to see the console for debugging.</p>
         <option value="free">Free Form</option>
       </select>
       <div id="button-box">
-        <button onclick="test()"> testing </button>
+        <button onclick="add_cube(1)">Add Cube</button>
+        <button onclick="add_cube(2)">Add Cube 2</button>
       </div>
     </div>
     
@@ -143,7 +144,7 @@ void main() {
     let sphere_colors = gen_sphere_colors(sphere_verts_and_indices.vertices.length) // get some dynamic colors
 
     // cube points and colors -- really just for consistency with other shapes for now
-    let cube_verts_and_indeces = {"vertices": cube_positions, "indices": cube_indices}
+    let cube_verts_and_indices = {"vertices": cube_positions, "indices": cube_indices}
     // let cube_colors...
 
     // attributes, program
@@ -153,6 +154,8 @@ void main() {
     let cube_pos_buff, cube_color_buff, cube_indices_buff;
     let cyl_pos_buff, cyl_color_buff, cyl_indices_buff
     let sphere_pos_buff, sphere_color_buff, sphere_indices_buff
+
+    let free_form_cubes = []
 
     function initBuffer(data, type=gl.ARRAY_BUFFER, gl_hint=gl.STATIC_DRAW) {
       buff = gl.createBuffer();
@@ -164,9 +167,9 @@ void main() {
     // Buffers
     function initBuffers() {
       // cube
-      cube_pos_buff = initBuffer(cube_verts_and_indeces.vertices)
+      cube_pos_buff = initBuffer(cube_verts_and_indices.vertices)
       cube_color_buff = initBuffer(cube_colors)
-      cube_indices_buff = initBuffer(cube_verts_and_indeces.indices, gl.ELEMENT_ARRAY_BUFFER)
+      cube_indices_buff = initBuffer(cube_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
 
       // cylinder
       cyl_pos_buff = initBuffer(cyl_verts_and_indices.vertices)
@@ -244,7 +247,7 @@ void main() {
 
     // method to pull out the common functionality of drawing a single
     // main object, to be further generalized with time.
-    function draw_main_object(pos_buff, color_buff, indices_buff, num_indeces) {
+    function draw_main_object(pos_buff, color_buff, indices_buff, num_indices) {
       gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
       gl.enableVertexAttribArray(posLoc);
       gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
@@ -255,11 +258,37 @@ void main() {
       
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices_buff);
 
-      gl.drawElements(gl.TRIANGLES, num_indeces, gl.UNSIGNED_SHORT, 0);
+      gl.drawElements(gl.TRIANGLES, num_indices, gl.UNSIGNED_SHORT, 0);
     }
 
-    function test() {
-      console.log("test")
+    // add a cube to the canvas 
+    function add_cube(id) {
+      const cube_verts_and_indices = {"vertices": cube_positions, "indices": cube_indices}
+      let cube_pos_buff 
+      let cube_color_buff
+      if (id == 1) {
+        cube_pos_buff = initBuffer(cube_verts_and_indices.vertices)
+        cube_color_buff = initBuffer(cube_colors)
+      } else {
+        cube_pos_buff = initBuffer(other_cube_positions)
+        cube_color_buff = initBuffer(other_cube_colors)
+      }
+      
+      const cube_indices_buff = initBuffer(cube_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+      draw_main_object(
+          cube_pos_buff, 
+          cube_color_buff, 
+          cube_indices_buff, 
+          cube_verts_and_indices.indices.length
+        )
+      
+      free_form_cubes.push({
+        "id": id,
+        "verts_and_indices": cube_verts_and_indices, 
+        "pos_buff": cube_pos_buff,
+        "color_buff": cube_color_buff,
+        "indices_buff": cube_indices_buff
+      })
     }
 
     function render() {
@@ -300,7 +329,7 @@ void main() {
           cube_pos_buff, 
           cube_color_buff, 
           cube_indices_buff, 
-          cube_verts_and_indeces.indices.length
+          cube_verts_and_indices.indices.length
         )
         document.getElementById("button-box").style.visibility = "hidden"
       } else if (mode == "cylinder") {
@@ -322,8 +351,17 @@ void main() {
         )
         document.getElementById("button-box").style.visibility = "hidden"
       } else if (mode == "free") {
-        // display some buttons
+        // display some buttons for playing
         document.getElementById("button-box").style.visibility = "visible"
+        // draw whatever's been saved so far.
+        for (let i = 0; i < free_form_cubes.length; i++) {
+          draw_main_object(
+            free_form_cubes[i]["pos_buff"], 
+            free_form_cubes[i]["color_buff"], 
+            free_form_cubes[i]["indices_buff"], 
+            free_form_cubes[i]["verts_and_indices"].indices.length
+          )
+        } // end loop
       }
     }
 

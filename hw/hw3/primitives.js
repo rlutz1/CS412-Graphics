@@ -10,8 +10,22 @@ const cube_positions = new Float32Array([
   -1,  1,  1   // 7
 ]);
 
+const other_cube_positions = new Float32Array([
+  -2, -2, -2,  // 0
+   1, -2, -2,  // 1
+   1,  1, -2,  // 2
+  -2,  1, -2,  // 3
+  -2, -2,  1,  // 4
+   1, -2,  1,  // 5
+   1,  1,  1,  // 6
+  -2,  1,  1   // 7
+]);
+
 const cube_colors = new Float32Array([
   1,0,0,  0,1,0,  0,0,1, 1,1,0, 1,0,1, 0,1,1, 1,1,0, 1,0,1
+]);
+const other_cube_colors = new Float32Array([
+  1,0,0,  1,0,0,  1,0,0, 0,1,0, 0,1,0, 0,0,1, 0,0,1, 0,0,1
 ]);
 
 
