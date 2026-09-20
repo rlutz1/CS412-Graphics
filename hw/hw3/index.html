@@ -117,11 +117,13 @@ void main() {
     vertEditor.value = document.getElementById("vertex-shader").textContent;
     fragEditor.value = document.getElementById("fragment-shader").textContent;
 
-    let verts_and_indeces = gen_sphere_points() // sphere point generator
-    let sphere_color = sphere_colors(verts_and_indeces.vertices.length) // all points are red
+    // let verts_and_indeces = gen_sphere_points() // sphere point generator
+    let verts_and_indeces = gen_cylinder_points() // cylinder point generation
+    // let color = sphere_colors(verts_and_indeces.vertices.length) // get some dynamic colors
+    let color = cylinder_colors(verts_and_indeces.vertices.length) // get some dynamic colors
     let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM;
     // let vbo, nbo, ibo;
-    let sphere_pos_buff, sphere_color_buff, sphere_indeces_buff
+    let sphere_pos_buff, color_buff, sphere_indeces_buff
 
     // Buffers
     function initBuffers() {
@@ -144,9 +146,9 @@ void main() {
       gl.bindBuffer(gl.ARRAY_BUFFER, sphere_pos_buff);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts_and_indeces.vertices), gl.STATIC_DRAW);
 
-      sphere_color_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, sphere_color_buff);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sphere_color), gl.STATIC_DRAW);
+      color_buff = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
 
       sphere_indeces_buff = gl.createBuffer();
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphere_indeces_buff); 
@@ -258,7 +260,7 @@ void main() {
       gl.enableVertexAttribArray(posLoc);
       gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, sphere_color_buff);
+      gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
       gl.enableVertexAttribArray(colorLoc);
       gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
 
