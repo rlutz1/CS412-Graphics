@@ -67,7 +67,6 @@ function gen_sphere_points(
       } // end loop
     }
    
-    let stepper = 0
     // SET UP POLAR NORTH INDECES
     for (let i = 1; i < h_steps - 1; i++) { // for each horizontal step
       indeces.push(0, i, i + 1)
@@ -87,13 +86,25 @@ function gen_sphere_points(
 
     // SET UP THE MIDDLE VERTICES (general case)
 
-//     for (let v_i = 1; v_i < v_steps; v_i++) { // TODO: -1 is important
-//       // const bottom_vert = h_i + (h_steps * v_i) 
-// //       // const top_vert = h_i + (h_steps * (v_i + 1)) 
-// //       // const top_next_vert = top_vert + 1
-// //       // const bottom_next_vert = bottom_vert + 1
-     
-//     }
+    for (let starter = 1; starter < lower_band; starter += h_steps) { // TODO: -1 is important
+      for (let inc = 0; inc < h_steps; inc++) {
+        // const bottom_left = h_i + (h_steps * v_i) 
+        // const top_left = h_i + (h_steps * (v_i + 1)) 
+        // const top_right = top_vert + 1
+        // const bottom_right = bottom_vert + 1
+        
+        const bottom_left = starter + inc // 1
+        const top_left = bottom_left + h_steps // 5
+        const top_right = bottom_left + h_steps + 1
+        const bottom_right = bottom_left + 1
+
+
+        indeces.push(
+          bottom_left, top_left, top_right,
+          bottom_left, bottom_right, top_right
+        )
+      } // end loop 
+    } // end loop
 
 
   // for (let v_i = 0; v_i < v_steps; v_i++) { // TODO: -1 is important
