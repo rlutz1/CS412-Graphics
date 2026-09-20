@@ -148,11 +148,11 @@ function gen_cylinder_points(
   const indeces = [] // js array for collecting indeces
 
   for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
-    // if (v_i == 0) { // north pole
-    //   vertices.push(center[0], center[1], r) // save the polar cap
-    // } else if (v_i == v_steps) { // south pole
-    //   vertices.push(center[0], center[1], -r) // save the polar cap
-    // } else {
+    if (v_i == 0) { // north pole
+      vertices.push(center[0], center[1], center[2]) // save the polar cap
+    } else if (v_i == v_steps) { // south pole
+      vertices.push(center[0], center[1], center[2] + height) // save the polar cap
+    } else {
        // get our current v, which is the v in (h, v)
         const v = v_min + (v_i * v_step)
         // const sin_v = Math.sin(v) // save for later
@@ -171,7 +171,7 @@ function gen_cylinder_points(
           // console.log(x, y, z)
           vertices.push(x, y, z) // save the points
 
-        // } // end if
+        } // end if
       } // end loop
     } // end loop
 
