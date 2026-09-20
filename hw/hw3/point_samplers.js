@@ -103,7 +103,10 @@ function gen_sphere_points(
     }
     indices.push(last_pt_index, last_pt_index - 1, lower_band)
 
-  return {"vertices": vertices, "indices": indices} // return as a js dict
+  return {
+    "vertices": new Float32Array(vertices), 
+    "indices": new Uint16Array(indices)
+  } // return as a js dict
 }
 
 // testing only to ensure different colors to distinguish
@@ -120,7 +123,7 @@ function gen_sphere_colors(num_vertices) {
     }
   }
 
-  return sphere_color
+  return new Float32Array(sphere_color)
 }
 
 
@@ -213,8 +216,10 @@ function gen_cylinder_points(
   }
   indices.push(last_pt_index, last_pt_index - 1, lower_band)
 
-  return {"vertices": vertices, "indices": indices} // return as a js dict
-
+  return {
+    "vertices": new Float32Array(vertices), 
+    "indices": new Uint16Array(indices)
+  } // return as a js dict
 }
 
 // quick testing colors
@@ -231,5 +236,5 @@ function gen_cylinder_colors(num_vertices) {
     }
   }
 
-  return cyl_color
+  return new Float32Array(cyl_color)
 }

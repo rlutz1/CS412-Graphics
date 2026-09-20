@@ -137,7 +137,7 @@ void main() {
     let cyl_pos_buff, cyl_color_buff, cyl_indices_buff
     let sphere_pos_buff, sphere_color_buff, sphere_indices_buff
 
-    function initBuffer(type, data, gl_hint) {
+    function initBuffer(data, type=gl.ARRAY_BUFFER, gl_hint=gl.STATIC_DRAW) {
       buff = gl.createBuffer();
       gl.bindBuffer(type, buff);
       gl.bufferData(type, data, gl_hint);
@@ -146,30 +146,16 @@ void main() {
 
     // Buffers
     function initBuffers() {
-      cube_pos_buff = initBuffer(gl.ARRAY_BUFFER, cube_verts_and_indeces.vertices, gl.STATIC_DRAW)
+      // cube
+      cube_pos_buff = initBuffer(cube_verts_and_indeces.vertices)
+      cube_color_buff = initBuffer(cube_colors)
+      cube_indices_buff = initBuffer(cube_verts_and_indeces.indices, gl.ELEMENT_ARRAY_BUFFER)
 
-      cube_color_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, cube_color_buff);
-      gl.bufferData(gl.ARRAY_BUFFER, cube_colors, gl.STATIC_DRAW);
+      // cylinder
 
-      cube_indices_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube_indices_buff); 
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cube_verts_and_indeces.indices, gl.STATIC_DRAW);
-
-      // sphere
-
-      cyl_pos_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, cyl_pos_buff);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cyl_verts_and_indices.vertices), gl.STATIC_DRAW);
-
-      cyl_color_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, cyl_color_buff);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cyl_colors), gl.STATIC_DRAW);
-
-      cyl_indices_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cyl_indices_buff); 
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cyl_verts_and_indices.indices), gl.STATIC_DRAW);
-
+      cyl_pos_buff = initBuffer(cyl_verts_and_indices.vertices)
+      cyl_color_buff = initBuffer(cyl_colors)
+      cyl_indices_buff = initBuffer(cyl_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
     }
     initBuffers();
 
@@ -277,7 +263,7 @@ void main() {
         gl.bindBuffer(gl.ARRAY_BUFFER, cube_pos_buff);
         gl.enableVertexAttribArray(posLoc);
         gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
-        console.log(cube_pos_buff)
+        // console.log(cube_pos_buff)
 
         gl.bindBuffer(gl.ARRAY_BUFFER, cube_color_buff);
         gl.enableVertexAttribArray(colorLoc);
