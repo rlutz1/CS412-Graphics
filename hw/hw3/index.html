@@ -56,7 +56,11 @@ Press F12 to see the console for debugging.</p>
         <option value="cube">Cube</option>
         <option value="cylinder">Cylinder</option>
         <option value="sphere">Sphere</option>
+        <option value="free">Free Form</option>
       </select>
+      <div id="button-box">
+        <button> testing </button>
+      </div>
     </div>
     
   
@@ -294,7 +298,8 @@ void main() {
           cube_indices_buff, 
           cube_verts_and_indeces.indices.length
         )
-      } else if (mode == "cylinder"){
+        document.getElementById("button-box").style.visibility = "hidden"
+      } else if (mode == "cylinder") {
         // draw a cylinder
         draw_main_object(
           cyl_pos_buff, 
@@ -302,7 +307,8 @@ void main() {
           cyl_indices_buff, 
           cyl_verts_and_indices.indices.length
         )
-      } else {
+        document.getElementById("button-box").style.visibility = "hidden"
+      } else if (mode == "sphere") {
         // draw a sphere, default
         draw_main_object(
           sphere_pos_buff, 
@@ -310,6 +316,10 @@ void main() {
           sphere_indices_buff, 
           sphere_verts_and_indices.indices.length
         )
+        document.getElementById("button-box").style.visibility = "hidden"
+      } else if (mode == "free") {
+        // display some buttons
+        document.getElementById("button-box").style.visibility = "visible"
       }
     }
 

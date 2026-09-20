@@ -36,7 +36,7 @@ ideas:
 
 let's do something that is helpful for me.
 
-+ let's add a drop down that switches between the shapes.
+~~+ let's add a drop down that switches between the shapes.~~ -- done
 + what would be awesome is sliders that change some of the values.
 
 ### transformations
