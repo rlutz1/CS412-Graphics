@@ -33,7 +33,7 @@ function gen_sphere_points(
   let v_steps = Math.round(Math.abs(v_max - v_min) / v_step)
 
   const vertices = [] // simple js array for collection of vertices
-  const indeces = [] // js array for collecting indeces
+  const indices = [] // js array for collecting indices
 
   for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
     if (v_i == 0) { // north pole
@@ -66,11 +66,11 @@ function gen_sphere_points(
     let last_pt_index = (vertices.length / 3) - 1 // 9
     let lower_band = last_pt_index - h_steps // 5
 
-    // SET UP POLAR NORTH INDECES
+    // SET UP POLAR NORTH indices
     for (let i = 1; i < h_steps; i++) { // for each horizontal step
-      indeces.push(0, i, i + 1)
+      indices.push(0, i, i + 1)
     } // end loop
-    indeces.push(0, h_steps, 1)
+    indices.push(0, h_steps, 1)
 
     // SET UP THE MIDDLE VERTICES (general case)
     for (let band_index = 1; band_index < lower_band; band_index += h_steps) { // TODO: -1 is important
@@ -80,7 +80,7 @@ function gen_sphere_points(
         const top_right = bottom_left + h_steps + 1 // 6
         const bottom_right = bottom_left + 1 // 2
 
-        indeces.push(
+        indices.push(
           bottom_left, top_left, top_right,
           bottom_left, bottom_right, top_right
         )
@@ -91,23 +91,23 @@ function gen_sphere_points(
       const top_right = band_index + h_steps // 5
       const bottom_right = band_index // 1
 
-      indeces.push(
+      indices.push(
           bottom_left, top_left, top_right,
           bottom_left, bottom_right, top_right
         )
     } // end loop
   
-    // SET UP THE POLAR SOUTH INDECES
+    // SET UP THE POLAR SOUTH indices
     for (let i = lower_band; i < last_pt_index - 1; i++) {
-      indeces.push(last_pt_index, i, i + 1)
+      indices.push(last_pt_index, i, i + 1)
     }
-    indeces.push(last_pt_index, last_pt_index - 1, lower_band)
+    indices.push(last_pt_index, last_pt_index - 1, lower_band)
 
-  return {"vertices": vertices, "indeces": indeces} // return as a js dict
+  return {"vertices": vertices, "indices": indices} // return as a js dict
 }
 
 // testing only to ensure different colors to distinguish
-function sphere_colors(num_vertices) {
+function gen_sphere_colors(num_vertices) {
   let sphere_color = []
 
   for (let v = 0; v < num_vertices; v++) {
@@ -144,7 +144,7 @@ function gen_cylinder_points(
   let v_steps = Math.round(Math.abs(v_max - v_min) / v_step)
 
   const vertices = [] // simple js array for collection of vertices
-  const indeces = [] // js array for collecting indeces
+  const indices = [] // js array for collecting indices
 
   // top middle point
   vertices.push(center[0], center[1], center[2]) // save the polar cap
@@ -172,15 +172,15 @@ function gen_cylinder_points(
   // accounts for anything not quite reaching the actual height value.
   vertices.push(center[0], center[1], vertices.at(-1)) // save the polar cap
 
-  // set up the indeces
+  // set up the indices
   let last_pt_index = (vertices.length / 3) - 1 // 9
   let lower_band = last_pt_index - h_steps // 5
 
-  // SET UP POLAR NORTH INDECES
+  // SET UP POLAR NORTH indices
   for (let i = 1; i < h_steps; i++) { // for each horizontal step
-    indeces.push(0, i, i + 1)
+    indices.push(0, i, i + 1)
   } // end loop
-  indeces.push(0, h_steps, 1)
+  indices.push(0, h_steps, 1)
 
   // SET UP THE MIDDLE VERTICES (general case)
   for (let band_index = 1; band_index < lower_band; band_index += h_steps) { // TODO: -1 is important
@@ -190,7 +190,7 @@ function gen_cylinder_points(
       const top_right = bottom_left + h_steps + 1 // 6
       const bottom_right = bottom_left + 1 // 2
 
-      indeces.push(
+      indices.push(
         bottom_left, top_left, top_right,
         bottom_left, bottom_right, top_right
       )
@@ -201,24 +201,24 @@ function gen_cylinder_points(
     const top_right = band_index + h_steps // 5
     const bottom_right = band_index // 1
 
-    indeces.push(
+    indices.push(
         bottom_left, top_left, top_right,
         bottom_left, bottom_right, top_right
       )
   } // end loop
 
-  // SET UP THE POLAR SOUTH INDECES
+  // SET UP THE POLAR SOUTH indices
   for (let i = lower_band; i < last_pt_index - 1; i++) {
-    indeces.push(last_pt_index, i, i + 1)
+    indices.push(last_pt_index, i, i + 1)
   }
-  indeces.push(last_pt_index, last_pt_index - 1, lower_band)
+  indices.push(last_pt_index, last_pt_index - 1, lower_band)
 
-  return {"vertices": vertices, "indeces": indeces} // return as a js dict
+  return {"vertices": vertices, "indices": indices} // return as a js dict
 
 }
 
 // quick testing colors
-function cylinder_colors(num_vertices) {
+function gen_cylinder_colors(num_vertices) {
   let cyl_color = []
 
   for (let v = 0; v < num_vertices; v++) {
