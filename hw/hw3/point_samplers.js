@@ -155,8 +155,6 @@ function gen_cylinder_points(
     } else {
        // get our current v, which is the v in (h, v)
         const v = v_min + (v_i * v_step)
-        // const sin_v = Math.sin(v) // save for later
-        // const cos_v = Math.cos(v)
 
         for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
           // get our current h, which is the h in (h, v)
@@ -179,6 +177,12 @@ function gen_cylinder_points(
   // set up the indeces
   let last_pt_index = (vertices.length / 3) - 1 // 9
   let lower_band = last_pt_index - h_steps // 5
+
+  // SET UP POLAR NORTH INDECES
+  for (let i = 1; i < h_steps; i++) { // for each horizontal step
+    indeces.push(0, i, i + 1)
+  } // end loop
+  indeces.push(0, h_steps, 1)
 
   // SET UP THE MIDDLE VERTICES (general case)
   for (let band_index = 1; band_index < lower_band; band_index += h_steps) { // TODO: -1 is important
@@ -204,6 +208,12 @@ function gen_cylinder_points(
         bottom_left, bottom_right, top_right
       )
   } // end loop
+
+  // SET UP THE POLAR SOUTH INDECES
+  for (let i = lower_band; i < last_pt_index - 1; i++) {
+    indeces.push(last_pt_index, i, i + 1)
+  }
+  indeces.push(last_pt_index, last_pt_index - 1, lower_band)
 
   return {"vertices": vertices, "indeces": indeces} // return as a js dict
 
