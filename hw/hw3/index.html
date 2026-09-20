@@ -123,7 +123,7 @@ void main() {
     let color = cylinder_colors(verts_and_indeces.vertices.length) // get some dynamic colors
     let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM;
     // let vbo, nbo, ibo;
-    let sphere_pos_buff, color_buff, sphere_indeces_buff
+    let pos_buff, color_buff, indeces_buff
 
     // Buffers
     function initBuffers() {
@@ -142,16 +142,16 @@ void main() {
       // sphere
       // verts_and_indeces = gen_sphere_points()
 
-      sphere_pos_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, sphere_pos_buff);
+      pos_buff = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts_and_indeces.vertices), gl.STATIC_DRAW);
 
       color_buff = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
 
-      sphere_indeces_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphere_indeces_buff); 
+      indeces_buff = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indeces_buff); 
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(verts_and_indeces.indeces), gl.STATIC_DRAW);
 
     }
@@ -256,7 +256,7 @@ void main() {
       // gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
       // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, sphere_pos_buff);
+      gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
       gl.enableVertexAttribArray(posLoc);
       gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
 
@@ -264,7 +264,7 @@ void main() {
       gl.enableVertexAttribArray(colorLoc);
       gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
 
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphere_indeces_buff);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indeces_buff);
 
       // draw the object by the index order
       // console.log(verts_and_indeces)
