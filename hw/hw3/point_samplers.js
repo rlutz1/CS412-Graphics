@@ -13,10 +13,10 @@
  * center: (x_c, y_c, z_c)
  */
 function gen_sphere_points(
-  r=2.0, // radius of the sphere
+  r=1.5, // radius of the sphere
   center=[0, 0, 0], // center of the sphere
-  h_step=0.05, // horizontal step interval
-  v_step=0.05, // vertical step interval
+  h_step=0.1, // horizontal step interval
+  v_step=0.1, // vertical step interval
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
   v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
 ) {
@@ -31,7 +31,6 @@ function gen_sphere_points(
   // how many steps we are taking in that range.
   let h_steps = Math.round(Math.abs(h_max - h_min) / h_step)
   let v_steps = Math.round(Math.abs(v_max - v_min) / v_step)
-  // console.log(Math.ceil(v_steps))
 
   const vertices = [] // simple js array for collection of vertices
   const indeces = [] // js array for collecting indeces
@@ -47,9 +46,6 @@ function gen_sphere_points(
         const sin_v = Math.sin(v) // save for later
         const cos_v = Math.cos(v)
 
-        // TODO: starting from 0 gives a repeat point like 63 times
-        // 6.28/0.1 (2pi/step) times. should see about optimizing that unneeded
-        // repetition.
         for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
           // get our current h, which is the h in (h, v)
           const h = h_min + (h_i * h_step)
