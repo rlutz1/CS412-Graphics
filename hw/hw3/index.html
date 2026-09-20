@@ -248,7 +248,7 @@ void main() {
       gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
       gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
 
-      if (MODE == "cube") {
+      // if (MODE == "cube") {
         gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
         gl.enableVertexAttribArray(posLoc);
         gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
@@ -260,7 +260,7 @@ void main() {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
         gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-      } else {
+      // } else {
         gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
         gl.enableVertexAttribArray(posLoc);
         gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
@@ -272,7 +272,7 @@ void main() {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indeces_buff);
        
         gl.drawElements(gl.TRIANGLES, verts_and_indeces.indeces.length, gl.UNSIGNED_SHORT, 0);
-      }
+      // }
       
 
 
