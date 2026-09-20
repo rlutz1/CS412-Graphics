@@ -59,7 +59,7 @@ Press F12 to see the console for debugging.</p>
         <option value="free">Free Form</option>
       </select>
       <div id="button-box">
-        <button> testing </button>
+        <button onclick="test()"> testing </button>
       </div>
     </div>
     
@@ -256,6 +256,10 @@ void main() {
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices_buff);
 
       gl.drawElements(gl.TRIANGLES, num_indeces, gl.UNSIGNED_SHORT, 0);
+    }
+
+    function test() {
+      console.log("test")
     }
 
     function render() {
