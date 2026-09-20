@@ -118,41 +118,41 @@ void main() {
     fragEditor.value = document.getElementById("fragment-shader").textContent;
 
     // let verts_and_indeces = gen_sphere_points() // sphere point generator
-    let verts_and_indeces = gen_cylinder_points() // cylinder point generation
+    // let verts_and_indeces = gen_cylinder_points() // cylinder point generation
     // let color = sphere_colors(verts_and_indeces.vertices.length) // get some dynamic colors
-    let color = cylinder_colors(verts_and_indeces.vertices.length) // get some dynamic colors
+    // let color = cylinder_colors(verts_and_indeces.vertices.length) // get some dynamic colors
     let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM;
-    // let vbo, nbo, ibo;
-    let pos_buff, color_buff, indeces_buff
+    let vbo, nbo, ibo;
+    // let pos_buff, color_buff, indeces_buff
 
     // Buffers
     function initBuffers() {
-      // vbo = gl.createBuffer();
-      // gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-      // gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+      vbo = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
-      // nbo = gl.createBuffer();
-      // gl.bindBuffer(gl.ARRAY_BUFFER, nbo);
-      // gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
+      nbo = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, nbo);
+      gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
 
-      // ibo = gl.createBuffer();
-      // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo); 
-      // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+      ibo = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo); 
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
       // sphere
       // verts_and_indeces = gen_sphere_points()
 
-      pos_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts_and_indeces.vertices), gl.STATIC_DRAW);
+      // pos_buff = gl.createBuffer();
+      // gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
+      // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts_and_indeces.vertices), gl.STATIC_DRAW);
 
-      color_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
+      // color_buff = gl.createBuffer();
+      // gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
+      // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
 
-      indeces_buff = gl.createBuffer();
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indeces_buff); 
-      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(verts_and_indeces.indeces), gl.STATIC_DRAW);
+      // indeces_buff = gl.createBuffer();
+      // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indeces_buff); 
+      // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(verts_and_indeces.indeces), gl.STATIC_DRAW);
 
     }
     initBuffers();
@@ -247,28 +247,29 @@ void main() {
       gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
       gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
 
-      // gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-      // gl.enableVertexAttribArray(posLoc);
-      // gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
-
-      // gl.bindBuffer(gl.ARRAY_BUFFER, nbo);
-      // gl.enableVertexAttribArray(colorLoc);
-      // gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
-      // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-
-      gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
       gl.enableVertexAttribArray(posLoc);
       gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
+      gl.bindBuffer(gl.ARRAY_BUFFER, nbo);
       gl.enableVertexAttribArray(colorLoc);
       gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
+      
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indeces_buff);
+      // gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
+      // gl.enableVertexAttribArray(posLoc);
+      // gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+
+      // gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
+      // gl.enableVertexAttribArray(colorLoc);
+      // gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
+
+      // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indeces_buff);
 
       // draw the object by the index order
       // console.log(verts_and_indeces)
-      gl.drawElements(gl.TRIANGLES, verts_and_indeces.indeces.length, gl.UNSIGNED_SHORT, 0);
+      gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
     }
 
     // Initialize when page loads

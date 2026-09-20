@@ -22,6 +22,8 @@ In this assignment, you will extend the provided hw3.zip below to build your int
 ![shapes](images/image.png)
 
 
+at minimmum, i have: sphere, cylinder
+
 ### add UI components
 
 **requirement: add at least 2 ui components**
@@ -31,6 +33,11 @@ ideas:
 1. switch between shape types.
 2. add more shapes, clear, click/select to remove? idk about last one, might be a nightmare.
 3. orbiting objects?
+
+let's do something that is helpful for me.
+
++ let's add a drop down that switches between the shapes.
++ what would be awesome is sliders that change some of the values.
 
 ### transformations
 
