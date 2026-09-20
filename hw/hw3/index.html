@@ -19,6 +19,12 @@
       height: 250px;
     }
 
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     canvas {
       border: 1px solid #444;
     }
@@ -44,9 +50,16 @@ Press F12 to see the console for debugging.</p>
         <textarea id="fragEditor"></textarea>
       </div>
     </div>
-    <div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
       <canvas id="glcanvas" width="400" height="400"></canvas>
+      <select name="Shapes" id="mode" style="text-align: center; font-size: 20px">
+        <option value="cube">Cube</option>
+        <option value="cylinder">Cylinder</option>
+        <option value="sphere">Sphere</option>
+      </select>
     </div>
+    
+  
   </div>
 
   <!-- Vertex shader -->
@@ -223,13 +236,7 @@ void main() {
 
     let startTime = Date.now();
 
-    // what primitive(s) to draw, specifically.
-    let modes = {
-      "cube": 0,
-      "cylinder": 1,
-      "sphere": 2
-    }
-    let mode = modes["sphere"] // just start with a cube
+    let mode; // mode for main object being shown
 
     // method to pull out the common functionality of drawing a single
     // main object, to be further generalized with time.
@@ -277,7 +284,9 @@ void main() {
       gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
       gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
 
-      if (mode == modes["cube"]) {
+      mode = document.getElementById("mode").value // grab the value from drop down
+
+      if (mode == "cube") {
         // draw your cube
         draw_main_object(
           cube_pos_buff, 
@@ -285,7 +294,7 @@ void main() {
           cube_indices_buff, 
           cube_verts_and_indeces.indices.length
         )
-      } else if (mode == modes["cylinder"]){
+      } else if (mode == "cylinder"){
         // draw a cylinder
         draw_main_object(
           cyl_pos_buff, 
