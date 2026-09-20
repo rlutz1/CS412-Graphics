@@ -15,7 +15,7 @@
 function gen_sphere_points(
   r=1.5, // radius of the sphere
   center=[0, 0, 0], // center of the sphere
-  h_step=0.1, // horizontal step interval
+  h_step=0.3, // horizontal step interval // TODO: 0.2 looks a little funky
   v_step=0.1, // vertical step interval
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
   v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
@@ -26,7 +26,6 @@ function gen_sphere_points(
   const v_max = v_range[1]
   const h_min = h_range[0]
   const h_max = h_range[1]
-
 
   // how many steps we are taking in that range.
   let h_steps = Math.round(Math.abs(h_max - h_min) / h_step)

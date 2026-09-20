@@ -152,10 +152,14 @@ void main() {
       cube_indices_buff = initBuffer(cube_verts_and_indeces.indices, gl.ELEMENT_ARRAY_BUFFER)
 
       // cylinder
-
       cyl_pos_buff = initBuffer(cyl_verts_and_indices.vertices)
       cyl_color_buff = initBuffer(cyl_colors)
       cyl_indices_buff = initBuffer(cyl_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+
+      // sphere
+      sphere_pos_buff = initBuffer(sphere_verts_and_indices.vertices)
+      sphere_color_buff = initBuffer(sphere_colors)
+      sphere_indices_buff = initBuffer(sphere_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
     }
     initBuffers();
 
@@ -225,8 +229,23 @@ void main() {
       "cylinder": 1,
       "sphere": 2
     }
-    let mode = modes["cube"] // just start with a cube
+    let mode = modes["sphere"] // just start with a cube
 
+    // method to pull out the common functionality of drawing a single
+    // main object, to be further generalized with time.
+    function draw_main_object(pos_buff, color_buff, indices_buff, num_indeces) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
+      gl.enableVertexAttribArray(posLoc);
+      gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
+      gl.enableVertexAttribArray(colorLoc);
+      gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
+      
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices_buff);
+
+      gl.drawElements(gl.TRIANGLES, num_indeces, gl.UNSIGNED_SHORT, 0);
+    }
 
     function render() {
       gl.enable(gl.DEPTH_TEST);
@@ -260,33 +279,28 @@ void main() {
 
       if (mode == modes["cube"]) {
         // draw your cube
-        gl.bindBuffer(gl.ARRAY_BUFFER, cube_pos_buff);
-        gl.enableVertexAttribArray(posLoc);
-        gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
-        // console.log(cube_pos_buff)
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, cube_color_buff);
-        gl.enableVertexAttribArray(colorLoc);
-        gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
-        
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cube_indices_buff);
-
-        gl.drawElements(gl.TRIANGLES, cube_verts_and_indeces.indices.length, gl.UNSIGNED_SHORT, 0);
+        draw_main_object(
+          cube_pos_buff, 
+          cube_color_buff, 
+          cube_indices_buff, 
+          cube_verts_and_indeces.indices.length
+        )
       } else if (mode == modes["cylinder"]){
         // draw a cylinder
-        gl.bindBuffer(gl.ARRAY_BUFFER, cyl_pos_buff);
-        gl.enableVertexAttribArray(posLoc);
-        gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, cyl_color_buff);
-        gl.enableVertexAttribArray(colorLoc);
-        gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cyl_indices_buff);
-       
-        gl.drawElements(gl.TRIANGLES, cyl_verts_and_indices.indices.length, gl.UNSIGNED_SHORT, 0);
+        draw_main_object(
+          cyl_pos_buff, 
+          cyl_color_buff, 
+          cyl_indices_buff, 
+          cyl_verts_and_indices.indices.length
+        )
       } else {
-        // sphere default
+        // draw a sphere, default
+        draw_main_object(
+          sphere_pos_buff, 
+          sphere_color_buff, 
+          sphere_indices_buff, 
+          sphere_verts_and_indices.indices.length
+        )
       }
     }
 
