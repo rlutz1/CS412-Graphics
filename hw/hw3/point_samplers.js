@@ -76,26 +76,18 @@ function gen_sphere_points(
     } // end loop
     indeces.push(0, h_steps, 1)
 
+    // SET UP THE MIDDLE VERTICES (general case)
     for (let band_index = 1; band_index < lower_band; band_index += h_steps) { // TODO: -1 is important
       for (let inc = 0; inc < h_steps - 1; inc++) {
-        // const bottom_left = h_i + (h_steps * v_i) 
-        // const top_left = h_i + (h_steps * (v_i + 1)) 
-        // const top_right = top_vert + 1
-        // const bottom_right = bottom_vert + 1
-        
         const bottom_left = band_index + inc // 1
         const top_left = bottom_left + h_steps // 5
         const top_right = bottom_left + h_steps + 1 // 6
         const bottom_right = bottom_left + 1 // 2
 
-        // 
-
         indeces.push(
           bottom_left, top_left, top_right,
           bottom_left, bottom_right, top_right
         )
-        // console.log(bottom_left, top_left, top_right)
-        // console.log(bottom_left, bottom_right, top_right)
       } // end loop 
       // special last case
       const bottom_left = band_index + h_steps - 1 // 4
@@ -107,61 +99,13 @@ function gen_sphere_points(
           bottom_left, top_left, top_right,
           bottom_left, bottom_right, top_right
         )
-
     } // end loop
-
   
     // SET UP THE POLAR SOUTH INDECES
     for (let i = lower_band; i < last_pt_index - 1; i++) {
       indeces.push(last_pt_index, i, i + 1)
     }
     indeces.push(last_pt_index, last_pt_index - 1, lower_band)
-
-    // console.log(indeces)
-
-    // SET UP THE MIDDLE VERTICES (general case)
-
-    
-
-
-  // for (let v_i = 0; v_i < v_steps; v_i++) { // TODO: -1 is important
-  //   for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
-  //     if (v_i == 0) { // north pole
-  //       indeces.push(v_i, h_i + 1, (h_i + 2) % (h_steps + 1))
-  //      //else if (v_i == v_steps - 1) { // south pole
-  //     //   const bottom_vert = h_i + (h_steps * v_i)
-  //     //   const bottom_next_vert = bottom_vert + 1
-  //     //   indeces.push(bottom_vert, bottom_next_vert, vertices.length / 3)
-  //     } else {
-  //       // TODO: explain this from the derivation on paper
-  //       // const bottom_vert = h_i + (h_steps * v_i) 
-  //       // const top_vert = h_i + (h_steps * (v_i + 1)) 
-  //       // const top_next_vert = top_vert + 1
-  //       // const bottom_next_vert = bottom_vert + 1
-  //       const k1 = (v_i * (h_steps + 1)) + h_i
-  //       const k2 = k1 + h_steps 
-
-  //       indeces.push(
-  //         k1, k2, k1 + 1,
-  //         k2, k2 + 1, k1 + 1
-  //       )
-
-  //       // indeces.push(
-  //       //   bottom_vert, top_vert, top_next_vert,
-  //       //   bottom_vert, bottom_next_vert, top_next_vert
-  //       // )
-  //     } // end if
-  //   } // end loop
-  // } // end loop
-    
-
-  // console.log(vertices)
-  // console.log("=======================")
-  // console.log(indeces)
-  // testing only
-  // for (let i = 0; i < indeces.length; i += 3) {
-  //   console.log(`(${indeces[i]}, ${indeces[i+1]}, ${indeces[i+2]})`)
-  // }
 
   return {"vertices": vertices, "indeces": indeces} // return as a js dict
 }
