@@ -159,6 +159,13 @@ function mat4FromRows(m00, m01, m02, m03,
     ]);
 }
 
+/**
+ * helper -> degree to radian as needed
+ */
+function deg_to_rad(degrees) {
+    return degrees * (Math.PI / 180.0);
+}
+
 
 /**
  * ========================================================
@@ -167,12 +174,32 @@ function mat4FromRows(m00, m01, m02, m03,
  */
 
 /**
+ * translation by tx, ty, tz.
+ * translations   -> should be a 3d list where [tx, ty, tz]
+ * returns a float 32 array.
+ */
+function translate(translations) {
+    const tx = translations[0]
+    const ty = translations[1]
+    const tz = translations[2]
+
+    let trans = mat4FromRows(
+        1.0, 0.0, 0.0, tx,
+        0.0, 1.0, 0.0, ty,
+        0.0, 0.0, 1.0, tz,
+        0.0, 0.0, 0.0, 1.0
+    )
+
+    return trans
+}
+
+/**
  * rotation of object by radians. can trigger clockwise.
  * returns the float32 needed for that rotation.
- * radians   -> should be a 3d list where [radians_x, radians_y, radians_z]
+ * radians   -> should be a 3d list where [rx, ry, rz]
  * clockwise -> bool, true/false
  */
-function rotation(radians, clockwise) {
+function rotate(radians, clockwise) {
     let rot // rotation matrix
     const rx = radians[0]
     const ry = radians[1]
@@ -186,15 +213,16 @@ function rotation(radians, clockwise) {
     const siny = Math.sin(ry)
     const sinz = Math.sin(rz)
 
-    // if (clockwise) {
     // set as rotation matrix
     rot = mat4FromRows(
         cosz * cosy, (cosz * siny * sinx) - (sinz * cosx), (cosz * siny * cosx) + (sinz * sinx), 0.0,
         sinz * cosy, (sinz * siny * sinx) + (cosz * cosx), (sinz * siny * cosx) - (cosz * sinx), 0.0,
         -siny      , cosy * sinx                         , cosy * cosx                         , 0.0,
         0.0        , 0.0                                 , 0.0                                 , 1.0            
-        )
-    // }
+    )
 
     return rot // return the matrix
 }
+
+
+

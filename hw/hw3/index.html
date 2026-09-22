@@ -67,14 +67,40 @@ Press F12 to see the console for debugging.</p>
         <legend>Transformations (to play over time):</legend>
 
           <div>
-            <input type="checkbox" name="transforms" id="rotation" value="rotation" />
-            <label for="rotation">Rotate</label>
+            <input type="checkbox" name="transforms" id="translation_x" value="translation_x" />
+            <label for="translation_x">Translate (x)</label>
+          </div>
+
+           <div>
+            <input type="checkbox" name="transforms" id="translation_y" value="translation_y" />
+            <label for="translation_y">Translate (y)</label>
+          </div>
+
+           <!-- <div>
+            <input type="checkbox" name="transforms" id="translation_z" value="translation_z" />
+            <label for="translation_z">Translate (z)</label>
+          </div> -->
+
+          <div>
+            <input type="checkbox" name="transforms" id="rotation_x" value="rotation_x" />
+            <label for="rotation_x">Rotate (x)</label>
+          </div>
+
+          <div>
+            <input type="checkbox" name="transforms" id="rotation_y" value="rotation_y" />
+            <label for="rotation_y">Rotate (y)</label>
+          </div>
+
+          <div>
+            <input type="checkbox" name="transforms" id="rotation_z" value="rotation_z" />
+            <label for="rotation_z">Rotate (z)</label>
           </div>
 
           <div>
             <input type="checkbox" name="transforms" id="scale" value="scale" />
             <label for="scale">Scale</label>
           </div>
+
       </fieldset>
     </div>
     
@@ -294,15 +320,47 @@ Press F12 to see the console for debugging.</p>
           case "scale":
             break // do nothing for the moment.
          
-          case "rotation":
+          case "rotation_x":
             transform_matrix = matMul(
-              rotation([time, time, time], true), 
+              rotate([time, 0, 0], true), 
+              transform_matrix
+            )
+            break
+
+          case "rotation_y":
+            transform_matrix = matMul(
+              rotate([0, time, 0], true), 
+              transform_matrix
+            )
+            break
+
+          case "rotation_z":
+            transform_matrix = matMul(
+              rotate([0, 0, time], true), 
               transform_matrix
             )
             break
           
-          // case translation:
-          //  break
+          case "translation_x":
+            transform_matrix = matMul(
+              translate([Math.sin(time), 0, 0]),
+              transform_matrix
+            )
+            break
+
+          case "translation_y":
+            transform_matrix = matMul(
+              translate([0, Math.sin(time), 0]),
+              transform_matrix
+            )
+            break
+
+          case "translation_z":
+            transform_matrix = matMul(
+              translate([0, 0, Math.sin(time)]),
+              transform_matrix
+            )
+            break
           default:
             console.log(`get_transform_matrix got an unknown transform val: ${trans_type}`)
         }
