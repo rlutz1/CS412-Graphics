@@ -113,11 +113,16 @@ function gen_sphere_colors(num_vertices) {
   let sphere_color = []
 
   for (let v = 0; v < num_vertices; v++) {
-    if (v % 3 == 0) {
+    if (v % 9 == 0) {
       sphere_color.push(0.3, 0, 0.3)
-    } else if (v % 3 == 1) {
+    } else if (v % 9 == 2) {
       sphere_color.push(0.3, 0, 0.4)
+    } else if (v % 9 == 6) {
+      sphere_color.push(0.0, 0.5, 0.4)
+    } else if (v % 9 == 8) {
+      sphere_color.push(0.0, 0.5, 0.7)
     } else {
+
       sphere_color.push(0.1, 0, 0.1)
     }
   }
@@ -226,9 +231,9 @@ function gen_cylinder_colors(num_vertices) {
   let cyl_color = []
 
   for (let v = 0; v < num_vertices; v++) {
-    if (v % 3 == 0) {
+    if (v % 6 == 0) {
       cyl_color.push(0.3, 0.3, 0)
-    } else if (v % 3 == 1) {
+    } else if (v % 6 == 2) {
       cyl_color.push(0.3, 0.4, 0)
     } else {
       cyl_color.push(0.1, 0, 0.1)
