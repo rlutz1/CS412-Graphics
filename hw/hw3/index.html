@@ -285,20 +285,24 @@ Press F12 to see the console for debugging.</p>
       // matMul(...)
       let transform_matrix = mat4Identity()
 
+      // todo: translate back to origin first?
+      
       for (let i = 0; i < transforms.length; i++) {
         const trans_type = transforms[i]
+        
         switch(trans_type) {
-          // TODO: opposite order!
-          // case translation
-
+          case "scale":
+            break // do nothing for the moment.
+         
           case "rotation":
             transform_matrix = matMul(
               rotation([time, time, time], true), 
               transform_matrix
             )
             break
-          case "scale":
-            break // do nothing for the moment.
+          
+          // case translation:
+          //  break
           default:
             console.log(`get_transform_matrix got an unknown transform val: ${trans_type}`)
         }
