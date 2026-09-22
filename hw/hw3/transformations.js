@@ -198,28 +198,3 @@ function rotation(radians, clockwise) {
 
     return rot // return the matrix
 }
-
-// const rotation = `/* rotate a 3 element vector in a given direction */
-//   vec3 rotate(float radians, vec3 to_rotate, bool clockwise) {
-//     // rotation matrix 
-//     mat3 rot;
-
-//     if (clockwise) {
-//       // clockwise rotation matrix
-//       rot = mat3(
-//         cos(radians), -sin(radians), 0.0,
-//         sin(radians), cos(radians), 0.0,
-//         0.0, 0.0, 1.0
-//       );
-//     } else {
-//       // counter clockwise rotation matrix
-//       rot = mat3(
-//         cos(radians), sin(radians), 0.0,
-//         -sin(radians), cos(radians), 0.0,
-//         0.0, 0.0, 1.0
-//       );
-//     } // end if
-
-//     return  rot * to_rotate;
-//   } // end method
-//   `

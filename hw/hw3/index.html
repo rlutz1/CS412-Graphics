@@ -265,7 +265,7 @@ Press F12 to see the console for debugging.</p>
     // for transformation animations.
     // returns the values of the check'd boxes.
     function get_all_transforms(checkbox_name) {
-      let checkboxes = documnet.getElementsByName(checkbox_name)
+      let checkboxes = document.getElementsByName(checkbox_name)
       let checked = []
 
       for (let i = 0; i < checkboxes.length; i++) {
@@ -275,6 +275,36 @@ Press F12 to see the console for debugging.</p>
       } // end loop
 
       return checked
+    }
+
+    // function to receive a list of readable values
+    // from the checkboxes with name "transforms".
+    // build the final matrix for transformation of the
+    // object on canvas.
+    function get_transform_matrix(transforms, time) {
+      // matMul(...)
+      let transform_matrix = mat4Identity()
+
+      for (let i = 0; i < transforms.length; i++) {
+        const trans_type = transforms[i]
+        switch(trans_type) {
+          // TODO: opposite order!
+          // case translation
+
+          case "rotation":
+            transform_matrix = matMul(
+              rotation([time, time, time], true), 
+              transform_matrix
+            )
+            break
+          case "scale":
+            break // do nothing for the moment.
+          default:
+            console.log(`get_transform_matrix got an unknown transform val: ${trans_type}`)
+        }
+      } // end loop
+      console.log(transform_matrix)
+      return transform_matrix
     }
 
     // method to pull out the common functionality of drawing a single
@@ -354,7 +384,8 @@ Press F12 to see the console for debugging.</p>
       gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
       gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
       // gl.uniformMatrix4fv(transformation, false, rotation([time, time, 0.0], true))
-      gl.uniformMatrix4fv(transformation, false, get_transform_matrix(get_all_transforms("transforms")), true)
+      gl.uniformMatrix4fv(transformation, false, get_transform_matrix(get_all_transforms("transforms"), time))
+     
       mode = document.getElementById("mode").value // grab the value from drop down
 
       if (mode == "cube") {
