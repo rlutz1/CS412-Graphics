@@ -56,17 +56,24 @@ Press F12 to see the console for debugging.</p>
         <option value="cube">Cube</option>
         <option value="cylinder">Cylinder</option>
         <option value="sphere">Sphere</option>
-        <option value="free">Free Form</option>
+        <!-- <option value="free">Free Form</option> -->
       </select>
-      <div id="button-box">
+      <!-- <div id="button-box">
         <button onclick="add_cube(1)">Add Cube</button>
         <button onclick="add_cube(2)">Add Cube 2</button>
-      </div>
+      </div> -->
 
       <fieldset>
         <legend>Transformations (to play over time):</legend>
 
           <div>
+              <button onclick="select_all(true, 'transforms')">Select All</button> 
+              <button onclick="select_all(false, 'transforms')">Clear All</button>
+          </div>
+
+          <div>
+            <p><b>Translations:</b></p>
+
             <input type="checkbox" name="transforms" id="translation_x" value="translation_x" />
             <label for="translation_x">Translate (x)</label>
    
@@ -78,6 +85,8 @@ Press F12 to see the console for debugging.</p>
           </div>
 
           <div>
+            <p><b>Rotations:</b></p>
+
             <input type="checkbox" name="transforms" id="rotation_x" value="rotation_x" />
             <label for="rotation_x">Rotate (x)</label>
          
@@ -89,6 +98,8 @@ Press F12 to see the console for debugging.</p>
           </div>
 
           <div>
+            <p><b>Scaling:</b></p>
+
             <input type="checkbox" name="transforms" id="scale_x" value="scale_x" />
             <label for="scale_x">Scale (x)</label>
             
@@ -100,6 +111,8 @@ Press F12 to see the console for debugging.</p>
           </div>
 
           <div>
+            <p><b>Reflection:</b></p>
+
             <input type="checkbox" name="transforms" id="reflect_x" value="reflect_x" />
             <label for="reflect_x">Reflect (x)</label>
             
@@ -110,9 +123,21 @@ Press F12 to see the console for debugging.</p>
             <label for="reflect_xy">Reflect (y=x)</label>
           </div>
 
+          <div>
+            <p><b>Shear/Skewing:</b></p>
+
+            <input type="checkbox" name="transforms" id="shear_x" value="shear_x" />
+            <label for="shear_x">Shear (x)</label>
+            
+            <input type="checkbox" name="transforms" id="shear_y" value="shear_y" />
+            <label for="shear_y">Shear (y)</label>
+
+            <input type="checkbox" name="transforms" id="shear_z" value="shear_z" />
+            <label for="shear_z">Shear (z)</label>
+          </div>
+
       </fieldset>
     </div>
-    
   
   </div>
 
@@ -330,6 +355,27 @@ Press F12 to see the console for debugging.</p>
         
         switch(trans_type) {
 
+          case "shear_x":
+            transform_matrix = matMul(
+              shear([sint, 0, 0]),
+              transform_matrix
+            )
+            break 
+
+          case "shear_y":
+             transform_matrix = matMul(
+              shear([0, sint, 0]),
+              transform_matrix
+            )
+            break
+
+          case "shear_z":
+            transform_matrix = matMul(
+              shear([0, 0, sint]),
+              transform_matrix
+            )
+            break
+
           case "scale_x":
             transform_matrix = matMul(
               scale([two_sint, 0, 0]),
@@ -438,6 +484,17 @@ Press F12 to see the console for debugging.</p>
       gl.drawElements(gl.TRIANGLES, num_indices, gl.UNSIGNED_SHORT, 0);
     }
 
+    /**
+     * select/deselect all of a of a given checkbox group.
+     */ 
+    function select_all(select, checkbox_name){
+      let checkboxes = document.getElementsByName(checkbox_name)
+
+      for (let i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = select
+      } // end loop
+    }
+
     // add a cube to the canvas 
     function add_cube(id) {
       const cube_verts_and_indices = {"vertices": cube_positions, "indices": cube_indices}
@@ -470,7 +527,7 @@ Press F12 to see the console for debugging.</p>
 
     function render() {
       gl.enable(gl.DEPTH_TEST);
-      gl.clearColor(0.5, 0.5, 0.5, 1);
+      gl.clearColor(0, 0, 0, 1);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
       // rotation matrices
@@ -498,7 +555,6 @@ Press F12 to see the console for debugging.</p>
       gl.uniformMatrix4fv(uPM, false, proj);
       gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
       gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
-      // gl.uniformMatrix4fv(transformation, false, rotation([time, time, 0.0], true))
       gl.uniformMatrix4fv(transformation, false, get_transform_matrix(get_all_transforms("transforms"), time))
      
       mode = document.getElementById("mode").value // grab the value from drop down
@@ -511,7 +567,7 @@ Press F12 to see the console for debugging.</p>
           cube_indices_buff, 
           cube_verts_and_indices.indices.length
         )
-        document.getElementById("button-box").style.visibility = "hidden"
+        // document.getElementById("button-box").style.visibility = "hidden"
       } else if (mode == "cylinder") {
         // draw a cylinder
         draw_main_object(
@@ -520,7 +576,7 @@ Press F12 to see the console for debugging.</p>
           cyl_indices_buff, 
           cyl_verts_and_indices.indices.length
         )
-        document.getElementById("button-box").style.visibility = "hidden"
+        // document.getElementById("button-box").style.visibility = "hidden"
       } else if (mode == "sphere") {
         // draw a sphere, default
         draw_main_object(
@@ -529,20 +585,21 @@ Press F12 to see the console for debugging.</p>
           sphere_indices_buff, 
           sphere_verts_and_indices.indices.length
         )
-        document.getElementById("button-box").style.visibility = "hidden"
-      } else if (mode == "free") {
-        // display some buttons for playing
-        document.getElementById("button-box").style.visibility = "visible"
-        // draw whatever's been saved so far.
-        for (let i = 0; i < free_form_cubes.length; i++) {
-          draw_main_object(
-            free_form_cubes[i]["pos_buff"], 
-            free_form_cubes[i]["color_buff"], 
-            free_form_cubes[i]["indices_buff"], 
-            free_form_cubes[i]["verts_and_indices"].indices.length
-          )
-        } // end loop
+        // document.getElementById("button-box").style.visibility = "hidden"
       }
+      // } else if (mode == "free") {
+      //   // display some buttons for playing
+      //   document.getElementById("button-box").style.visibility = "visible"
+      //   // draw whatever's been saved so far.
+      //   for (let i = 0; i < free_form_cubes.length; i++) {
+      //     draw_main_object(
+      //       free_form_cubes[i]["pos_buff"], 
+      //       free_form_cubes[i]["color_buff"], 
+      //       free_form_cubes[i]["indices_buff"], 
+      //       free_form_cubes[i]["verts_and_indices"].indices.length
+      //     )
+      //   } // end loop
+      // }
     }
 
     // Initialize when page loads
