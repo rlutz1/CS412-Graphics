@@ -62,6 +62,20 @@ Press F12 to see the console for debugging.</p>
         <button onclick="add_cube(1)">Add Cube</button>
         <button onclick="add_cube(2)">Add Cube 2</button>
       </div>
+
+      <fieldset>
+        <legend>Transformations (to play over time):</legend>
+
+          <div>
+            <input type="checkbox" name="transforms" id="rotation" value="rotation" />
+            <label for="rotation">Rotate</label>
+          </div>
+
+          <div>
+            <input type="checkbox" name="transforms" id="scale" value="scale" />
+            <label for="scale">Scale</label>
+          </div>
+      </fieldset>
     </div>
     
   
@@ -69,33 +83,33 @@ Press F12 to see the console for debugging.</p>
 
   <!-- Vertex shader -->
   <script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
-in vec3 aPosition;
-in vec3 aColor;
+  in vec3 aPosition;
+  in vec3 aColor;
 
-uniform float uTime; //time in sec
-uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
-uniform mat4 uModelTransformationMatrix;
-uniform mat4 transformation;
+  uniform float uTime; //time in sec
+  uniform mat4 uModelViewMatrix;
+  uniform mat4 uProjectionMatrix;
+  uniform mat4 uModelTransformationMatrix;
+  uniform mat4 transformation;
 
-out vec3 vColor;
+  out vec3 vColor;
 
-void main() {
-  gl_Position = uProjectionMatrix * uModelViewMatrix * uModelTransformationMatrix * transformation * vec4(aPosition,1.0);
-  vColor = aColor;
-}
-</script>
-  <!-- Fragment Shader -->
-  <script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
-precision mediump float;
-in vec3 vColor;
+  void main() {
+    gl_Position = uProjectionMatrix * uModelViewMatrix * uModelTransformationMatrix * transformation * vec4(aPosition,1.0);
+    vColor = aColor;
+  }
+  </script>
+    <!-- Fragment Shader -->
+    <script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
+  precision mediump float;
+  in vec3 vColor;
 
-out vec4 fragColor;
+  out vec4 fragColor;
 
-void main() {
-  fragColor = vec4(vColor,1.0);
-}
-</script>
+  void main() {
+    fragColor = vec4(vColor,1.0);
+  }
+  </script>
 
   <script src="primitives.js"></script>
   <script src="transformations.js"></script>
@@ -247,6 +261,22 @@ void main() {
 
     let mode; // mode for main object being shown
 
+    // function to see what checkboxes are checked
+    // for transformation animations.
+    // returns the values of the check'd boxes.
+    function get_all_transforms(checkbox_name) {
+      let checkboxes = documnet.getElementsByName(checkbox_name)
+      let checked = []
+
+      for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+          checked.push(checkboxes[i].value)
+        } // end if
+      } // end loop
+
+      return checked
+    }
+
     // method to pull out the common functionality of drawing a single
     // main object, to be further generalized with time.
     function draw_main_object(pos_buff, color_buff, indices_buff, num_indices) {
@@ -323,8 +353,8 @@ void main() {
       gl.uniformMatrix4fv(uPM, false, proj);
       gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
       gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
-      gl.uniformMatrix4fv(transformation, false, rotation([time, time, 0.0], true))
-
+      // gl.uniformMatrix4fv(transformation, false, rotation([time, time, 0.0], true))
+      gl.uniformMatrix4fv(transformation, false, get_transform_matrix(get_all_transforms("transforms")), true)
       mode = document.getElementById("mode").value // grab the value from drop down
 
       if (mode == "cube") {
