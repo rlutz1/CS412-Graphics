@@ -260,7 +260,6 @@ function reflect(radians) {
         sin, -cos, 0.0, 0.0,
         0.0,  0.0, 1.0, 0.0,
         0.0,  0.0, 0.0, 1.0,
-
     )
 
     return refl
@@ -285,6 +284,25 @@ function reflect_y() {
  */
 function reflect_xy() {
     return reflect(deg_to_rad(45))
+}
+
+/**
+ * shearing/skewing function
+ * factor -> should be 3d list where [shx, shy, shz]
+ */
+function shear(factor) {
+    const shx = factor[0]
+    const shy = factor[1]
+    const shz = factor[2]
+
+    const sh = mat4FromRows(
+        1.0,  shx, shx, 0.0,
+        shy,  1.0, shy, 0.0,
+        shz,  shz, 1.0, 0.0,
+        0.0,  0.0, 0.0, 1.0,
+    )
+
+    return sh
 }
   
 /* SHEAR/SKEW FUNCTIONS */
