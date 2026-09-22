@@ -76,11 +76,12 @@ uniform float uTime; //time in sec
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform mat4 uModelTransformationMatrix;
+uniform mat4 transformation;
 
 out vec3 vColor;
 
 void main() {
-  gl_Position = uProjectionMatrix * uModelViewMatrix * uModelTransformationMatrix * vec4(aPosition,1.0);
+  gl_Position = uProjectionMatrix * uModelViewMatrix * uModelTransformationMatrix * transformation * vec4(aPosition,1.0);
   vColor = aColor;
 }
 </script>
@@ -148,7 +149,7 @@ void main() {
     // let cube_colors...
 
     // attributes, program
-    let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM;
+    let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM, transformation;
 
     // buffers
     let cube_pos_buff, cube_color_buff, cube_indices_buff;
@@ -193,6 +194,7 @@ void main() {
         uMVM = gl.getUniformLocation(program, "uModelViewMatrix");
         uPM = gl.getUniformLocation(program, "uProjectionMatrix");
         uMTM = gl.getUniformLocation(program, "uModelTransformationMatrix");
+        transformation = gl.getUniformLocation(program, "transformation")
       } catch (e) { console.error(e); }
     }
     initShaderProgram();
@@ -320,6 +322,7 @@ void main() {
       gl.uniformMatrix4fv(uPM, false, proj);
       gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
       gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
+      gl.uniformMatrix4fv(transformation, false, rotation([deltaTime/1000.0, deltaTime/1000.0, 0.0], true))
 
       mode = document.getElementById("mode").value // grab the value from drop down
 
