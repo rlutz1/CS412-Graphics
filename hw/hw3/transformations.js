@@ -147,14 +147,79 @@ function mat4RotateY(matrix, angle) {
 
 
 // [optional] Helper function converting math format row-major matrices into a flat column-major array.
-// function mat4FromRows(m00, m01, m02, m03,
-//                       m10, m11, m12, m13,
-//                       m20, m21, m22, m23,
-//                       m30, m31, m32, m33) {
-//     return new Float32Array([
-//         m00, m10, m20, m30,   // column 0
-//         m01, m11, m21, m31,   // column 1
-//         m02, m12, m22, m32,   // column 2
-//         m03, m13, m23, m33    // column 3
-//     ]);
-// }
+function mat4FromRows(m00, m01, m02, m03,
+                      m10, m11, m12, m13,
+                      m20, m21, m22, m23,
+                      m30, m31, m32, m33) {
+    return new Float32Array([
+        m00, m10, m20, m30,   // column 0
+        m01, m11, m21, m31,   // column 1
+        m02, m12, m22, m32,   // column 2
+        m03, m13, m23, m33    // column 3
+    ]);
+}
+
+
+/**
+ * ========================================================
+ * TRANSFORMATIONS OF OBJECT
+ * ========================================================
+ */
+
+/**
+ * rotation of object by radians. can trigger clockwise.
+ * returns the float32 needed for that rotation.
+ * radians   -> should be a 3d list where [radians_x, radians_y, radians_z]
+ * clockwise -> bool, true/false
+ */
+function rotation(radians, clockwise) {
+    let rot // rotation matrix
+    const rx = radians[0]
+    const ry = radians[1]
+    const rz = radians[2]
+
+    const cosx = Math.cos(rx)
+    const cosy = Math.cos(ry)
+    const cosz = Math.cos(rz)
+
+    const sinx = Math.sin(rx)
+    const siny = Math.sin(ry)
+    const sinz = Math.sin(rz)
+
+    // if (clockwise) {
+    // set as rotation matrix
+    rot = mat4FromRows(
+        cosz * cosy, (cosz * siny * sinx) - (sinz * cosx), (cosz * siny * cosx) + (sinz * sinx), 0.0,
+        sinz * cosy, (sinz * siny * sinx) + (cosz * cosx), (sinz * siny * cosx) - (cosz * sinx), 0.0,
+        -siny      , cosy * sinx                         , cosy * cosx                         , 0.0,
+        0.0        , 0.0                                 , 0.0                                 , 1.0            
+        )
+    // }
+
+    return rot // return the matrix
+}
+
+// const rotation = `/* rotate a 3 element vector in a given direction */
+//   vec3 rotate(float radians, vec3 to_rotate, bool clockwise) {
+//     // rotation matrix 
+//     mat3 rot;
+
+//     if (clockwise) {
+//       // clockwise rotation matrix
+//       rot = mat3(
+//         cos(radians), -sin(radians), 0.0,
+//         sin(radians), cos(radians), 0.0,
+//         0.0, 0.0, 1.0
+//       );
+//     } else {
+//       // counter clockwise rotation matrix
+//       rot = mat3(
+//         cos(radians), sin(radians), 0.0,
+//         -sin(radians), cos(radians), 0.0,
+//         0.0, 0.0, 1.0
+//       );
+//     } // end if
+
+//     return  rot * to_rotate;
+//   } // end method
+//   `

@@ -117,3 +117,28 @@ these points are being generated with a MAth.floor drop, looking the most sane:
 using a higher step, offcenter: 
 
 ![points on desmos](images/image-1.png)
+
+
+
+
+
+
+### final things.
+
+i want to have the free form to be basically: 
+
+if i click on an area of the canvas, grab the point on which i clicked. then, add a sphere at that location.
+
+**at the same time, maybe i need to focus on getting some transformations in on the other end just to meet the requirements FIRST.**
+
+so that would need:
+
+1. need to rewrite a transformation as a js function.
+2. i think i may need to pull out a shape as its own program with its own shader.
+3. have an in var that is the transformation matrix (TRS, or whatever).
+4. maybe have check boxes for which transforms to do together.
+
+
+let's try that with just rotation because that's like the simplest. let's do it on the cube and verify that the cube is the only one affected, not the others.
+
+
