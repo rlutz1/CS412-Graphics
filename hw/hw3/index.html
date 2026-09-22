@@ -99,6 +99,17 @@ Press F12 to see the console for debugging.</p>
             <label for="scale_z">Scale (z)</label>
           </div>
 
+          <div>
+            <input type="checkbox" name="transforms" id="reflect_x" value="reflect_x" />
+            <label for="reflect_x">Reflect (x)</label>
+            
+            <input type="checkbox" name="transforms" id="reflect_y" value="reflect_y" />
+            <label for="reflect_y">Reflect (y)</label>
+
+            <input type="checkbox" name="transforms" id="reflect_xy" value="reflect_xy" />
+            <label for="reflect_xy">Reflect (y=x)</label>
+          </div>
+
       </fieldset>
     </div>
     
@@ -343,6 +354,27 @@ Press F12 to see the console for debugging.</p>
           case "rotation_x":
             transform_matrix = matMul(
               rotate([time, 0, 0], true), 
+              transform_matrix
+            )
+            break
+
+          case "reflect_x":
+            transform_matrix = matMul(
+              reflect_x(), 
+              transform_matrix
+            )
+            break
+
+          case "reflect_y":
+            transform_matrix = matMul(
+              reflect_y(), 
+              transform_matrix
+            )
+            break
+
+          case "reflect_xy":
+            transform_matrix = matMul(
+              reflect_xy(), 
               transform_matrix
             )
             break

@@ -244,5 +244,59 @@ function rotate(radians, clockwise) {
     return rot // return the matrix
 }
 
+/**
+ * function to reflect the object.
+ * here, we will just take in a degree value
+ * and have helpers for specific axis reflections.
+ * radians -> radians to reflect by, scalar
+ */
+function reflect(radians) {
+    const two_theta = 2 * radians
+    const sin = Math.sin(two_theta)
+    const cos = Math.cos(two_theta)
 
+    const refl = mat4FromRows(
+        cos,  sin, 0.0, 0.0,
+        sin, -cos, 0.0, 0.0,
+        0.0,  0.0, 1.0, 0.0,
+        0.0,  0.0, 0.0, 1.0,
+
+    )
+
+    return refl
+}
+
+/**
+ * reflect object over the x axis
+ */
+function reflect_x() {
+    return reflect(deg_to_rad(0))
+}
+
+/**
+ * reflect object over the y axis
+ */
+function reflect_y() {
+    return reflect(deg_to_rad(90))
+}
+
+/**
+ * reflect object over the y = x axis
+ */
+function reflect_xy() {
+    return reflect(deg_to_rad(45))
+}
+  
+/* SHEAR/SKEW FUNCTIONS */
+const shearing = `/* shear/skew a shape by shx, shy */
+  vec3 shear(float shx, float shy, vec3 to_shear) {
+    mat3 sh = mat3(
+      1.0, shy, 0.0,
+      shx, 1.0, 0.0,
+      0.0, 0.0, 1.0
+    );
+
+    return sh * to_shear;
+  } // end method
+  `
 
