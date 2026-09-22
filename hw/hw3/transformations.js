@@ -183,7 +183,7 @@ function translate(translations) {
     const ty = translations[1]
     const tz = translations[2]
 
-    let trans = mat4FromRows(
+    const trans = mat4FromRows(
         1.0, 0.0, 0.0, tx,
         0.0, 1.0, 0.0, ty,
         0.0, 0.0, 1.0, tz,
@@ -191,6 +191,26 @@ function translate(translations) {
     )
 
     return trans
+}
+
+/**
+ * scaling of an object by a given value
+ * factor -> should be a 3d list where [sx, sy, sz]
+ */
+function scale(factor) {
+    // catch the mistake of scaling by 0!
+    const sx = factor[0] == 0 ? 1 : factor[0]
+    const sy = factor[1] == 0 ? 1 : factor[1]
+    const sz = factor[2] == 0 ? 1 : factor[2]
+
+    const sc = mat4FromRows(
+        sx, 0.0, 0.0, 0.0, 
+        0.0, sy, 0.0, 0.0,
+        0.0, 0.0, sz, 0.0,
+        0.0, 0.0, 0.0, 1.0
+    )
+
+    return sc
 }
 
 /**

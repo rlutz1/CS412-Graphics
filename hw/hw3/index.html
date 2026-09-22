@@ -69,36 +69,34 @@ Press F12 to see the console for debugging.</p>
           <div>
             <input type="checkbox" name="transforms" id="translation_x" value="translation_x" />
             <label for="translation_x">Translate (x)</label>
-          </div>
-
-           <div>
+   
             <input type="checkbox" name="transforms" id="translation_y" value="translation_y" />
             <label for="translation_y">Translate (y)</label>
-          </div>
-
-           <!-- <div>
+          
             <input type="checkbox" name="transforms" id="translation_z" value="translation_z" />
             <label for="translation_z">Translate (z)</label>
-          </div> -->
+          </div>
 
           <div>
             <input type="checkbox" name="transforms" id="rotation_x" value="rotation_x" />
             <label for="rotation_x">Rotate (x)</label>
-          </div>
-
-          <div>
+         
             <input type="checkbox" name="transforms" id="rotation_y" value="rotation_y" />
             <label for="rotation_y">Rotate (y)</label>
-          </div>
-
-          <div>
+         
             <input type="checkbox" name="transforms" id="rotation_z" value="rotation_z" />
             <label for="rotation_z">Rotate (z)</label>
           </div>
 
           <div>
-            <input type="checkbox" name="transforms" id="scale" value="scale" />
-            <label for="scale">Scale</label>
+            <input type="checkbox" name="transforms" id="scale_x" value="scale_x" />
+            <label for="scale_x">Scale (x)</label>
+            
+            <input type="checkbox" name="transforms" id="scale_y" value="scale_y" />
+            <label for="scale_y">Scale (y)</label>
+
+            <input type="checkbox" name="transforms" id="scale_z" value="scale_z" />
+            <label for="scale_z">Scale (z)</label>
           </div>
 
       </fieldset>
@@ -308,17 +306,39 @@ Press F12 to see the console for debugging.</p>
     // build the final matrix for transformation of the
     // object on canvas.
     function get_transform_matrix(transforms, time) {
-      // matMul(...)
       let transform_matrix = mat4Identity()
 
       // todo: translate back to origin first?
+      // todo, need to order the values -- TRS
+      // console.log(transforms)
+      const sint = Math.sin(time) // for general use
+      const two_sint = 2 * sint
       
       for (let i = 0; i < transforms.length; i++) {
         const trans_type = transforms[i]
         
         switch(trans_type) {
-          case "scale":
-            break // do nothing for the moment.
+
+          case "scale_x":
+            transform_matrix = matMul(
+              scale([two_sint, 0, 0]),
+              transform_matrix
+            )
+            break 
+
+          case "scale_y":
+             transform_matrix = matMul(
+              scale([0, two_sint, 0]),
+              transform_matrix
+            )
+            break
+
+          case "scale_z":
+            transform_matrix = matMul(
+              scale([0, 0, two_sint]),
+              transform_matrix
+            )
+            break
          
           case "rotation_x":
             transform_matrix = matMul(
@@ -343,25 +363,26 @@ Press F12 to see the console for debugging.</p>
           
           case "translation_x":
             transform_matrix = matMul(
-              translate([Math.sin(time), 0, 0]),
+              translate([sint, 0, 0]),
               transform_matrix
             )
             break
 
           case "translation_y":
             transform_matrix = matMul(
-              translate([0, Math.sin(time), 0]),
+              translate([0, sint, 0]),
               transform_matrix
             )
             break
 
           case "translation_z":
             transform_matrix = matMul(
-              translate([0, 0, Math.sin(time)]),
+              translate([0, 0, sint]),
               transform_matrix
             )
             break
-          default:
+          
+            default:
             console.log(`get_transform_matrix got an unknown transform val: ${trans_type}`)
         }
       } // end loop
