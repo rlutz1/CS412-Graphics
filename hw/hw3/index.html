@@ -318,11 +318,12 @@ void main() {
       modelViewMatrix = mat4Translate(modelViewMatrix, [camX, camY, camZ]);
       
       //set time in seconds
-      gl.uniform1f(timeLoc, deltaTime/1000.0);
+      time = deltaTime/1000.0
+      gl.uniform1f(timeLoc, time);
       gl.uniformMatrix4fv(uPM, false, proj);
       gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
       gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
-      gl.uniformMatrix4fv(transformation, false, rotation([deltaTime/1000.0, deltaTime/1000.0, 0.0], true))
+      gl.uniformMatrix4fv(transformation, false, rotation([time, time, 0.0], true))
 
       mode = document.getElementById("mode").value // grab the value from drop down
 
