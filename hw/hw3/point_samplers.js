@@ -14,7 +14,7 @@
  *
  */
 function gen_sphere_points(
-  r=2.0, // radius of the sphere
+  r=1.5, // radius of the sphere
   center=[0, 0, 0], // center of the sphere
   h_step=0.2, // horizontal step interval // TODO: 0.2 looks a little funky
   v_step=0.1, // vertical step interval

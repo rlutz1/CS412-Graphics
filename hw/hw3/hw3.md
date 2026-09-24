@@ -142,3 +142,50 @@ so that would need:
 let's try that with just rotation because that's like the simplest. let's do it on the cube and verify that the cube is the only one affected, not the others.
 
 
+
+pulling this out for now:
+
+  // add a cube to the canvas 
+    function add_cube(id) {
+      const cube_verts_and_indices = {"vertices": cube_positions, "indices": cube_indices}
+      let cube_pos_buff 
+      let cube_color_buff
+      if (id == 1) {
+        cube_pos_buff = initBuffer(cube_verts_and_indices.vertices)
+        cube_color_buff = initBuffer(cube_colors)
+      } else {
+        cube_pos_buff = initBuffer(other_cube_positions)
+        cube_color_buff = initBuffer(other_cube_colors)
+      }
+      
+      const cube_indices_buff = initBuffer(cube_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+      draw_main_object(
+          cube_pos_buff, 
+          cube_color_buff, 
+          cube_indices_buff, 
+          cube_verts_and_indices.indices.length
+        )
+      
+      free_form_cubes.push({
+        "id": id,
+        "verts_and_indices": cube_verts_and_indices, 
+        "pos_buff": cube_pos_buff,
+        "color_buff": cube_color_buff,
+        "indices_buff": cube_indices_buff
+      })
+    }
+
+
+      // } else if (mode == "free") {
+      //   // display some buttons for playing
+      //   document.getElementById("button-box").style.visibility = "visible"
+      //   // draw whatever's been saved so far.
+      //   for (let i = 0; i < free_form_cubes.length; i++) {
+      //     draw_main_object(
+      //       free_form_cubes[i]["pos_buff"], 
+      //       free_form_cubes[i]["color_buff"], 
+      //       free_form_cubes[i]["indices_buff"], 
+      //       free_form_cubes[i]["verts_and_indices"].indices.length
+      //     )
+      //   } // end loop
+      // }

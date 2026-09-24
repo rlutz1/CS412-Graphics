@@ -72,6 +72,7 @@
         <option value="cube">Cube</option>
         <option value="cylinder">Cylinder</option>
         <option value="sphere">Sphere</option>
+        <!-- wont be available by time of final sub: -->
         <!-- <option value="free">Free Form</option> -->
       </select>
       <!-- <div id="button-box">
@@ -80,6 +81,10 @@
       </div> -->
 
       <fieldset>
+        <!-- 
+          just a fun playground for mostly me to toy with
+         different transformations in combination with different shapes.
+        -->
         <legend>Transformations:</legend>
 
           <div>
@@ -190,6 +195,7 @@
   <script src="primitives.js"></script>
   <script src="transformations.js"></script>
   <script src="point_samplers.js"></script>
+  <script src="ui_util.js"></script>
 
   <script>
 
@@ -318,7 +324,6 @@
       }
     });
 
-
     // Projection setup
     let fov = Math.PI / 4, aspect = canvas.width / canvas.height, zNear = 0.1, zFar = 100;
 
@@ -337,155 +342,10 @@
 
     let mode; // mode for main object being shown
 
-    // function to see what checkboxes are checked
-    // for transformation animations.
-    // returns the values of the check'd boxes.
-    function get_all_transforms(checkbox_name) {
-      let checkboxes = document.getElementsByName(checkbox_name)
-      let checked = []
-
-      for (let i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked) {
-          checked.push(checkboxes[i].value)
-        } // end if
-      } // end loop
-
-      return checked
-    }
-
-    // function to receive a list of readable values
-    // from the checkboxes with name "transforms".
-    // build the final matrix for transformation of the
-    // object on canvas.
-    function get_transform_matrix(transforms, time) {
-      let transform_matrix = mat4Identity()
-
-      // todo: translate back to origin first?
-      // todo, need to order the values -- TRS
-      // console.log(transforms)
-      const sint = Math.sin(time) // for general use
-      const two_sint = 2 * sint
-      
-      for (let i = 0; i < transforms.length; i++) {
-        const trans_type = transforms[i]
-        
-        switch(trans_type) {
-
-          case "shear_x":
-            transform_matrix = matMul(
-              shear([sint, 0, 0]),
-              transform_matrix
-            )
-            break 
-
-          case "shear_y":
-             transform_matrix = matMul(
-              shear([0, sint, 0]),
-              transform_matrix
-            )
-            break
-
-          case "shear_z":
-            transform_matrix = matMul(
-              shear([0, 0, sint]),
-              transform_matrix
-            )
-            break
-
-          case "scale_x":
-            transform_matrix = matMul(
-              scale([two_sint, 0, 0]),
-              transform_matrix
-            )
-            break 
-
-          case "scale_y":
-             transform_matrix = matMul(
-              scale([0, two_sint, 0]),
-              transform_matrix
-            )
-            break
-
-          case "scale_z":
-            transform_matrix = matMul(
-              scale([0, 0, two_sint]),
-              transform_matrix
-            )
-            break
-         
-          case "rotation_x":
-            transform_matrix = matMul(
-              rotate([time, 0, 0], true), 
-              transform_matrix
-            )
-            break
-
-          case "reflect_x":
-            transform_matrix = matMul(
-              reflect_x(), 
-              transform_matrix
-            )
-            break
-
-          case "reflect_y":
-            transform_matrix = matMul(
-              reflect_y(), 
-              transform_matrix
-            )
-            break
-
-          case "reflect_xy":
-            transform_matrix = matMul(
-              reflect_xy(), 
-              transform_matrix
-            )
-            break
-
-          case "rotation_y":
-            transform_matrix = matMul(
-              rotate([0, time, 0], true), 
-              transform_matrix
-            )
-            break
-
-          case "rotation_z":
-            transform_matrix = matMul(
-              rotate([0, 0, time], true), 
-              transform_matrix
-            )
-            break
-          
-          case "translation_x":
-            transform_matrix = matMul(
-              translate([sint, 0, 0]),
-              transform_matrix
-            )
-            break
-
-          case "translation_y":
-            transform_matrix = matMul(
-              translate([0, sint, 0]),
-              transform_matrix
-            )
-            break
-
-          case "translation_z":
-            transform_matrix = matMul(
-              translate([0, 0, sint]),
-              transform_matrix
-            )
-            break
-          
-            default:
-            console.log(`get_transform_matrix got an unknown transform val: ${trans_type}`)
-        }
-      } // end loop
-      console.log(transform_matrix)
-      return transform_matrix
-    }
-
-    // method to pull out the common functionality of drawing a single
-    // main object, to be further generalized with time.
+    /**
+     * method to pull out the common functionality of drawing a single
+     * main object, to be further generalized with time.
+     */
     function draw_main_object(pos_buff, color_buff, indices_buff, num_indices) {
       gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
       gl.enableVertexAttribArray(posLoc);
@@ -498,48 +358,7 @@
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices_buff);
 
       gl.drawElements(gl.TRIANGLES, num_indices, gl.UNSIGNED_SHORT, 0);
-    }
-
-    /**
-     * select/deselect all of a of a given checkbox group.
-     */ 
-    function select_all(select, checkbox_name){
-      let checkboxes = document.getElementsByName(checkbox_name)
-
-      for (let i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].checked = select
-      } // end loop
-    }
-
-    // add a cube to the canvas 
-    function add_cube(id) {
-      const cube_verts_and_indices = {"vertices": cube_positions, "indices": cube_indices}
-      let cube_pos_buff 
-      let cube_color_buff
-      if (id == 1) {
-        cube_pos_buff = initBuffer(cube_verts_and_indices.vertices)
-        cube_color_buff = initBuffer(cube_colors)
-      } else {
-        cube_pos_buff = initBuffer(other_cube_positions)
-        cube_color_buff = initBuffer(other_cube_colors)
-      }
-      
-      const cube_indices_buff = initBuffer(cube_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
-      draw_main_object(
-          cube_pos_buff, 
-          cube_color_buff, 
-          cube_indices_buff, 
-          cube_verts_and_indices.indices.length
-        )
-      
-      free_form_cubes.push({
-        "id": id,
-        "verts_and_indices": cube_verts_and_indices, 
-        "pos_buff": cube_pos_buff,
-        "color_buff": cube_color_buff,
-        "indices_buff": cube_indices_buff
-      })
-    }
+    } // end method
 
     function render() {
       gl.enable(gl.DEPTH_TEST);
@@ -575,48 +394,39 @@
      
       mode = document.getElementById("mode").value // grab the value from drop down
 
-      if (mode == "cube") {
-        // draw your cube
-        draw_main_object(
-          cube_pos_buff, 
-          cube_color_buff, 
-          cube_indices_buff, 
-          cube_verts_and_indices.indices.length
-        )
-        // document.getElementById("button-box").style.visibility = "hidden"
-      } else if (mode == "cylinder") {
-        // draw a cylinder
-        draw_main_object(
+      switch (mode) {
+        case "cube":
+          // draw your cube
+          draw_main_object(
+            cube_pos_buff, 
+            cube_color_buff, 
+            cube_indices_buff, 
+            cube_verts_and_indices.indices.length
+          )
+          break
+        case "cylinder":
+          // draw a cylinder
+          draw_main_object(
           cyl_pos_buff, 
           cyl_color_buff, 
           cyl_indices_buff, 
           cyl_verts_and_indices.indices.length
-        )
-        // document.getElementById("button-box").style.visibility = "hidden"
-      } else if (mode == "sphere") {
-        // draw a sphere, default
-        draw_main_object(
-          sphere_pos_buff, 
-          sphere_color_buff, 
-          sphere_indices_buff, 
-          sphere_verts_and_indices.indices.length
-        )
-        // document.getElementById("button-box").style.visibility = "hidden"
-      }
-      // } else if (mode == "free") {
-      //   // display some buttons for playing
-      //   document.getElementById("button-box").style.visibility = "visible"
-      //   // draw whatever's been saved so far.
-      //   for (let i = 0; i < free_form_cubes.length; i++) {
-      //     draw_main_object(
-      //       free_form_cubes[i]["pos_buff"], 
-      //       free_form_cubes[i]["color_buff"], 
-      //       free_form_cubes[i]["indices_buff"], 
-      //       free_form_cubes[i]["verts_and_indices"].indices.length
-      //     )
-      //   } // end loop
-      // }
-    }
+          )
+          break
+        case "sphere":
+          // draw a sphere, default
+          draw_main_object(
+            sphere_pos_buff, 
+            sphere_color_buff, 
+            sphere_indices_buff, 
+            sphere_verts_and_indices.indices.length
+          )
+          break
+        default:
+          console.log("Something very wrong: drop down is somehow no valid option: cube, cylinder, sphere.")
+      } // end switch
+
+    } // end render
 
     // Initialize when page loads
     window.onload = function () {
