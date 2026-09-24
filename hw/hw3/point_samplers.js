@@ -220,54 +220,61 @@ function gen_cylinder_points(
   //  GENERATE INDICES
   // ==================================
 
-  // set up the indices
-  let last_pt_index = (vertices.length / 3) - 1 // 9
-  let lower_band = last_pt_index - h_steps // 5
+  // this is done wiht ~the same approach as the sphere!
+  // see that method for more detailed explanations.
 
-  // SET UP POLAR NORTH indices
-  for (let i = 1; i < h_steps; i++) { // for each horizontal step
+  let last_pt_index = (vertices.length / 3) - 1 // last poss index
+  let lower_band = last_pt_index - h_steps // the start of the last band
+
+  // create the base indeces, again making a spokes-in-wheel connection
+  for (let i = 1; i < h_steps; i++) {
     indices.push(0, i, i + 1)
   } // end loop
-  indices.push(0, h_steps, 1)
+  indices.push(0, h_steps, 1) // special case wrap around
 
-  // SET UP THE MIDDLE VERTICES (general case)
-  for (let band_index = 1; band_index < lower_band; band_index += h_steps) { // TODO: -1 is important
+  // set up the banding indeces in the same triangular way as sphere
+  for (let band_index = 1; band_index < lower_band; band_index += h_steps) { 
     for (let inc = 0; inc < h_steps - 1; inc++) {
-      const bottom_left = band_index + inc // 1
-      const top_left = bottom_left + h_steps // 5
-      const top_right = bottom_left + h_steps + 1 // 6
-      const bottom_right = bottom_left + 1 // 2
+      // grab all 4 indeces for 2 triangles
+      const bottom_left = band_index + inc 
+      const top_left = bottom_left + h_steps 
+      const top_right = bottom_left + h_steps + 1 
+      const bottom_right = bottom_left + 1 
 
+      // and the two triangles
       indices.push(
         bottom_left, top_left, top_right,
         bottom_left, bottom_right, top_right
       )
     } // end loop 
-    // special last case
-    const bottom_left = band_index + h_steps - 1 // 4
-    const top_left = bottom_left + h_steps // 8
-    const top_right = band_index + h_steps // 5
-    const bottom_right = band_index // 1
 
+    // special last case wrap around
+    const bottom_left = band_index + h_steps - 1 
+    const top_left = bottom_left + h_steps 
+    const top_right = band_index + h_steps 
+    const bottom_right = band_index 
+
+    // add the triangles
     indices.push(
         bottom_left, top_left, top_right,
         bottom_left, bottom_right, top_right
       )
   } // end loop
 
-  // SET UP THE POLAR SOUTH indices
+  // finally, set up the top center spoke pattern
   for (let i = lower_band; i < last_pt_index - 1; i++) {
     indices.push(last_pt_index, i, i + 1)
-  }
-  indices.push(last_pt_index, last_pt_index - 1, lower_band)
+  } // end loop
+  indices.push(last_pt_index, last_pt_index - 1, lower_band) // special case wrap around
 
+  // return as a js dict
   return {
     "vertices": new Float32Array(vertices), 
     "indices": new Uint16Array(indices)
-  } // return as a js dict
-}
+  } 
+} // end method
 
-// quick testing colors
+// quick testing colors for fun
 function gen_cylinder_colors(num_vertices) {
   let cyl_color = []
 
@@ -275,11 +282,11 @@ function gen_cylinder_colors(num_vertices) {
     if (v % 6 == 0) {
       cyl_color.push(0.3, 0.3, 0)
     } else if (v % 6 == 2) {
-      cyl_color.push(0.3, 0.4, 0)
+      cyl_color.push(0.3, 0.6, 0)
     } else {
       cyl_color.push(0.1, 0, 0.1)
-    }
-  }
+    } // end if
+  } // end loop
 
   return new Float32Array(cyl_color)
-}
+} // end method
