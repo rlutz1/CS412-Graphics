@@ -1,3 +1,8 @@
+/**
+ * file with both projection transformations for viewing
+ * and object transformations.
+ */
+
 // The perspective matrix is built as a product of three factors:
 //
 //     M_per = M_orth * P * F
@@ -164,7 +169,7 @@ function mat4FromRows(m00, m01, m02, m03,
  */
 function deg_to_rad(degrees) {
     return degrees * (Math.PI / 180.0);
-}
+} // end method
 
 
 /**
@@ -191,7 +196,7 @@ function translate(translations) {
     )
 
     return trans
-}
+} // end method
 
 /**
  * scaling of an object by a given value
@@ -211,7 +216,7 @@ function scale(factor) {
     )
 
     return sc
-}
+} // end method
 
 /**
  * rotation of object by radians. can trigger clockwise.
@@ -242,7 +247,7 @@ function rotate(radians, clockwise) {
     )
 
     return rot // return the matrix
-}
+} // end method
 
 /**
  * function to reflect the object.
@@ -263,28 +268,28 @@ function reflect(radians) {
     )
 
     return refl
-}
+} // end method
 
 /**
  * reflect object over the x axis
  */
 function reflect_x() {
     return reflect(deg_to_rad(0))
-}
+} // end method
 
 /**
  * reflect object over the y axis
  */
 function reflect_y() {
     return reflect(deg_to_rad(90))
-}
+} // end method
 
 /**
  * reflect object over the y = x axis
  */
 function reflect_xy() {
     return reflect(deg_to_rad(45))
-}
+} // end method
 
 /**
  * shearing/skewing function
@@ -303,18 +308,5 @@ function shear(factor) {
     )
 
     return sh
-}
-  
-/* SHEAR/SKEW FUNCTIONS */
-const shearing = `/* shear/skew a shape by shx, shy */
-  vec3 shear(float shx, float shy, vec3 to_shear) {
-    mat3 sh = mat3(
-      1.0, shy, 0.0,
-      shx, 1.0, 0.0,
-      0.0, 0.0, 1.0
-    );
-
-    return sh * to_shear;
-  } // end method
-  `
+} // end method
 
