@@ -2,6 +2,7 @@
  * file here is a holder for all point sampling
  * functions to generate a set of points over an interval
  * with a specific step.
+ * this holds the functions for generating: sphere, cylinder
  */
 
 
@@ -10,18 +11,18 @@
  * x = x_c + r * sin(v) * cos(u)
  * y = y_c + r * sin(v) * sin(u)
  * z = z_c + r * cos(v)
- * center: (x_c, y_c, z_c)
+ *
  */
 function gen_sphere_points(
-  r=1.5, // radius of the sphere
+  r=2.0, // radius of the sphere
   center=[0, 0, 0], // center of the sphere
-  h_step=0.3, // horizontal step interval // TODO: 0.2 looks a little funky
+  h_step=0.2, // horizontal step interval // TODO: 0.2 looks a little funky
   v_step=0.1, // vertical step interval
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
   v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
 ) {
 
-  // save for non-constant indexing
+  // save for later use indexing
   const v_min = v_range[0]
   const v_max = v_range[1]
   const h_min = h_range[0]
@@ -34,12 +35,13 @@ function gen_sphere_points(
   const vertices = [] // simple js array for collection of vertices
   const indices = [] // js array for collecting indices
 
-  for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
-    if (v_i == 0) { // north pole
-      vertices.push(center[0], center[1], r) // save the polar cap
-    } else if (v_i == v_steps) { // south pole
-      vertices.push(center[0], center[1], -r) // save the polar cap
-    } else {
+  // ==================================
+  //  GENERATE POINTS
+  // ==================================
+
+  vertices.push(center[0], center[1], r) // save the north polar cap
+
+  for (let v_i = 1; v_i < v_steps; v_i++) { // for each vertical step
        // get our current v, which is the v in (h, v)
         const v = v_min + (v_i * v_step)
         const sin_v = Math.sin(v) // save for later
@@ -55,13 +57,12 @@ function gen_sphere_points(
           const x = center[0] + (r * sin_v * cos_h)
           const y = center[1] + (r * sin_v * sin_h)
           const z = center[2] + (r * cos_v)
-          // console.log(x, y, z)
           vertices.push(x, y, z) // save the points
-
-        } // end if
       } // end loop
     } // end loop
    
+    vertices.push(center[0], center[1], -r) // save the south polar cap
+
     let last_pt_index = (vertices.length / 3) - 1 // 9
     let lower_band = last_pt_index - h_steps // 5
 
