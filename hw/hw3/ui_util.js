@@ -1,4 +1,8 @@
 /**
+ * some utility functions for some of the UI changes/actions.
+ */
+
+/**
  * function to see what checkboxes are checked
  * for transformation animations.
  * returns the values of the check'd boxes.
