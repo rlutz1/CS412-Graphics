@@ -110,10 +110,31 @@
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <canvas id="glcanvas" width="400" height="400"></canvas>
     </div>
-    <div class="slidecontainer">
-      <h4>Rotation of Base (degrees)</h4>
-      <p id="curr_base_range"><b>Current Rotation: 0 degrees</b></p>
-      <input type="range" min="0" max="360" value="0" class="slider" step="1" id="base_range">
+    <div id="slidecontainer" class="slidecontainer">
+      <div id="base">
+        <h4>Rotation of Base (degrees)</h4>
+        <p id="curr_base_range"></p>
+        <input type="range" min="0" max="360" value="0" class="slider" step="1" id="base_range">
+      </div>
+
+      <div id="seg2">
+        <h4>Rotation of Segment 2 (degrees)</h4>
+        <p id="curr_seg2_range"></p>
+        <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg2_range">
+      </div>
+
+      <div id="seg3">
+        <h4>Rotation of Segment 3 (degrees)</h4>
+        <p id="curr_seg3_range"></p>
+        <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg3_range">
+      </div>
+
+      <div id="top">
+        <h4>Rotation of Top (degrees)</h4>
+        <p id="curr_top_range"></p>
+        <input type="range" min="0" max="360" value="0" class="slider" step="1" id="top_range">
+      </div>
+      
     </div>
   
   </div>
@@ -153,14 +174,21 @@
   <script src="point_samplers.js"></script>
   <script src="ui_util.js"></script>
   <script>
-    var slider = document.getElementById("base_range");
-    var output = document.getElementById("curr_base_range");
-    output.innerHTML = `<i>Current Rotation:</i> ${slider.value} degrees`; // Display the default slider value
+    let sliders = document.getElementById("slidecontainer");
 
-    // Update the current slider value (each time you drag the slider handle)
-    slider.oninput = function() {
-      output.innerHTML = `<i>Current Rotation:</i> ${this.value} degrees`;
-    } 
+    for (const child of sliders.children) {
+      console.log(`curr_${child.id}_range`); // Accesses each HTML element
+      let slider = document.getElementById(`${child.id}_range`);
+      let output = document.getElementById(`curr_${child.id}_range`);
+      output.innerHTML = `<i>${child.id} Current Rotation:</i> ${slider.value} degrees`; // Display the default slider value
+
+      // Update the current slider value (each time you drag the slider handle)
+      slider.oninput = function() {
+        output.innerHTML = `<i>${child.id} Current Rotation:</i> ${this.value} degrees`;
+      } // end function
+    } // end loop
+
+   
   </script>
 
   <script>
