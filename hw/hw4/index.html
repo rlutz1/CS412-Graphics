@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>UNM CS 412/512 HW3</title>
+  <style>
+    body {
+      background: #111;
+      color: #ccc;
+      font-family: monospace;
+    }
+
+    textarea {
+      background: #222;
+      color: #0f0;
+      font: 14px monospace;
+      width: 400px;
+      height: 250px;
+    }
+
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      border: 1px solid #444;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Interactive Controls & Geometric Primitives</h2>
+  <p>
+    Edit vertex and fragment shaders on the left to get the result instantly.<br>
+    Use mouse to drag and rotate the cube. <br>
+    Use arrow keys and w, s keys to move the camera.<br>
+    Save your code to source file if you want to save it.<br>
+    Press F12 to see the console for debugging.
+  </p>
+      
+  <h3>Submission by:</h3>
+  <p>
+    Roxanne Krause <br />
+    CS412 <br />
+    9/25/26 <br />
+  </p>
+  
+
+  <p>
+    Use the drop down to change the shape drawn. <br />
+    Apply different transformations with respect to time (except reflection)
+    to play around with different effects.
+  </p>
+
+  <div style="display: flex; gap: 10px; align-items: flex-start;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div>
+        <b>Vertex Shader</b><br>
+        <textarea id="vertEditor"></textarea>
+      </div>
+      <div>
+        <b>Fragment Shader</b><br>
+        <textarea id="fragEditor"></textarea>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <canvas id="glcanvas" width="400" height="400"></canvas>
+      <select name="Shapes" id="mode" style="text-align: center; font-size: 20px">
+        <option value="cube">Cube</option>
+        <option value="cylinder">Cylinder</option>
+        <option value="sphere">Sphere</option>
+        <!-- wont be available by time of final sub: -->
+        <!-- <option value="free">Free Form</option> -->
+      </select>
+      <!-- <div id="button-box">
+        <button onclick="add_cube(1)">Add Cube</button>
+        <button onclick="add_cube(2)">Add Cube 2</button>
+      </div> -->
+
+      <fieldset>
+        <!-- 
+          just a fun playground for mostly me to toy with
+         different transformations in combination with different shapes.
+        -->
+        <legend>Transformations:</legend>
+
+          <div>
+              <button onclick="select_all(true, 'transforms')">Select All</button> 
+              <button onclick="select_all(false, 'transforms')">Clear All</button>
+          </div>
+
+          <div>
+            <p><b>Translations:</b></p>
+
+            <input type="checkbox" name="transforms" id="translation_x" value="translation_x" />
+            <label for="translation_x">Translate (x)</label>
+   
+            <input type="checkbox" name="transforms" id="translation_y" value="translation_y" />
+            <label for="translation_y">Translate (y)</label>
+          
+            <input type="checkbox" name="transforms" id="translation_z" value="translation_z" />
+            <label for="translation_z">Translate (z)</label>
+          </div>
+
+          <div>
+            <p><b>Rotations:</b></p>
+
+            <input type="checkbox" name="transforms" id="rotation_x" value="rotation_x" />
+            <label for="rotation_x">Rotate (x)</label>
+         
+            <input type="checkbox" name="transforms" id="rotation_y" value="rotation_y" />
+            <label for="rotation_y">Rotate (y)</label>
+         
+            <input type="checkbox" name="transforms" id="rotation_z" value="rotation_z" />
+            <label for="rotation_z">Rotate (z)</label>
+          </div>
+
+          <div>
+            <p><b>Scaling:</b></p>
+
+            <input type="checkbox" name="transforms" id="scale_x" value="scale_x" />
+            <label for="scale_x">Scale (x)</label>
+            
+            <input type="checkbox" name="transforms" id="scale_y" value="scale_y" />
+            <label for="scale_y">Scale (y)</label>
+
+            <input type="checkbox" name="transforms" id="scale_z" value="scale_z" />
+            <label for="scale_z">Scale (z)</label>
+          </div>
+
+          <div>
+            <p><b>Reflection:</b></p>
+
+            <input type="checkbox" name="transforms" id="reflect_x" value="reflect_x" />
+            <label for="reflect_x">Reflect (x)</label>
+            
+            <input type="checkbox" name="transforms" id="reflect_y" value="reflect_y" />
+            <label for="reflect_y">Reflect (y)</label>
+
+            <input type="checkbox" name="transforms" id="reflect_xy" value="reflect_xy" />
+            <label for="reflect_xy">Reflect (y=x)</label>
+          </div>
+
+          <div>
+            <p><b>Shear/Skewing:</b></p>
+
+            <input type="checkbox" name="transforms" id="shear_x" value="shear_x" />
+            <label for="shear_x">Shear (x)</label>
+            
+            <input type="checkbox" name="transforms" id="shear_y" value="shear_y" />
+            <label for="shear_y">Shear (y)</label>
+
+            <input type="checkbox" name="transforms" id="shear_z" value="shear_z" />
+            <label for="shear_z">Shear (z)</label>
+          </div>
+
+      </fieldset>
+    </div>
+  
+  </div>
+
+  <!-- Vertex shader -->
+  <script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
+  in vec3 aPosition;
+  in vec3 aColor;
+
+  uniform float uTime; //time in sec
+  uniform mat4 uModelViewMatrix;
+  uniform mat4 uProjectionMatrix;
+  uniform mat4 uModelTransformationMatrix;
+  uniform mat4 transformation;
+
+  out vec3 vColor;
+
+  void main() {
+    gl_Position = uProjectionMatrix * uModelViewMatrix * uModelTransformationMatrix * transformation * vec4(aPosition,1.0);
+    vColor = aColor;
+  }
+  </script>
+    <!-- Fragment Shader -->
+    <script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
+  precision mediump float;
+  in vec3 vColor;
+
+  out vec4 fragColor;
+
+  void main() {
+    fragColor = vec4(vColor,1.0);
+  }
+  </script>
+
+  <script src="primitives.js"></script>
+  <script src="transformations.js"></script>
+  <script src="point_samplers.js"></script>
+  <script src="ui_util.js"></script>
+
+  <script>
+
+    function createShader(gl, type, source) {
+      let shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        throw new Error(gl.getShaderInfoLog(shader));
+      }
+      return shader;
+    }
+
+    function createProgram(gl, vsSource, fsSource) {
+      let vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+      let fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+      let prog = gl.createProgram();
+      gl.attachShader(prog, vs);
+      gl.attachShader(prog, fs);
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        throw new Error(gl.getProgramInfoLog(prog));
+      }
+      return prog;
+    }
+
+    // WebGL setup
+    const canvas = document.getElementById("glcanvas");
+    const gl = canvas.getContext("webgl2");
+    if (!gl) alert("WebGL2 not supported");
+
+    let vertEditor = document.getElementById("vertEditor");
+    let fragEditor = document.getElementById("fragEditor");
+    vertEditor.value = document.getElementById("vertex-shader").textContent;
+    fragEditor.value = document.getElementById("fragment-shader").textContent;
+
+    // default cylinder points and colors    
+    let cyl_verts_and_indices = gen_cylinder_points() // cylinder point generation
+    let cyl_colors = gen_cylinder_colors(cyl_verts_and_indices.vertices.length) // get some dynamic colors
+    
+    // default sphere points and colors 
+    let sphere_verts_and_indices = gen_sphere_points() // sphere point generator
+    let sphere_colors = gen_sphere_colors(sphere_verts_and_indices.vertices.length) // get some dynamic colors
+
+    // cube points and colors -- really just for consistency with other shapes for now
+    let cube_verts_and_indices = {"vertices": cube_positions, "indices": cube_indices}
+    // let cube_colors...
+
+    // attributes, program
+    let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM, transformation;
+
+    // buffers
+    let cube_pos_buff, cube_color_buff, cube_indices_buff;
+    let cyl_pos_buff, cyl_color_buff, cyl_indices_buff
+    let sphere_pos_buff, sphere_color_buff, sphere_indices_buff
+
+    let free_form_cubes = []
+
+    function initBuffer(data, type=gl.ARRAY_BUFFER, gl_hint=gl.STATIC_DRAW) {
+      buff = gl.createBuffer();
+      gl.bindBuffer(type, buff);
+      gl.bufferData(type, data, gl_hint);
+      return buff
+    }
+
+    // Buffers
+    function initBuffers() {
+      // cube
+      cube_pos_buff = initBuffer(cube_verts_and_indices.vertices)
+      cube_color_buff = initBuffer(cube_colors)
+      cube_indices_buff = initBuffer(cube_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+
+      // cylinder
+      cyl_pos_buff = initBuffer(cyl_verts_and_indices.vertices)
+      cyl_color_buff = initBuffer(cyl_colors)
+      cyl_indices_buff = initBuffer(cyl_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+
+      // sphere
+      sphere_pos_buff = initBuffer(sphere_verts_and_indices.vertices)
+      sphere_color_buff = initBuffer(sphere_colors)
+      sphere_indices_buff = initBuffer(sphere_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+    }
+    initBuffers();
+
+    function initShaderProgram() {
+      try {
+        program = createProgram(gl, vertEditor.value, fragEditor.value);
+        gl.useProgram(program);
+        posLoc = gl.getAttribLocation(program, "aPosition");
+        colorLoc = gl.getAttribLocation(program, "aColor");
+        timeLoc = gl.getUniformLocation(program, "uTime");
+        uMVM = gl.getUniformLocation(program, "uModelViewMatrix");
+        uPM = gl.getUniformLocation(program, "uProjectionMatrix");
+        uMTM = gl.getUniformLocation(program, "uModelTransformationMatrix");
+        transformation = gl.getUniformLocation(program, "transformation")
+      } catch (e) { console.error(e); }
+    }
+    initShaderProgram();
+    vertEditor.onkeyup = initShaderProgram;
+    fragEditor.onkeyup = initShaderProgram;
+
+    // Mouse and keyboard interactions
+    let mouseDown = false, lastX, lastY, cubeRotX = 0, cubeRotY = 0;
+    let camX = 0, camY = 0, camZ = -6;
+
+    canvas.addEventListener('mousedown', e => { mouseDown = true; lastX = e.clientX; lastY = e.clientY; });
+    canvas.addEventListener('mouseup', () => mouseDown = false);
+    canvas.addEventListener('mousemove', e => {
+      if (!mouseDown) return;
+      let dx = e.clientX - lastX;
+      let dy = e.clientY - lastY;
+      cubeRotY += dx * 0.01;
+      cubeRotX += dy * 0.01;
+      lastX = e.clientX; lastY = e.clientY;
+    });
+
+    document.addEventListener('keydown', e => {
+      const step = 0.2;
+      switch (e.key) {
+        case 'ArrowUp': camY -= step; break;
+        case 'ArrowDown': camY += step; break;
+        case 'ArrowLeft': camX += step; break;
+        case 'ArrowRight': camX -= step; break;
+        case 'w': camZ += step; break;
+        case 's': camZ -= step; break;
+      }
+    });
+
+    // Projection setup
+    let fov = Math.PI / 4, aspect = canvas.width / canvas.height, zNear = 0.1, zFar = 100;
+
+    let orthoSize = 2.5;
+
+    // Perspective and Orthographic projection
+    let projPerspective = perspective(fov, aspect, zNear, zFar);
+
+    let projOrtho = matMul(
+    box2Cube(-orthoSize * aspect, orthoSize * aspect, -orthoSize, orthoSize, zNear, zFar),
+    flipZ()
+);
+    let proj = projOrtho;
+
+    let startTime = Date.now();
+
+    let mode; // mode for main object being shown
+
+    /**
+     * method to pull out the common functionality of drawing a single
+     * main object, to be further generalized with time.
+     */
+    function draw_main_object(pos_buff, color_buff, indices_buff, num_indices) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
+      gl.enableVertexAttribArray(posLoc);
+      gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
+      gl.enableVertexAttribArray(colorLoc);
+      gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
+      
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices_buff);
+
+      gl.drawElements(gl.TRIANGLES, num_indices, gl.UNSIGNED_SHORT, 0);
+    } // end method
+
+    function render() {
+      gl.enable(gl.DEPTH_TEST);
+      gl.clearColor(0, 0, 0, 1);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+      // rotation matrices
+      let cx = Math.cos(cubeRotY), sx = Math.sin(cubeRotY);
+      let cy = Math.cos(cubeRotX), sy = Math.sin(cubeRotX);
+      let rotX = [1, 0, 0, 0, 0, cy, sy, 0, 0, -sy, cy, 0, 0, 0, 0, 1];
+      let rotY = [cx, 0, -sx, 0, 0, 1, 0, 0, sx, 0, cx, 0, 0, 0, 0, 1];
+      let cubeRotation = multiplyMat4(rotY, rotX);
+
+      // init model-view matrix as identity matrix
+      let modelViewMatrix = mat4Identity();
+      // init model transformation matrix as identity matrix
+      let modelTransformationMatrix = mat4Identity();
+
+      //delta time in ms
+      let deltaTime = Date.now() - startTime;
+      // object rotation
+      modelTransformationMatrix = multiplyMat4(modelTransformationMatrix, cubeRotation);
+      // camera translation
+      modelViewMatrix = mat4Translate(modelViewMatrix, [camX, camY, camZ]);
+      
+      //set time in seconds
+      time = deltaTime/1000.0
+      gl.uniform1f(timeLoc, time);
+      gl.uniformMatrix4fv(uPM, false, proj);
+      gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
+      gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
+      gl.uniformMatrix4fv(transformation, false, get_transform_matrix(get_all_transforms("transforms"), time))
+     
+      mode = document.getElementById("mode").value // grab the value from drop down
+
+      switch (mode) {
+        case "cube":
+          // draw your cube
+          draw_main_object(
+            cube_pos_buff, 
+            cube_color_buff, 
+            cube_indices_buff, 
+            cube_verts_and_indices.indices.length
+          )
+          break
+        case "cylinder":
+          // draw a cylinder
+          draw_main_object(
+          cyl_pos_buff, 
+          cyl_color_buff, 
+          cyl_indices_buff, 
+          cyl_verts_and_indices.indices.length
+          )
+          break
+        case "sphere":
+          // draw a sphere, default
+          draw_main_object(
+            sphere_pos_buff, 
+            sphere_color_buff, 
+            sphere_indices_buff, 
+            sphere_verts_and_indices.indices.length
+          )
+          break
+        default:
+          console.log("Something very wrong: drop down is somehow no valid option: cube, cylinder, sphere.")
+      } // end switch
+
+    } // end render
+
+    // Initialize when page loads
+    window.onload = function () {
+      setInterval(render, 30); // execute this code with a 30 ms delay on each call
+    }
+
+  </script>
+</body>
+
+</html>

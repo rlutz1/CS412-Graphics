@@ -1,0 +1,48 @@
+// cube
+const cube_positions = new Float32Array([
+  -1, -1, -1,  // 0
+   1, -1, -1,  // 1
+   1,  1, -1,  // 2
+  -1,  1, -1,  // 3
+  -1, -1,  1,  // 4
+   1, -1,  1,  // 5
+   1,  1,  1,  // 6
+  -1,  1,  1   // 7
+]);
+
+// ignore: likely won't be ready for final submission sadly, testing only
+// const other_cube_positions = new Float32Array([
+//   -2, -2, -2,  // 0
+//    1, -2, -2,  // 1
+//    1,  1, -2,  // 2
+//   -2,  1, -2,  // 3
+//   -2, -2,  1,  // 4
+//    1, -2,  1,  // 5
+//    1,  1,  1,  // 6
+//   -2,  1,  1   // 7
+// ]);
+
+const cube_colors = new Float32Array([
+  1,0,0,  0,1,0,  0,0,1, 1,1,0, 1,0,1, 0,1,1, 1,1,0, 1,0,1
+]);
+
+// again, not ready for final sub
+// const other_cube_colors = new Float32Array([
+//   1,0,0,  1,0,0,  1,0,0, 0,1,0, 0,1,0, 0,0,1, 0,0,1, 0,0,1
+// ]);
+
+
+const cube_indices = new Uint16Array([
+  // Front
+  4, 5, 6,   4, 6, 7,
+  // Back
+  1, 0, 3,   1, 3, 2,
+  // Top
+  3, 7, 6,   3, 6, 2,
+  // Bottom
+  0, 1, 5,   0, 5, 4,
+  // Right
+  1, 2, 6,   1, 6, 5,
+  // Left
+  0, 4, 7,   0, 7, 3,
+]);
