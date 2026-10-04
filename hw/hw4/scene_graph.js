@@ -370,14 +370,6 @@ class SceneObjectNode {
   /**
    * method to pull out the common functionality of drawing a single
    * main object, to be further generalized with time.
-   * 
-   * TODO: the attribute locations.
-   * // grab vertex transform matrices from dictionary
-
-    // push vertex transforms to stack
-    // push part transforms to the stack
-    // set stack transforms to attribute in the vertex shader
-    // pop off my part transform
    */
   render(vertex_transforms, stack) {
     // vertex/positions buffer

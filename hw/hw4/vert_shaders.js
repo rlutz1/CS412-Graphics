@@ -26,17 +26,17 @@ const basic_vert_shader = {
     out vec3 vColor;
 
     void main() {
-      mat4 all_transforms = uProjectionMatrix * uModelViewMatrix;
-
-      for (int i = 0; i < transforms_up_to; i++) {
-        all_transforms *= uModelTransformationMatrix[i]; // add all transforms
-      } // end loop
+      vec4 pos = vec4(aPosition,1.0);
 
       for (int i = 0; i < parts_transforms_up_to; i++) {
-        all_transforms *= parts_transforms[i]; // add all transforms
+        pos = parts_transforms[i] * pos; // add all transforms
       } // end loop
-
-      gl_Position =  all_transforms * vec4(aPosition,1.0);
+      
+      for (int i = 0; i < transforms_up_to; i++) {
+        pos = uModelTransformationMatrix[i] * pos; // add all transforms
+      } // end loop
+      
+      gl_Position =  uProjectionMatrix * uModelViewMatrix * pos;
       
       vColor = aColor;
     }

@@ -18,7 +18,7 @@ function generate_arm(gl) {
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
   let cyl_verts_and_indices = gen_cylinder_points(); // the vertices to start with
   let cyl_colors = gen_cylinder_colors(cyl_verts_and_indices.vertices.length);
-  let part_transforms = [translate([0, -1, 0]), rotate([deg_to_rad(90), 0, 0], true)];
+  let part_transforms = [rotate([deg_to_rad(90), 0, 0], true), translate([0, 0, 0])];
 
   // make this a scene node.
   const base = new SceneObjectNode("base", cyl_verts_and_indices, cyl_colors, part_transforms, gl, object.program);
@@ -27,7 +27,7 @@ function generate_arm(gl) {
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
   cyl_verts_and_indices = gen_cylinder_points(); // the vertices to start with
   cyl_colors = gen_cylinder_colors(cyl_verts_and_indices.vertices.length);
-  part_transforms = [translate([0, 0, 0]), rotate([deg_to_rad(90), 0, 0], true), scale([0.5, 0.5, 0])];
+  part_transforms = [scale([0.75, 0.75, 0]), rotate([deg_to_rad(90), 0, 0], true), translate([0, 1, 0])];
 
   // make this a scene node.
   const seg2 = new SceneObjectNode("seg2", cyl_verts_and_indices, cyl_colors, part_transforms, gl, object.program);
@@ -36,7 +36,7 @@ function generate_arm(gl) {
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
   cyl_verts_and_indices = gen_cylinder_points(); // the vertices to start with
   cyl_colors = gen_cylinder_colors(cyl_verts_and_indices.vertices.length);
-  part_transforms = [translate([0, 1, 0]), rotate([deg_to_rad(90), 0, 0], true),  scale([0.4, 0.4, 0])];
+  part_transforms = [scale([0.5, 0.5, 0]), rotate([deg_to_rad(90), 0, 0], true), translate([0, 2, 0])];
 
   // make this a scene node.
   const seg3 = new SceneObjectNode("seg3", cyl_verts_and_indices, cyl_colors, part_transforms, gl, object.program);
