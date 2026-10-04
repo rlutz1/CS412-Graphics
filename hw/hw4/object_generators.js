@@ -27,7 +27,7 @@ function generate_arm(gl) {
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
   cyl_verts_and_indices = gen_cylinder_points(); // the vertices to start with
   cyl_colors = gen_cylinder_colors(cyl_verts_and_indices.vertices.length);
-  part_transforms = [translate([0, 0, 0]), rotate([deg_to_rad(90), 0, 0], true)];
+  part_transforms = [translate([0, 1, 0]), rotate([deg_to_rad(90), 0, 0], true)];
 
   // make this a scene node.
   const seg2 = new SceneObjectNode("seg2", cyl_verts_and_indices, cyl_colors, part_transforms, gl, object.program);

@@ -130,13 +130,19 @@
         "arm": {
           
           "base": {
-            "vertex_transforms": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
+            "vertex_transforms": [
+              rotate([0, 0, deg_to_rad(document.getElementById(`base_range`).value)], true)
+            ],
             
             "seg2": {
-              "vertex_transforms": [rotate([deg_to_rad(document.getElementById(`seg2_range`).value), 0, 0], true)],
+              "vertex_transforms": [
+                rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)
+              ],
               
               "seg3": {
-                "vertex_transforms": [rotate([deg_to_rad(document.getElementById(`seg3_range`).value), 0, 0], true)]
+                "vertex_transforms": [
+                  rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)
+                ]
               }
             
             }
