@@ -19,7 +19,9 @@ const basic_vert_shader = {
     
     // allow for many matrices in a row
     uniform mat4 uModelTransformationMatrix[50];
-    in int transforms_up_to; // apply these many transforms
+    uniform int transforms_up_to; // marker of how many transforms
+    uniform mat4 parts_transforms[20]; // specific to the part
+    uniform int parts_transforms_up_to;
     
     out vec3 vColor;
 
@@ -29,6 +31,11 @@ const basic_vert_shader = {
       for (int i = 0; i < transforms_up_to; i++) {
         all_transforms *= uModelTransformationMatrix[i]; // add all transforms
       } // end loop
+
+      for (int i = 0; i < parts_transforms_up_to; i++) {
+        all_transforms *= parts_transforms[i]; // add all transforms
+      } // end loop
+
       gl_Position =  all_transforms * vec4(aPosition,1.0);
       
       vColor = aColor;

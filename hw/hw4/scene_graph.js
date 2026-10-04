@@ -292,7 +292,9 @@ class SceneObjectNode {
   // these NEED, at minimum, to be set by the scene object!
   pos_loc = null;
   color_loc = null;
-  tranform_loc = null;
+  vertex_transform_loc = null;
+  parts_transform_loc = null;
+  parts_up_to_loc = null;
 
   /**
    * ----------------------------------
@@ -311,7 +313,10 @@ class SceneObjectNode {
     // grab these here for now.
     this.pos_loc = this.gl.getAttribLocation(this.program, "aPosition");
     this.color_loc = this.gl.getAttribLocation(this.program, "aColor");
-    this.transform_matrix = this.gl.getUniformLocation(this.program, "uModelTransformationMatrix"); 
+    this.vertex_transform_loc = this.gl.getUniformLocation(this.program, "uModelTransformationMatrix"); 
+    this.parts_transform_loc = this.gl.getUniformLocation(this.program, "parts_transforms");
+    this.up_to_loc = this.gl.getUniformLocation(this.program, "transforms_up_to");
+    this.parts_up_to_loc = this.gl.getUniformLocation(this.program, "parts_transforms_up_to");
 
     // initialize the buffers from the given params.
     this.init_buffers();
@@ -327,7 +332,7 @@ class SceneObjectNode {
    */
   init_buffers() {
       this.pos_buff = this.init_buffer(this.vertices);
-      this.indices_buff = this.init_buffer(this.indices, gl.ELEMENT_ARRAY_BUFFER);
+      this.indices_buff = this.init_buffer(this.indices, this.gl.ELEMENT_ARRAY_BUFFER);
       this.color_buff = this.init_buffer(this.colors)
   } // end function
 
@@ -367,7 +372,7 @@ class SceneObjectNode {
     // vertex/positions buffer
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pos_buff);
     this.gl.enableVertexAttribArray(this.pos_loc);
-    this.gl.vertexAttribPointer(this.pos_loc, 3, gl.FLOAT, false, 0, 0);
+    this.gl.vertexAttribPointer(this.pos_loc, 3, this.gl.FLOAT, false, 0, 0);
 
     // index buffer for drawing as triangles
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices_buff);
@@ -375,19 +380,33 @@ class SceneObjectNode {
     // color buffer
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.color_buff);
     this.gl.enableVertexAttribArray(this.color_loc);
-    this.gl.vertexAttribPointer(this.color_loc, 3, gl.FLOAT, false, 0, 0);
+    this.gl.vertexAttribPointer(this.color_loc, 3, this.gl.FLOAT, false, 0, 0);
 
      // need to update the matrix with my vertex transforms, then my parts
-    stack.push(vertex_transforms.vertex_transforms);
-    stack.push(this.part_transforms);
-   
-    gl.uniformMatrix4fv(this.transform_matrix, false, new Float32Array(stack));
-  
-    // todo: pop my parts
-    stack.pop();
+    stack = stack.concat(vertex_transforms.vertex_transforms);
+    // console.log(stack.flat().flat().length)
+    // console.log(this.part_transforms.length)
+    const flattened_stack = new Float32Array(stack.length * 16);
 
-    // draw the node
-    gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+    stack.forEach((matrix, i) => {
+        flattened_stack.set(matrix, i * 16);
+    });
+
+    const flattened_parts = new Float32Array(this.part_transforms.length * 16);
+
+    this.part_transforms.forEach((matrix, i) => {
+        flattened_parts.set(matrix, i * 16);
+    });
+
+    this.gl.uniformMatrix4fv(this.vertex_transform_loc, false, flattened_stack); 
+    this.gl.uniform1i(this.up_to_loc, stack.length); 
+    this.gl.uniformMatrix4fv(this.parts_transform_loc, false, flattened_parts); 
+    this.gl.uniform1i(this.parts_up_to_loc, this.part_transforms.length); 
+
+    // // draw the node
+    // this.gl.drawElements(this.gl.TRIANGLES, this.indices.length, this.gl.UNSIGNED_SHORT, 0);
+
+    
 
     // vertex_transforms, stack
     this.children.forEach((c) => {
