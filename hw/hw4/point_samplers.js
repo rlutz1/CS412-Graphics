@@ -159,9 +159,9 @@ function gen_sphere_colors(num_vertices) {
  * 
  */
 function gen_cylinder_points(
-  r=1.5, // radius of the cylinder
-  height=2.0, // height of the cylinder
-  base=[0, 0, -1], // base of the cylinder
+  r=1.0, // radius of the cylinder
+  height=1.0, // height of the cylinder
+  base=[0, 0,-1], // base of the cylinder
   h_step=0.1, // horizontal step interval (u)
   v_step=0.1, // vertical step interval (v)
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)

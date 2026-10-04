@@ -4,72 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>UNM CS 412/512 HW3</title>
-  <style>
-    body {
-      background: #111;
-      color: #ccc;
-      font-family: monospace;
-    }
-
-    textarea {
-      background: #222;
-      color: #0f0;
-      font: 14px monospace;
-      width: 400px;
-      height: 250px;
-    }
-
-    .center {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    canvas {
-      border: 1px solid #444;
-    }
-
-    /* below is courtesy of: https://www.w3schools.com/howto/howto_js_rangeslider.asp */
-
-    .slidecontainer {
-      width: 100%; /* Width of the outside container */
-    }
-
-    /* The slider itself */
-    .slider {
-      -webkit-appearance: none;  /* Override default CSS styles */
-      appearance: none;
-      width: 100%; /* Full-width */
-      height: 25px; /* Specified height */
-      background: #535353; /* Grey background */
-      outline: none; /* Remove outline */
-      opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-      -webkit-transition: .2s; /* 0.2 seconds transition on hover */
-      transition: opacity .2s;
-    }
-
-    /* Mouse-over effects */
-    .slider:hover {
-      opacity: 1; /* Fully shown on mouse-over */
-    }
-
-    /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-    .slider::-webkit-slider-thumb {
-      -webkit-appearance: none; /* Override default look */
-      appearance: none;
-      width: 25px; /* Set a specific slider handle width */
-      height: 25px; /* Slider handle height */
-      background: #e076da; /* slider background */
-      cursor: pointer; /* Cursor on hover */
-    }
-
-    .slider::-moz-range-thumb {
-      width: 25px; /* Set a specific slider handle width */
-      height: 25px; /* Slider handle height */
-      background: #e076da; /* slider background */
-      cursor: pointer; /* Cursor on hover */
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -86,14 +21,12 @@
   <p>
     Roxanne Krause <br />
     CS412 <br />
-    9/25/26 <br />
+    10/6/26 <br />
   </p>
   
 
   <p>
-    Use the drop down to change the shape drawn. <br />
-    Apply different transformations with respect to time (except reflection)
-    to play around with different effects.
+    <b>PUT EXPLANATION HERE</b>
   </p>
 
   <div style="display: flex; gap: 10px; align-items: flex-start;">
@@ -110,7 +43,9 @@
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <canvas id="glcanvas" width="400" height="400"></canvas>
     </div>
+
     <div id="slidecontainer" class="slidecontainer">
+
       <div id="base">
         <h4>Rotation of Base (degrees)</h4>
         <p id="curr_base_range"></p>
@@ -146,6 +81,7 @@
   <script src="vert_shaders.js"></script>
   <script src="frag_shaders.js"></script>
   <script src="scene_graph.js"></script>
+  <script src="object_generators.js"></script>
   <script src="ui_util.js"></script>
   <script>
     // set up a simple value grab/feedback for the sliders used for testing hierarchical setup.
@@ -165,30 +101,21 @@
   </script>
 
   <script>
-
-    
-
     // WebGL setup
     const canvas = document.getElementById("glcanvas");
     const gl = canvas.getContext("webgl2");
     if (!gl) alert("WebGL2 not supported");
 
-    let vertEditor = basic_vert_shader; // TODO
-    let fragEditor = basic_frag_shader;
-    // vertEditor.value = document.getElementById("vertex-shader").textContent;
-    // fragEditor.value = document.getElementById("fragment-shader").textContent;
+    // just use the most basic fragment shaders.
+    const vertEditor = basic_vert_shader; 
+    const fragEditor = basic_frag_shader;
 
-    // default cylinder points and colors    
-    let cyl_verts_and_indices = gen_cylinder_points() // cylinder point generation
-    let cyl_colors = gen_cylinder_colors(cyl_verts_and_indices.vertices.length) // get some dynamic colors
-    
-    // default sphere points and colors 
-    let sphere_verts_and_indices = gen_sphere_points() // sphere point generator
-    let sphere_colors = gen_sphere_colors(sphere_verts_and_indices.vertices.length) // get some dynamic colors
-
-    // cube points and colors -- really just for consistency with other shapes for now
-    let cube_verts_and_indices = {"vertices": cube_positions, "indices": cube_indices}
-    // let cube_colors...
+    // generate an arm using 4 cylinders.
+    // the hierarchy needs to be base -> seg2 -> seg3 -> top.
+    // the rotations are to come from the sliders and are going to be implied x rotations.
+    // this generates the shapes for the STATIC arm starting point.
+    const arm = generate_arm(); 
+    // console.log(arm)
 
     // attributes, program
     // let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM, transformation;
@@ -214,21 +141,21 @@
     function render() {
       
       
-      //set time in seconds
-      time = deltaTime/1000.0
-      gl.uniform1f(timeLoc, time);
-      gl.uniformMatrix4fv(uPM, false, proj);
-      gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
-      gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
-      gl.uniformMatrix4fv(transformation, false, get_transform_matrix(get_all_transforms("transforms"), time))
+      // //set time in seconds
+      // time = deltaTime/1000.0
+      // gl.uniform1f(timeLoc, time);
+      // gl.uniformMatrix4fv(uPM, false, proj);
+      // gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
+      // gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
+      // gl.uniformMatrix4fv(transformation, false, get_transform_matrix(get_all_transforms("transforms"), time))
      
-      // perhaps the node 
-      draw_main_object(
-          cyl_pos_buff, 
-          cyl_color_buff, 
-          cyl_indices_buff, 
-          cyl_verts_and_indices.indices.length
-          )
+      // // perhaps the node 
+      // draw_main_object(
+      //     cyl_pos_buff, 
+      //     cyl_color_buff, 
+      //     cyl_indices_buff, 
+      //     cyl_verts_and_indices.indices.length
+      //     )
 
     } // end render
 

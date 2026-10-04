@@ -127,7 +127,7 @@ class SceneGraph {
  * all of these should have the same shaders/program.
  * ============================================================
  */
-class SceneTree {
+class SceneObject {
 
   gl = null;
   node = null;
@@ -136,6 +136,8 @@ class SceneTree {
   frag_shader = null; 
   program = null;
   id = null;
+
+  // todo: add_node(SceneObjectNode, parent id)
 
   /**
    * ----------------------------------
@@ -239,7 +241,7 @@ class SceneTree {
  * hierarchy.
  * ============================================================
  */
-class SceneNode {
+class SceneObjectNode {
 
   verts_and_indeces = null; // dictionary of vertex points ("vertices") and indices ("indices") 
   colors = null; // the colors of this node 
