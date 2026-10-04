@@ -356,6 +356,17 @@ class SceneObjectNode {
     } // end if
   } // end function
 
+  flatten_matrices(matrices) {
+    const result = new Float32Array(matrices.length * 16);
+
+    matrices.forEach((matrix, i) => {
+        result.set(matrix, i * 16);
+    });
+
+    return result;
+  }
+
+
   /**
    * method to pull out the common functionality of drawing a single
    * main object, to be further generalized with time.
@@ -382,39 +393,105 @@ class SceneObjectNode {
     this.gl.enableVertexAttribArray(this.color_loc);
     this.gl.vertexAttribPointer(this.color_loc, 3, this.gl.FLOAT, false, 0, 0);
 
-     // need to update the matrix with my vertex transforms, then my parts
+    // Add this node's matrices to the hierarchy stack.
     stack = stack.concat(vertex_transforms.vertex_transforms);
-    // console.log(stack.flat().flat().length)
-    // console.log(this.part_transforms.length)
-    const flattened_stack = new Float32Array(stack.length * 16);
 
-    stack.forEach((matrix, i) => {
-        flattened_stack.set(matrix, i * 16);
+    const hierarchy_matrices = this.flatten_matrices(stack);
+
+    console.log(
+        "HIERARCHY:",
+        stack.length,
+        "matrices,",
+        hierarchy_matrices.length,
+        "floats"
+    );
+
+    this.gl.uniformMatrix4fv(
+        this.vertex_transform_loc,
+        false,
+        hierarchy_matrices
+    );
+
+    this.gl.uniform1i(
+        this.up_to_loc,
+        stack.length
+    );
+
+
+    // Upload this node's local/part transforms.
+    const part_matrices = this.flatten_matrices(
+        this.part_transforms
+    );
+
+    console.log(
+        "PARTS:",
+        this.part_transforms.length,
+        "matrices,",
+        part_matrices.length,
+        "floats"
+    );
+
+    this.gl.uniformMatrix4fv(
+        this.parts_transform_loc,
+        false,
+        part_matrices
+    );
+
+    this.gl.uniform1i(
+        this.parts_up_to_loc,
+        this.part_transforms.length
+    );
+
+
+    // Draw.
+    this.gl.drawElements(
+        this.gl.TRIANGLES,
+        this.indices.length,
+        this.gl.UNSIGNED_SHORT,
+        0
+    );
+
+
+    // Recurse.
+    this.children.forEach((c) => {
+        c.render(
+            vertex_transforms[c.id],
+            stack
+        );
     });
+    //  // need to update the matrix with my vertex transforms, then my parts
+    // stack = stack.concat(vertex_transforms.vertex_transforms);
+    // // console.log(stack.flat().flat().length)
+    // // console.log(this.part_transforms.length)
+    // const flattened_stack = new Float32Array(stack.length * 16);
 
-    const flattened_parts = new Float32Array(this.part_transforms.length * 16);
+    // stack.forEach((matrix, i) => {
+    //     flattened_stack.set(matrix, i * 16);
+    // });
 
-    this.part_transforms.forEach((matrix, i) => {
-        flattened_parts.set(matrix, i * 16);
-    });
+    // const flattened_parts = new Float32Array(this.part_transforms.length * 16);
 
-    this.gl.uniformMatrix4fv(this.vertex_transform_loc, false, flattened_stack); 
-    this.gl.uniform1i(this.up_to_loc, stack.length); 
-    this.gl.uniformMatrix4fv(this.parts_transform_loc, false, flattened_parts); 
-    this.gl.uniform1i(this.parts_up_to_loc, this.part_transforms.length); 
+    // this.part_transforms.forEach((matrix, i) => {
+    //     flattened_parts.set(matrix, i * 16);
+    // });
 
-    // // draw the node
-    // this.gl.drawElements(this.gl.TRIANGLES, this.indices.length, this.gl.UNSIGNED_SHORT, 0);
+    // this.gl.uniformMatrix4fv(this.vertex_transform_loc, false, flattened_stack); 
+    // this.gl.uniform1i(this.up_to_loc, stack.length); 
+    // this.gl.uniformMatrix4fv(this.parts_transform_loc, false, flattened_parts); 
+    // this.gl.uniform1i(this.parts_up_to_loc, this.part_transforms.length); 
+
+    // // // draw the node
+    // // this.gl.drawElements(this.gl.TRIANGLES, this.indices.length, this.gl.UNSIGNED_SHORT, 0);
 
     
 
-    // vertex_transforms, stack
-    this.children.forEach((c) => {
-      console.log(`Rendering ${c.id} node...`);
-      // TODO: can i just put camera views on the stack?
-      // stack is empty for now here.
-      c.render(vertex_transforms[c.id], stack);
-    });
+    // // vertex_transforms, stack
+    // this.children.forEach((c) => {
+    //   console.log(`Rendering ${c.id} node...`);
+    //   // TODO: can i just put camera views on the stack?
+    //   // stack is empty for now here.
+    //   c.render(vertex_transforms[c.id], stack);
+    // });
 
   } // end method
 
