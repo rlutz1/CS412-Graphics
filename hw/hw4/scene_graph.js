@@ -117,3 +117,55 @@ class SceneGraph {
     } // end function
 
 } // end class
+
+
+/**
+ * ============================================================
+ * SCENE OBJECT
+ * 
+ * essentially: a grouping of nodes, hierarchically pieced together.
+ * all of these should have the same shaders/program.
+ * ============================================================
+ */
+class SceneObject {
+
+  node = null;
+  children = null;
+  vert_shader = null;
+  frag_shader = null; 
+  program = null;
+  id = null;
+
+  /**
+   * ----------------------------------
+   * constructor
+   * ----------------------------------
+   */
+  constructor() {
+
+  } // end constructor
+
+  /**
+   * ----------------------------------
+   * render
+   * ----------------------------------
+   */
+  render(camera_views, transform_dict, stack) {
+    // set gl attributes for the camera_matrices
+    // generate vertex transform matrices from dictionary
+    // push vertex transforms to stack
+    // push part transforms to the stack
+    // set stack transforms to attribute in the vertex shader
+    // pop off my part transform
+    
+    // for each c in children:
+    //  c.render(camera_views, transform_dict[c.id], stack)
+
+  } // end render
+
+} // end class
+
+
+class SceneNode {
+
+} // end class
