@@ -9,7 +9,7 @@
  * hierarchy of 4 times: 
  * base -> seg2 -> seg3 -> top
  */
-function generate_arm() {
+function generate_arm(gl) {
   // generate the base.
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
   let cyl_verts_and_indices = gen_cylinder_points(); // the vertices to start with
@@ -17,7 +17,7 @@ function generate_arm() {
   let part_transforms = [rotate([deg_to_rad(90), 0, 0], true)];
 
   // make this a scene node.
-  const base = new SceneObjectNode("base", cyl_verts_and_indices, cyl_colors, part_transforms);
+  const base = new SceneObjectNode("base", cyl_verts_and_indices, cyl_colors, part_transforms, gl);
 
   // generate the next segment.
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
@@ -26,7 +26,7 @@ function generate_arm() {
   part_transforms = [translate([0, 1, 0]), rotate([deg_to_rad(90), 0, 0], true)];
 
   // make this a scene node.
-  const seg2 = new SceneObjectNode("seg2", cyl_verts_and_indices, cyl_colors, part_transforms);
+  const seg2 = new SceneObjectNode("seg2", cyl_verts_and_indices, cyl_colors, part_transforms, gl);
 
   // generate the next segment.
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
@@ -35,12 +35,12 @@ function generate_arm() {
   part_transforms = [translate([0, 2, 0]), rotate([deg_to_rad(90), 0, 0], true)];
 
   // make this a scene node.
-  const seg3 = new SceneObjectNode("seg3", cyl_verts_and_indices, cyl_colors, part_transforms);
+  const seg3 = new SceneObjectNode("seg3", cyl_verts_and_indices, cyl_colors, part_transforms, gl);
 
   // TODO: make the top -- need 4, but testing with 3 to start.
 
   // construct the hierarchy as a SceneObject
-  const object = new SceneObject();
+  const object = new SceneObject(gl);
   object.add_node(base, null); // format: node to add, parent 
   object.add_node(seg2, "base");
   object.add_node(seg3, "seg2");

@@ -107,14 +107,14 @@
     if (!gl) alert("WebGL2 not supported");
 
     // just use the most basic fragment shaders.
-    const vertEditor = basic_vert_shader; 
-    const fragEditor = basic_frag_shader;
+    const vert_shader = basic_vert_shader; 
+    const frag_shader = basic_frag_shader;
 
     // generate an arm using 4 cylinders.
     // the hierarchy needs to be base -> seg2 -> seg3 -> top.
     // the rotations are to come from the sliders and are going to be implied x rotations.
     // this generates the shapes for the STATIC arm starting point.
-    const arm = generate_arm(); 
+    const arm = generate_arm(gl); 
     // console.log(arm)
 
     // attributes, program

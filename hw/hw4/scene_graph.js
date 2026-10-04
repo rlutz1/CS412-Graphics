@@ -144,7 +144,7 @@ class SceneObject {
    * constructor
    * ----------------------------------
    */
-  constructor(node, children, vert_shader, frag_shader, id) {
+  constructor(node, children, vert_shader, frag_shader, id, gl) {
 
   } // end constructor
 
@@ -243,50 +243,81 @@ class SceneObject {
  */
 class SceneObjectNode {
 
-  verts_and_indeces = null; // dictionary of vertex points ("vertices") and indices ("indices") 
-  colors = null; // the colors of this node 
-  part_transform = null;
+  gl = null; // ref to gl for buffer generation
 
-  // initBuffers() {
-  //     // cube
-  //     cube_pos_buff = initBuffer(cube_verts_and_indices.vertices)
-  //     cube_color_buff = initBuffer(cube_colors)
-  //     cube_indices_buff = initBuffer(cube_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+  vertices = null; // actual raw vertices of the node
+  indices = null; // the indices of the above vertices to join up the triangles 
+  colors = null; // the colors for each vertex
+  part_transforms = null; // the PART transforms of this object -- static positioning.
 
-  //     // cylinder
-  //     cyl_pos_buff = initBuffer(cyl_verts_and_indices.vertices)
-  //     cyl_color_buff = initBuffer(cyl_colors)
-  //     cyl_indices_buff = initBuffer(cyl_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+  // buffers for gl for this node.
+  pos_buff = null;
+  indices_buff = null;
+  color_buff = null;
 
-  //     // sphere
-  //     sphere_pos_buff = initBuffer(sphere_verts_and_indices.vertices)
-  //     sphere_color_buff = initBuffer(sphere_colors)
-  //     sphere_indices_buff = initBuffer(sphere_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
-  // }
+  /**
+   * ----------------------------------
+   * constructor
+   * ----------------------------------
+   */
+  constructor(id, verts_and_indices, colors, part_transforms, gl) {
+    this.id = id;
+    this.vertices = verts_and_indices.vertices;
+    this.indices = verts_and_indices.indices;
+    this.colors = colors;
+    this.part_transforms = part_transforms;
+    this.gl = gl; // todo, null check
 
-  init_buffer(data, type=gl.ARRAY_BUFFER, gl_hint=gl.STATIC_DRAW) {
-      buff = gl.createBuffer();
-      gl.bindBuffer(type, buff);
-      gl.bufferData(type, data, gl_hint);
+    // initialize the buffers from the given params.
+    init_buffers();
+  } // end constructor
+
+
+  /**
+   * initialize the buffers for 
+   * 1. positions/vertices
+   * 2. indices
+   * 3. colors
+   * used for drawing this node.
+   */
+  init_buffers() {
+      this.pos_buff = initBuffer(this.vertices);
+      this.indices_buff = initBuffer(this.indices, gl.ELEMENT_ARRAY_BUFFER);
+      this.color_buff = initBuffer(this.colors)
+  } // end function
+
+  /**
+   * wrapper around the creation and binding of a buffer so no steps missed!
+   */
+  init_buffer(data, type=this.gl.ARRAY_BUFFER, gl_hint=this.gl.STATIC_DRAW) {
+      buff = this.gl.createBuffer();
+      this.gl.bindBuffer(type, buff);
+      this.gl.bufferData(type, data, gl_hint);
       return buff
-  }
+  } // end function
 
   /**
    * method to pull out the common functionality of drawing a single
    * main object, to be further generalized with time.
+   * 
+   * TODO: the attribute locations.
    */
-  draw_main_object(pos_buff, color_buff, indices_buff, num_indices) {
-    gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
-    gl.enableVertexAttribArray(posLoc);
-    gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+  draw() {
+    // vertex/positions buffer
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pos_buff);
+    this.gl.enableVertexAttribArray(posLoc);
+    this.gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
-    gl.enableVertexAttribArray(colorLoc);
-    gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
-    
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices_buff);
+    // index buffer for drawing as triangles
+    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices_buff);
 
-    gl.drawElements(gl.TRIANGLES, num_indices, gl.UNSIGNED_SHORT, 0);
+    // color buffer
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.color_buff);
+    this.gl.enableVertexAttribArray(colorLoc);
+    this.gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
+  
+    // draw the node
+    gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
   } // end method
 
 } // end class
