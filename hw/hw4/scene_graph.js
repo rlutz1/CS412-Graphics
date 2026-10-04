@@ -386,7 +386,8 @@ class SceneObjectNode {
     this.gl.vertexAttribPointer(this.color_loc, 3, this.gl.FLOAT, false, 0, 0);
 
     // Add this node's matrices to the hierarchy stack.
-    stack = stack.concat(vertex_transforms.vertex_transforms);
+    // stack = stack.concat(vertex_transforms.vertex_transforms);
+    stack = stack.concat(this.part_transforms);
 
     const hierarchy_matrices = this.flatten_matrices(stack);
 
@@ -410,14 +411,14 @@ class SceneObjectNode {
     );
 
 
-    // Upload this node's local/part transforms.
+     // Upload this node's local/part transforms.
     const part_matrices = this.flatten_matrices(
-        this.part_transforms
+        vertex_transforms.vertex_transforms
     );
 
     console.log(
         "PARTS:",
-        this.part_transforms.length,
+        vertex_transforms.vertex_transforms.length,
         "matrices,",
         part_matrices.length,
         "floats"
@@ -431,8 +432,32 @@ class SceneObjectNode {
 
     this.gl.uniform1i(
         this.parts_up_to_loc,
-        this.part_transforms.length
+        vertex_transforms.vertex_transforms.length
     );
+
+    // // Upload this node's local/part transforms.
+    // const part_matrices = this.flatten_matrices(
+    //     this.part_transforms
+    // );
+
+    // console.log(
+    //     "PARTS:",
+    //     this.part_transforms.length,
+    //     "matrices,",
+    //     part_matrices.length,
+    //     "floats"
+    // );
+
+    // this.gl.uniformMatrix4fv(
+    //     this.parts_transform_loc,
+    //     false,
+    //     part_matrices
+    // );
+
+    // this.gl.uniform1i(
+    //     this.parts_up_to_loc,
+    //     this.part_transforms.length
+    // );
 
 
     // Draw.
