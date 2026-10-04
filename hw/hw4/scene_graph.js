@@ -157,7 +157,7 @@ class SceneObject {
     // push part transforms to the stack
     // set stack transforms to attribute in the vertex shader
     // pop off my part transform
-    
+
     // for each c in children:
     //  c.render(camera_views, transform_dict[c.id], stack)
 
@@ -166,6 +166,24 @@ class SceneObject {
 } // end class
 
 
+/**
+ * ============================================================
+ * SCENE NODE
+ * 
+ * generalized: a node to wrap in a scene object.
+ * this could be an shape (cube, sphere, etc...) 
+ * but is the ultimate node of the object tree. 
+ * the object level is where you set the vertex/frag shaders and prog.
+ * this is simply for holding points, colors, etc, and 
+ * setting the final transformation in the vert shader for the
+ * hierarchy.
+ * ============================================================
+ */
 class SceneNode {
+
+  verts_and_indeces = null; // dictionary of vertex points ("vertices") and indices ("indices") 
+  colors = null; // the colors of this node 
+  part_transform = null;
+
 
 } // end class
