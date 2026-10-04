@@ -454,6 +454,7 @@ class SceneObjectNode {
 
     // Recurse.
     this.children.forEach((c) => {
+        console.log(`Rendering ${c.id} node...`);
         c.render(
             vertex_transforms[c.id],
             stack
