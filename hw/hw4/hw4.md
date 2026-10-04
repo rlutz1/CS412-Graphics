@@ -15,3 +15,26 @@ In this assignment, you will need to build hierarchical models with the primitiv
 4. If you plan to submission by uploading files, you need to zip the folder (put your name as part of the folder name) containing all required code, and upload the zipped file. If you plan to submit URL of a GitHub webpage, make sure you don't edit your online repo after the deadline because the timpstamp of the last edit will be considered as the submission time.
 
 ## notes dump
+
+general flow for distinct objects:
+
+[read me](https://stackoverflow.com/questions/28614956/webgl-adding-multiple-objects-to-one-canvas)
+
+[also](https://webglfundamentals.org/webgl/lessons/webgl-drawing-multiple-things.html)
+
+```
+use program for cube // only if they have different shaders!
+set attributes for cube
+set uniforms for cube
+draw cube
+
+use program for tetrahedon
+set attributes for tetrahedon
+set uniforms for tetrahedon
+draw tetrahedon
+
+use program for sphere
+set attributes for sphere
+set uniforms for sphere
+draw sphere
+```

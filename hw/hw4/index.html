@@ -139,36 +139,6 @@
   
   </div>
 
-  <!-- Vertex shader -->
-  <script id="vertex-shader" type="x-shader/x-vertex">#version 300 es
-  in vec3 aPosition;
-  in vec3 aColor;
-
-  uniform float uTime; //time in sec
-  uniform mat4 uModelViewMatrix;
-  uniform mat4 uProjectionMatrix;
-  uniform mat4 uModelTransformationMatrix;
-  uniform mat4 transformation;
-
-  out vec3 vColor;
-
-  void main() {
-    gl_Position = uProjectionMatrix * uModelViewMatrix * uModelTransformationMatrix * transformation * vec4(aPosition,1.0);
-    vColor = aColor;
-  }
-  </script>
-    <!-- Fragment Shader -->
-    <script id="fragment-shader" type="x-shader/x-fragment">#version 300 es
-  precision mediump float;
-  in vec3 vColor;
-
-  out vec4 fragColor;
-
-  void main() {
-    fragColor = vec4(vColor,1.0);
-  }
-  </script>
-
   <script src="primitives.js"></script>
   <script src="transformations.js"></script>
   <script src="point_samplers.js"></script>
@@ -326,6 +296,7 @@
     } // end method
 
     function render() {
+      // scene graph clear things.
       gl.enable(gl.DEPTH_TEST);
       gl.clearColor(0, 0, 0, 1);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -350,6 +321,7 @@
       gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
       gl.uniformMatrix4fv(transformation, false, get_transform_matrix(get_all_transforms("transforms"), time))
      
+      // perhaps the node 
       draw_main_object(
           cyl_pos_buff, 
           cyl_color_buff, 
