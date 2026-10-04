@@ -107,6 +107,7 @@
     if (!gl) alert("WebGL2 not supported");
 
     // just use the most basic fragment shaders.
+    // the src can be accessed via vert_shader.src, frag_shader.src
     const vert_shader = basic_vert_shader; 
     const frag_shader = basic_frag_shader;
 
@@ -114,32 +115,36 @@
     // the hierarchy needs to be base -> seg2 -> seg3 -> top.
     // the rotations are to come from the sliders and are going to be implied x rotations.
     // this generates the shapes for the STATIC arm starting point.
-    const arm = generate_arm(gl); 
+    const arm = generate_arm(gl);  // returns a SceneObject with the correct hierarchy
+    // arm.init(vert_shader, frag_shader); // initalize with the chose shaders
     // console.log(arm)
 
-    // attributes, program
-    // let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM, transformation;
+    const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
+    scene.add_object(arm); // add to the scene graph
 
-    // buffers
-    // let cube_pos_buff, cube_color_buff, cube_indices_buff;
-    // let cyl_pos_buff, cyl_color_buff, cyl_indices_buff
-    // let sphere_pos_buff, sphere_color_buff, sphere_indices_buff
-
-    // Buffers
-    
-    // initBuffers();
-
-    
-    // initShaderProgram();
-
-    
-
-    let startTime = Date.now();
-
-    
-
+    /**
+     * render the scene.
+     */
     function render() {
-      
+      scene.render({
+        "arm": {
+          
+          "base": {
+            "vertex_transforms": [rotate(deg_to_rad([document.getElementById(`base_range`).value, 0, 0]), true)],
+            
+            "seg2": {
+              "vertex_transforms": [rotate([deg_to_rad([document.getElementById(`seg2_range`).value, 0, 0]), 0, 0], true)],
+              
+              "seg3": {
+                "vertex_transforms": [rotate([deg_to_rad([document.getElementById(`seg3_range`).value, 0, 0]), 0, 0], true)]
+              }
+            
+            }
+          
+          }
+        
+        }
+      });
       
       // //set time in seconds
       // time = deltaTime/1000.0
@@ -147,15 +152,7 @@
       // gl.uniformMatrix4fv(uPM, false, proj);
       // gl.uniformMatrix4fv(uMVM, false, modelViewMatrix);
       // gl.uniformMatrix4fv(uMTM, false, modelTransformationMatrix);
-      // gl.uniformMatrix4fv(transformation, false, get_transform_matrix(get_all_transforms("transforms"), time))
-     
-      // // perhaps the node 
-      // draw_main_object(
-      //     cyl_pos_buff, 
-      //     cyl_color_buff, 
-      //     cyl_indices_buff, 
-      //     cyl_verts_and_indices.indices.length
-      //     )
+      // gl.uniformMatrix4fv(transformation, false, get_transform_matrix(get_all_transforms("transforms"), time)
 
     } // end render
 

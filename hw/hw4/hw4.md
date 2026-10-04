@@ -38,3 +38,7 @@ set attributes for sphere
 set uniforms for sphere
 draw sphere
 ```
+
+## todo list
++ pass on a pos & color attrib location at minimum (the two in's of the basic vert shader.)
+  + would like for to be flexible, but if hardcoded for testing, is fine.
