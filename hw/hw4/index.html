@@ -166,28 +166,7 @@
 
   <script>
 
-    function createShader(gl, type, source) {
-      let shader = gl.createShader(type);
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        throw new Error(gl.getShaderInfoLog(shader));
-      }
-      return shader;
-    }
-
-    function createProgram(gl, vsSource, fsSource) {
-      let vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
-      let fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
-      let prog = gl.createProgram();
-      gl.attachShader(prog, vs);
-      gl.attachShader(prog, fs);
-      gl.linkProgram(prog);
-      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-        throw new Error(gl.getProgramInfoLog(prog));
-      }
-      return prog;
-    }
+    
 
     // WebGL setup
     const canvas = document.getElementById("glcanvas");
@@ -212,79 +191,25 @@
     // let cube_colors...
 
     // attributes, program
-    let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM, transformation;
+    // let program, posLoc, colorLoc, timeLoc, uMVM, uPM, uMTM, transformation;
 
     // buffers
-    let cube_pos_buff, cube_color_buff, cube_indices_buff;
-    let cyl_pos_buff, cyl_color_buff, cyl_indices_buff
-    let sphere_pos_buff, sphere_color_buff, sphere_indices_buff
-
-    let free_form_cubes = []
-
-    function initBuffer(data, type=gl.ARRAY_BUFFER, gl_hint=gl.STATIC_DRAW) {
-      buff = gl.createBuffer();
-      gl.bindBuffer(type, buff);
-      gl.bufferData(type, data, gl_hint);
-      return buff
-    }
+    // let cube_pos_buff, cube_color_buff, cube_indices_buff;
+    // let cyl_pos_buff, cyl_color_buff, cyl_indices_buff
+    // let sphere_pos_buff, sphere_color_buff, sphere_indices_buff
 
     // Buffers
-    function initBuffers() {
-      // cube
-      cube_pos_buff = initBuffer(cube_verts_and_indices.vertices)
-      cube_color_buff = initBuffer(cube_colors)
-      cube_indices_buff = initBuffer(cube_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+    
+    // initBuffers();
 
-      // cylinder
-      cyl_pos_buff = initBuffer(cyl_verts_and_indices.vertices)
-      cyl_color_buff = initBuffer(cyl_colors)
-      cyl_indices_buff = initBuffer(cyl_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
-
-      // sphere
-      sphere_pos_buff = initBuffer(sphere_verts_and_indices.vertices)
-      sphere_color_buff = initBuffer(sphere_colors)
-      sphere_indices_buff = initBuffer(sphere_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
-    }
-    initBuffers();
-
-    function initShaderProgram() {
-      try {
-        program = createProgram(gl, vertEditor.value, fragEditor.value);
-        gl.useProgram(program);
-        posLoc = gl.getAttribLocation(program, "aPosition");
-        colorLoc = gl.getAttribLocation(program, "aColor");
-        timeLoc = gl.getUniformLocation(program, "uTime");
-        uMVM = gl.getUniformLocation(program, "uModelViewMatrix");
-        uPM = gl.getUniformLocation(program, "uProjectionMatrix");
-        uMTM = gl.getUniformLocation(program, "uModelTransformationMatrix");
-        transformation = gl.getUniformLocation(program, "transformation")
-      } catch (e) { console.error(e); }
-    }
-    initShaderProgram();
-    vertEditor.onkeyup = initShaderProgram;
-    fragEditor.onkeyup = initShaderProgram;
+    
+    // initShaderProgram();
 
     
 
     let startTime = Date.now();
 
-    /**
-     * method to pull out the common functionality of drawing a single
-     * main object, to be further generalized with time.
-     */
-    function draw_main_object(pos_buff, color_buff, indices_buff, num_indices) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
-      gl.enableVertexAttribArray(posLoc);
-      gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
-
-      gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
-      gl.enableVertexAttribArray(colorLoc);
-      gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
-      
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices_buff);
-
-      gl.drawElements(gl.TRIANGLES, num_indices, gl.UNSIGNED_SHORT, 0);
-    } // end method
+    
 
     function render() {
       

@@ -127,7 +127,7 @@ class SceneGraph {
  * all of these should have the same shaders/program.
  * ============================================================
  */
-class SceneObject {
+class SceneTree {
 
   gl = null;
   node = null;
@@ -164,6 +164,65 @@ class SceneObject {
 
   } // end render
 
+  /**
+   * function to generate a shader for this object and its (optional) children.
+   */
+  create_shader(type, source) {
+    const shader = this.gl.createShader(type);
+    this.gl.shaderSource(shader, source);
+    this.gl.compileShader(shader);
+    if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+      throw new Error(this.gl.getShaderInfoLog(shader));
+    }
+    return shader;
+  } // end function
+
+  /**
+   * create a gl program with attached shaders.
+   */
+  create_program(vsSource, fsSource) {
+    // create the shaders
+    this.vert_shader = create_shader(this.gl, this.gl.VERTEX_SHADER, vsSource);
+    this.frag_shader = create_shader(this.gl, this.gl.FRAGMENT_SHADER, fsSource);
+    // create the program for this object and children
+    this.program = this.gl.createProgram();
+    // attach shaders
+    this.gl.attachShader(this.program, this.vert_shader);
+    this.gl.attachShader(this.program, this.frag_shader);
+    // link the program
+    this.gl.linkProgram(this.program);
+    if (!this.gl.getProgramParameter(prog, this.gl.LINK_STATUS)) {
+      throw new Error(gl.getProgramInfoLog(prog));
+    }
+    return prog;
+  } // end function
+
+  /**
+   * top level call function to (1) create the program 
+   * and (2) switch over to using this program to render
+   * this object tree.
+   */
+  init_shader_program(vsSource, fsSource) {
+    try {
+      // create the program for this object and children
+      this.create_program(vsSource, fsSource);
+      // use this program
+      this.gl.useProgram(this.program);
+
+      // set up atribute locations
+      // TODO: make flexible to the vertex shader?
+      posLoc = this.gl.getAttribLocation(program, "aPosition"); // node
+      colorLoc = this.gl.getAttribLocation(program, "aColor"); // node
+      timeLoc = this.gl.getUniformLocation(program, "uTime"); // node
+      // TODO: maybe a matrix index? or UPTO this matrix?
+      uMVM = this.gl.getUniformLocation(program, "uModelViewMatrix"); // same for all
+      uPM = this.gl.getUniformLocation(program, "uProjectionMatrix"); // same for all
+      uMTM = this.gl.getUniformLocation(program, "uModelTransformationMatrix"); // node -- because this will change
+    } catch (e) { 
+      console.error(e); 
+    } // end try catch
+  } // end function
+
 } // end class
 
 
@@ -186,5 +245,46 @@ class SceneNode {
   colors = null; // the colors of this node 
   part_transform = null;
 
+  // initBuffers() {
+  //     // cube
+  //     cube_pos_buff = initBuffer(cube_verts_and_indices.vertices)
+  //     cube_color_buff = initBuffer(cube_colors)
+  //     cube_indices_buff = initBuffer(cube_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+
+  //     // cylinder
+  //     cyl_pos_buff = initBuffer(cyl_verts_and_indices.vertices)
+  //     cyl_color_buff = initBuffer(cyl_colors)
+  //     cyl_indices_buff = initBuffer(cyl_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+
+  //     // sphere
+  //     sphere_pos_buff = initBuffer(sphere_verts_and_indices.vertices)
+  //     sphere_color_buff = initBuffer(sphere_colors)
+  //     sphere_indices_buff = initBuffer(sphere_verts_and_indices.indices, gl.ELEMENT_ARRAY_BUFFER)
+  // }
+
+  init_buffer(data, type=gl.ARRAY_BUFFER, gl_hint=gl.STATIC_DRAW) {
+      buff = gl.createBuffer();
+      gl.bindBuffer(type, buff);
+      gl.bufferData(type, data, gl_hint);
+      return buff
+  }
+
+  /**
+   * method to pull out the common functionality of drawing a single
+   * main object, to be further generalized with time.
+   */
+  draw_main_object(pos_buff, color_buff, indices_buff, num_indices) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, pos_buff);
+    gl.enableVertexAttribArray(posLoc);
+    gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, color_buff);
+    gl.enableVertexAttribArray(colorLoc);
+    gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
+    
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices_buff);
+
+    gl.drawElements(gl.TRIANGLES, num_indices, gl.UNSIGNED_SHORT, 0);
+  } // end method
 
 } // end class
