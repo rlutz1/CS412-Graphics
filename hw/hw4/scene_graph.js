@@ -129,6 +129,7 @@ class SceneGraph {
  */
 class SceneObject {
 
+  gl = null;
   node = null;
   children = null;
   vert_shader = null;
@@ -141,7 +142,7 @@ class SceneObject {
    * constructor
    * ----------------------------------
    */
-  constructor() {
+  constructor(node, children, vert_shader, frag_shader, id) {
 
   } // end constructor
 
