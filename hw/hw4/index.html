@@ -126,13 +126,15 @@
     // the hierarchy needs to be base -> seg2 -> seg3 -> top.
     // the rotations are to come from the sliders and are going to be implied x rotations.
     // this generates the shapes for the STATIC arm starting point.
-    const arm = generate_arm(gl);  // returns a SceneObject with the correct hierarchy
+    const cake = generate_cake(gl);  // returns a SceneObject with the correct hierarchy
+    let cake_json;
+    const [starfish_json, starfish] = generate_starfish(gl);
     // arm.init(vert_shader, frag_shader); // initalize with the chose shaders
     // console.log(arm)
 
     const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
-    scene.add_object(arm); // add to the scene graph
-
+    scene.add_object(cake); // add to the scene graph
+    // todo: remove object
     start_time = Date.now()
 
     /**
@@ -143,86 +145,30 @@
       
       if (document.getElementById(`slinky`).checked) {
         // do a fun slinky motion
-        scene.render({
-          "arm": {
-            
-            "base": {
-              "dynamic_transforms": [
-                rotate([0, Math.sin(delta_time), 0], true)
-              ],
-              "joint_transforms": [],
-              
-              "seg2": {
-                "dynamic_transforms": [
-                  rotate([0, Math.sin(delta_time + 1), 0], true)
-                ],
-                "joint_transforms": [],
-                
-                "seg3": {
-                  "dynamic_transforms": [
-                    rotate([0, Math.sin(delta_time + 2), 0], true)
-                  ],
-                  "joint_transforms": [],
 
-                  "seg4": {
-                    "dynamic_transforms": [
-                      rotate([0, Math.sin(delta_time + 3), 0], true)
-                    ], 
-                    "joint_transforms": [],
+        // inputs som values to a json to keep this clean. 
+        // this is not flexible in its current state.
+        // just intended to clean up the main html.
+        cake_json = generate_cake_json({
+          "base": [rotate([0, Math.sin(delta_time), 0], true)],
+          "seg2": [rotate([0, Math.sin(delta_time + 1), 0], true)],
+          "seg3": [rotate([0, Math.sin(delta_time + 2), 0], true)],
+          "seg4": [rotate([0, Math.sin(delta_time + 3), 0], true)],
+          "top":  [rotate([0, Math.sin(delta_time + 4), 0], true)]
+        })
 
-                    "top": {
-                      "dynamic_transforms": [
-                        rotate([0, Math.sin(delta_time + 4), 0], true)
-                      ],
-                      "joint_transforms": [translate([0, 0, 1])],
-                    }
-                  }
-                }
-              }
-            }
-          }
-        });
+        scene.render(cake_json);
 
       } else { // use the sliders
-        scene.render({
-          "arm": {
-            
-            "base": {
-              "dynamic_transforms": [
-                rotate([0, deg_to_rad(document.getElementById(`base_range`).value), 0], true)
-              ],
-              "joint_transforms": [],
-              
-              "seg2": {
-                "dynamic_transforms": [
-                  rotate([0, deg_to_rad(document.getElementById(`seg2_range`).value), 0], true)
-                ],
-                "joint_transforms": [],
-                
-                "seg3": {
-                  "dynamic_transforms": [
-                    rotate([0, deg_to_rad(document.getElementById(`seg3_range`).value), 0], true)
-                  ],
-                  "joint_transforms": [],
+        cake_json = generate_cake_json({
+          "base": [rotate([0, deg_to_rad(document.getElementById(`base_range`).value), 0], true)],
+          "seg2": [rotate([0, deg_to_rad(document.getElementById(`seg2_range`).value), 0], true)],
+          "seg3": [rotate([0, deg_to_rad(document.getElementById(`seg3_range`).value), 0], true)],
+          "seg4": [rotate([0, deg_to_rad(document.getElementById(`seg4_range`).value), 0], true)],
+          "top":  [rotate([0, deg_to_rad(document.getElementById(`top_range`).value), 0], true)]
+        })
 
-                  "seg4": {
-                    "dynamic_transforms": [
-                      rotate([0, deg_to_rad(document.getElementById(`seg4_range`).value), 0], true)
-                    ],
-                    "joint_transforms": [],
-
-                    "top": {
-                      "dynamic_transforms": [
-                        rotate([0, deg_to_rad(document.getElementById(`top_range`).value), 0], true)
-                      ],
-                      "joint_transforms": [translate([0, 0, 1])],
-                    }
-                  }
-                }
-              }
-            }
-          }
-        });
+        scene.render(cake_json);
       } // end if
     
     } // end render
