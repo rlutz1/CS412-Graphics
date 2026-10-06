@@ -7,3 +7,5 @@
 [hw 2](https://rlutz1.github.io/rkrause-graphics-portfolio.github.io/project-2/)
 
 [hw 3](https://rlutz1.github.io/rkrause-graphics-portfolio.github.io/project-3/)
+
+[hw 4](https://rlutz1.github.io/rkrause-graphics-portfolio.github.io/project-4/)
