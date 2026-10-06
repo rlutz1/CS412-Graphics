@@ -8,7 +8,7 @@
 </head>
 
 <body>
-  <h2>Hierarchical Modelling</h2>
+  <h2>Hierarchical Modeling</h2>
   <p>
     The following canvas has two options: a basic "cake" structure and <br />
     (2) a starfish like creature with an animation playing over time. <br />
@@ -16,7 +16,7 @@
     You can play with the cake more with sliders to move all the individual <br />
     5 segments in order to illustrate the hierarchical modelling of the structure. <br />
     You can also turn on "Animation Mode" to watch it move with respect to time <br />
-    (achieved with a rotation matrix given to each child in hierarchy).
+    (achieved with a rotation matrix given to each child in hierarchy). <br />
     <br />
     You can also switch to the "starfish", which only moves with respect to time <br />
     in the same way as mentioned above. There are no sliders for this one because, <br />
@@ -38,26 +38,27 @@
 
   <div style="display: flex; gap: 10px; align-items: flex-start;">
     <div style="display: flex; flex-direction: column; gap: 10px;">
-      <canvas id="glcanvas" width="800" height="500"></canvas>
       <!-- select your model -->
       <select name="Models" id="model" style="text-align: center; font-size: 20px">
         <option value="cake">Cake</option>
         <option value="starfish">Starfish</option>
       </select>
+      
+      <canvas id="glcanvas" width="800" height="500"></canvas>
     </div>
 
     <div style="display: flex; flex-direction: column; gap: 10px;">
       
       <!-- slinky mode for funsies. -->
+      <h3>Enable "Animation Mode"</h3>
       <div>
-         <h3>Enable "Animation Mode"</h3>
         <input type="checkbox" id="animate" name="animate" value="animate">
         <label for="animate">Animation Mode</label>
       </div>
 
       <!-- sliders for testing the hierarchy -->
+      <h3 id="ind_seg_header">Rotate Individual Segments</h3> 
       <div id="cake_slide_container" class="cake_slide_container">
-        <h3>Rotate Individual Segments</h3>
 
         <div id="base">
           <h4>Rotation of Base (degrees)</h4>
@@ -109,7 +110,7 @@
     let sliders = document.getElementById("cake_slide_container");
 
     for (const child of sliders.children) {
-      console.log(`curr_${child.id}_range`); // Accesses each HTML element
+      console.log(`SCRIPT: curr_${child.id}_range`); // Accesses each HTML element
       let slider = document.getElementById(`${child.id}_range`);
       let output = document.getElementById(`curr_${child.id}_range`);
       output.innerHTML = `<i>${child.id} Current Rotation:</i> ${slider.value} degrees`; // Display the default slider value
@@ -155,7 +156,8 @@
       
       if (document.getElementById("model").value == "cake") {
         // make this visible
-        document.getElementById("cake_slide_container").style.display = 'block';
+        document.getElementById("ind_seg_header").style.visibility = 'visible';
+        document.getElementById("cake_slide_container").style.visibility = 'visible';
         
         if (!scene.has_object(cake)) {
           scene.remove_all_objects();
@@ -193,7 +195,8 @@
 
       } else if (document.getElementById("model").value == "starfish") {
         // make this visible
-        document.getElementById("cake_slide_container").style.display = 'none';
+        document.getElementById("ind_seg_header").style.visibility = 'hidden';
+        document.getElementById("cake_slide_container").style.visibility = 'hidden';
 
         if (!scene.has_object(starfish)) {
           scene.remove_all_objects();
