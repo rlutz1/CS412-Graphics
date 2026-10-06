@@ -32,6 +32,10 @@
   <div style="display: flex; gap: 10px; align-items: flex-start;">
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <canvas id="glcanvas" width="800" height="500"></canvas>
+      <select name="Models" id="model" style="text-align: center; font-size: 20px">
+        <option value="cake">Cake</option>
+        <option value="starfish">Starfish</option>
+      </select>
     </div>
     
     
@@ -39,15 +43,15 @@
     <div style="display: flex; flex-direction: column; gap: 10px;">
       
       <!-- slinky mode for funsies. -->
-      <h3>Enable "Slinky Mode"</h3>
       <div>
-        <input type="checkbox" id="slinky" name="slinky" value="slinky">
-        <label for="slinky">Slinky Mode</label>
+         <h3>Enable "Animation Mode"</h3>
+        <input type="checkbox" id="animate" name="animate" value="animate">
+        <label for="animate">Animation Mode</label>
       </div>
 
       <!-- sliders for testing the hierarchy -->
-      <h3>Rotate Individual Segments</h3>
-      <div id="slidecontainer" class="slidecontainer">
+      <div id="cake_slide_container" class="cake_slide_container">
+        <h3>Rotate Individual Segments</h3>
 
         <div id="base">
           <h4>Rotation of Base (degrees)</h4>
@@ -96,7 +100,7 @@
   <script src="ui_util.js"></script>
   <script>
     // set up a simple value grab/feedback for the sliders used for testing hierarchical setup.
-    let sliders = document.getElementById("slidecontainer");
+    let sliders = document.getElementById("cake_slide_container");
 
     for (const child of sliders.children) {
       console.log(`curr_${child.id}_range`); // Accesses each HTML element
@@ -133,7 +137,7 @@
     // console.log(arm)
 
     const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
-    scene.add_object(cake); // add to the scene graph
+    
     // todo: remove object
     start_time = Date.now()
 
@@ -143,34 +147,94 @@
     function render() {
       delta_time = (start_time - Date.now()) / 1000.0;
       
-      if (document.getElementById(`slinky`).checked) {
-        // do a fun slinky motion
+      if (document.getElementById("model").value == "cake") {
+        // make this visible
+        document.getElementById("cake_slide_container").style.display = 'block';
+        
+        if (!scene.has_object(cake)) {
+          scene.remove_all_objects();
+          scene.add_object(cake); // add to the scene graph
+        } // end if
 
-        // inputs som values to a json to keep this clean. 
-        // this is not flexible in its current state.
-        // just intended to clean up the main html.
-        cake_json = generate_cake_json({
-          "base": [rotate([0, Math.sin(delta_time), 0], true)],
-          "seg2": [rotate([0, Math.sin(delta_time + 1), 0], true)],
-          "seg3": [rotate([0, Math.sin(delta_time + 2), 0], true)],
-          "seg4": [rotate([0, Math.sin(delta_time + 3), 0], true)],
-          "top":  [rotate([0, Math.sin(delta_time + 4), 0], true)]
-        })
+        if (document.getElementById(`animate`).checked) {
+          // do a fun slinky motion
 
-        scene.render(cake_json);
+          // inputs som values to a json to keep this clean. 
+          // this is not flexible in its current state.
+          // just intended to clean up the main html.
+          cake_json = generate_cake_json({
+            "base": [rotate([0, Math.sin(delta_time), 0], true)],
+            "seg2": [rotate([0, Math.sin(delta_time + 1), 0], true)],
+            "seg3": [rotate([0, Math.sin(delta_time + 2), 0], true)],
+            "seg4": [rotate([0, Math.sin(delta_time + 3), 0], true)],
+            "top":  [rotate([0, Math.sin(delta_time + 4), 0], true)]
+          })
 
-      } else { // use the sliders
-        cake_json = generate_cake_json({
-          "base": [rotate([0, deg_to_rad(document.getElementById(`base_range`).value), 0], true)],
-          "seg2": [rotate([0, deg_to_rad(document.getElementById(`seg2_range`).value), 0], true)],
-          "seg3": [rotate([0, deg_to_rad(document.getElementById(`seg3_range`).value), 0], true)],
-          "seg4": [rotate([0, deg_to_rad(document.getElementById(`seg4_range`).value), 0], true)],
-          "top":  [rotate([0, deg_to_rad(document.getElementById(`top_range`).value), 0], true)]
-        })
+          scene.render(cake_json);
 
-        scene.render(cake_json);
+        } else { 
+          // use the sliders
+          cake_json = generate_cake_json({
+            "base": [rotate([0, deg_to_rad(document.getElementById(`base_range`).value), 0], true)],
+            "seg2": [rotate([0, deg_to_rad(document.getElementById(`seg2_range`).value), 0], true)],
+            "seg3": [rotate([0, deg_to_rad(document.getElementById(`seg3_range`).value), 0], true)],
+            "seg4": [rotate([0, deg_to_rad(document.getElementById(`seg4_range`).value), 0], true)],
+            "top":  [rotate([0, deg_to_rad(document.getElementById(`top_range`).value), 0], true)]
+          })
+
+          scene.render(cake_json);
+        } // end if
+
+      } else if (document.getElementById("model").value == "starfish") {
+        // make this visible
+        document.getElementById("cake_slide_container").style.display = 'none';
+
+        if (!scene.has_object(starfish)) {
+          scene.remove_all_objects();
+          scene.add_object(starfish); // add to the scene graph
+        } // end if
+
+        if (document.getElementById(`animate`).checked) {
+          // do a fun slinky motion
+
+          // add this rotation to all components so they all have their own motion
+          // to propogate through hierarchy
+          const slinker = [rotate([0, 0, Math.sin(delta_time)], true)];
+          const queue = [];
+          let temp = starfish_json;
+          queue.push(temp["starfish"]);
+
+          while(queue.length > 0) {
+            temp = queue.splice(0, 1)[0];
+
+            for (const [key, value] of Object.entries(temp)) {
+              console.log(`${key}: ${value}`);
+              if (key == "dynamic_transforms") {
+                temp[key] = slinker
+              } else {
+                queue.push(temp[key]);
+              } // end if
+            } // end loop
+          } // end while
+
+          // special base circular motion, scaling, moving around canvas
+          starfish_json["starfish"]["base"]["dynamic_transforms"] = [
+            scale([Math.abs(Math.sin(delta_time)) + 1, Math.abs(Math.sin(delta_time)) + 1, 0]),
+            rotate([0, 0, Math.sin(delta_time)], true),
+            translate([Math.sin(delta_time), Math.cos(delta_time), 0])
+          ]
+
+          scene.render(starfish_json)
+
+        } else {
+          // just stop the motion where it is
+          scene.render(starfish_json);
+        } // end if
+
+      } else {
+        scene.remove_all_objects();
+        Console.warn("Somehow nothing selected on the dropdown! Weirdness afoot!");
       } // end if
-    
     } // end render
 
     // Initialize when page loads

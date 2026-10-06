@@ -119,6 +119,31 @@ class SceneGraph {
     } // end if
   } // end function
 
+  /**
+   * remove a specific object from the scene.
+   */
+  remove_object(object) {
+    if (object != null) {
+      this.objects = this.objects.filter(o => o != object);
+      console.log(`Removed ${object.id} from ${this.objects}.`);
+    } // end if
+  } // end function
+
+  /**
+   * remove all objects from the scene graph.
+   */
+  remove_all_objects() {
+    console.log("Removing all scene objects from graph!");
+    this.objects = []
+  } // end function
+
+  /**
+   * return if an object is within the scene graph.
+   */
+  has_object(object) {
+    return this.objects.includes(object);
+  } // end function
+
 } // end class
 
 
