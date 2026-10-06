@@ -16,7 +16,7 @@
 function gen_sphere_points(
   r=1.0, // radius of the sphere
   center=[0, 0, 0], // center of the sphere
-  h_step=0.2, // horizontal step interval // TODO: 0.2 looks a little funky
+  h_step=0.1, // horizontal step interval // TODO: 0.2 looks a little funky
   v_step=0.1, // vertical step interval
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
   v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
@@ -151,11 +151,12 @@ function gen_sphere_colors(num_vertices, solid_color=null) {
   
   // use a solid color only.
   for (let v = 0; v < num_vertices; v++) {
-    if (v % 6 == 0) { // for a little depth since no lighting.
-        sphere_color.push(...solid_color)
+    if (v % 6 == 0 || v % 6 == 2 || v % 6 == 3) { // for a little depth since no lighting.
+      // const offset = solid_color.map(num => num * 1/2);
+      // sphere_color.push(...offset)
+      sphere_color.push(0, 0, 0);
     } else {
-      const offset = solid_color.map(num => num * 1/2);
-      sphere_color.push(...offset)
+      sphere_color.push(...solid_color)
     } // end if
   } // end loop
   return new Float32Array(sphere_color)

@@ -126,12 +126,14 @@
     // the hierarchy needs to be base -> seg2 -> seg3 -> top.
     // the rotations are to come from the sliders and are going to be implied x rotations.
     // this generates the shapes for the STATIC arm starting point.
-    const arm = generate_arm(gl);  // returns a SceneObject with the correct hierarchy
+    // const arm = generate_arm(gl);  // returns a SceneObject with the correct hierarchy
+    // const arm = generate_tentacle(gl);  // returns a SceneObject with the correct hierarchy
+    const [json, object] = generate_starfish(gl);
     // arm.init(vert_shader, frag_shader); // initalize with the chose shaders
     // console.log(arm)
 
     const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
-    scene.add_object(arm); // add to the scene graph
+    scene.add_object(object); // add to the scene graph
 
     start_time = Date.now()
 
@@ -143,86 +145,78 @@
       
       if (document.getElementById(`slinky`).checked) {
         // do a fun slinky motion
-        scene.render({
-          "arm": {
-            
-            "base": {
-              "dynamic_transforms": [
-                rotate([0, Math.sin(delta_time), 0], true)
-              ],
-              "joint_transforms": [],
-              
-              "seg2": {
-                "dynamic_transforms": [
-                  rotate([0, Math.sin(delta_time + 1), 0], true)
-                ],
-                "joint_transforms": [],
-                
-                "seg3": {
-                  "dynamic_transforms": [
-                    rotate([0, Math.sin(delta_time + 2), 0], true)
-                  ],
-                  "joint_transforms": [],
 
-                  "seg4": {
-                    "dynamic_transforms": [
-                      rotate([0, Math.sin(delta_time + 3), 0], true)
-                    ], 
-                    "joint_transforms": [],
+        // add this rotation to all components so they all have their own motion
+        // to propogate through hierarchy
+        const slinker = [rotate([0, 0, Math.sin(delta_time)], true)];
+        const queue = [];
+        let temp = json;
+        queue.push(temp["starfish"]);
 
-                    "top": {
-                      "dynamic_transforms": [
-                        rotate([0, Math.sin(delta_time + 4), 0], true)
-                      ],
-                      "joint_transforms": [translate([0, 0, 1])],
-                    }
-                  }
-                }
-              }
-            }
-          }
-        });
+        while(queue.length > 0) {
+          temp = queue.splice(0, 1)[0];
+
+          for (const [key, value] of Object.entries(temp)) {
+            console.log(`${key}: ${value}`);
+            if (key == "dynamic_transforms") {
+              temp[key] = slinker
+            } else {
+              queue.push(temp[key]);
+            } // end if
+          } // end loop
+        } // end while
+
+        // special base circular motion
+        json["starfish"]["base"]["dynamic_transforms"] = [
+          scale([Math.abs(Math.sin(delta_time)) + 1, Math.abs(Math.sin(delta_time)) + 1, 0]),
+          rotate([0, 0, Math.sin(delta_time)], true),
+          translate([Math.sin(delta_time), Math.cos(delta_time), 0])
+        ]
+
+        console.log(json) 
+        scene.render(json)
 
       } else { // use the sliders
-        scene.render({
-          "arm": {
+        scene.render(json);
+        // scene.render({
+        //   "arm": {
             
-            "base": {
-              "dynamic_transforms": [
-                rotate([0, deg_to_rad(document.getElementById(`base_range`).value), 0], true)
-              ],
-              "joint_transforms": [],
+        //     "base": {
+        //       "dynamic_transforms": [
+        //         rotate([0, 0, deg_to_rad(document.getElementById(`base_range`).value)], true)
+        //       ],
+        //       "joint_transforms": [],
               
-              "seg2": {
-                "dynamic_transforms": [
-                  rotate([0, deg_to_rad(document.getElementById(`seg2_range`).value), 0], true)
-                ],
-                "joint_transforms": [],
+        //       "seg2": {
+        //         "dynamic_transforms": [
+        //           rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)
+        //         ],
+        //         "joint_transforms": [],
                 
-                "seg3": {
-                  "dynamic_transforms": [
-                    rotate([0, deg_to_rad(document.getElementById(`seg3_range`).value), 0], true)
-                  ],
-                  "joint_transforms": [],
+        //         "seg3": {
+        //           "dynamic_transforms": [
+        //             rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)
+        //           ],
+        //           "joint_transforms": [],
 
-                  "seg4": {
-                    "dynamic_transforms": [
-                      rotate([0, deg_to_rad(document.getElementById(`seg4_range`).value), 0], true)
-                    ],
-                    "joint_transforms": [],
+        //           "seg4": {
+        //             "dynamic_transforms": [
+        //               rotate([0, 0, deg_to_rad(document.getElementById(`seg4_range`).value)], true)
+        //             ],
+        //             "joint_transforms": [],
 
-                    "top": {
-                      "dynamic_transforms": [
-                        rotate([0, deg_to_rad(document.getElementById(`top_range`).value), 0], true)
-                      ],
-                      "joint_transforms": [translate([0, 0, 1])],
-                    }
-                  }
-                }
-              }
-            }
-          }
-        });
+        //             "top": {
+        //               "dynamic_transforms": [
+        //                 rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)
+        //               ],
+        //               "joint_transforms": [],
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        // });
       } // end if
     
     } // end render

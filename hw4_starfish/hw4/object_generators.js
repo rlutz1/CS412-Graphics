@@ -1,0 +1,166 @@
+/**
+ * for writing custom logic to generate objects in 
+ * a hierarchy.
+ */
+
+/**
+ * generate a simple arm out of cylinders.
+ * going to return a SceneObject that has the 
+ * hierarchy of 4 times: 
+ * base -> seg2 -> seg3 -> top
+ */
+function generate_arm(gl) {
+  // construct the hierarchy as a SceneObject
+  const object = new SceneObject("arm", gl);
+  object.init(basic_vert_shader, basic_frag_shader);
+
+  // generate the base.
+  // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
+  let verts_and_indices = gen_cylinder_points(); // the vertices to start with
+  let colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0, 0]);
+  let static_transforms = [scale([1, 0.8, 1]), rotate([deg_to_rad(300), 0, 0], true), translate([0, 0, -2])];
+
+  // make this a scene node.
+  const base = new SceneObjectNode("base", verts_and_indices, colors, static_transforms, gl, object.program);
+
+  // generate the next segment.
+  // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
+  verts_and_indices = gen_cylinder_points(); // the vertices to start with
+  colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.2, 0.2]);
+  static_transforms = [scale([0.8, 1, 1]), translate([0, 0, 1])];
+
+  // make this a scene node.
+  const seg2 = new SceneObjectNode("seg2", verts_and_indices, colors, static_transforms, gl, object.program);
+
+  // generate the next segment.
+  // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
+  verts_and_indices = gen_cylinder_points(); // the vertices to start with
+  colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.5, 0.5]);
+  static_transforms = [scale([0.8, 1, 1]), translate([0, 0, 1])];
+
+  // make this a scene node.
+  const seg3 = new SceneObjectNode("seg3", verts_and_indices, colors, static_transforms, gl, object.program);
+
+
+  // generate the next segment.
+  // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
+  verts_and_indices = gen_cylinder_points(); // the vertices to start with
+  colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.7, 0.7]);
+  static_transforms = [scale([0.8, 1, 1]), translate([0, 0, 1])];
+
+  // make this a scene node.
+  const seg4 = new SceneObjectNode("seg4", verts_and_indices, colors, static_transforms, gl, object.program);
+
+  verts_and_indices = gen_sphere_points(); // the vertices to start with
+  colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 1, 1]);
+  static_transforms = [scale([0.5, 0.5, 0.5]), translate([0, 0, 2])];
+
+  // make this a scene node.
+  const top = new SceneObjectNode("top", verts_and_indices, colors, static_transforms, gl, object.program);
+
+  // TODO: make the top -- need 4, but testing with 3 to start.
+  object.add_root(base); // format: node to add, parent 
+  base.add_child(seg2);
+  seg2.add_child(seg3);
+  seg3.add_child(seg4);
+  seg4.add_child(top);
+
+  return object;
+
+} // end function
+
+function generate_starfish(gl) {
+  // construct the hierarchy as a SceneObject
+  const object = new SceneObject("starfish", gl); // TODO: snake
+  object.init(basic_vert_shader, basic_frag_shader);
+
+  const json = {} // for dynamically creating this instead of doing by hand.
+  json["starfish"] = {}
+
+  // generate the base.
+  let verts_and_indices = gen_sphere_points(); // the vertices to start with
+  let colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 0.5, 0.6]);
+  let static_transforms = [scale([0.5, 0.5, 0.5])];
+
+  // make this a scene node.
+  const base = new SceneObjectNode("base", verts_and_indices, colors, static_transforms, gl, object.program);
+  json["starfish"]["base"] = {}
+  json["starfish"]["base"]["dynamic_transforms"] = [];
+  json["starfish"]["base"]["joint_transforms"] = [];
+
+  // make some tentacles, returning the root node of this structure
+  const num_tentacles = 4;
+  const translates = [[-2.1, 0, 0], [0, 2.1, 0], [2.1, 0, 0], [0, -2.1, 0]]
+  for (let i = 0; i < num_tentacles; i++) {
+    const [json_child, root_child_node] = generate_tentacle(gl, i, translates[i], object.program)
+    json["starfish"]["base"][root_child_node.id] = json_child[root_child_node.id] // add to json
+    base.add_child(root_child_node); // add child to this base.
+  } // end loop
+
+  console.log(json)
+
+  // add base as the root.
+  object.add_root(base);
+
+
+  return [json, object]
+}
+
+/**
+ * make a snake of all sphereds.
+ */
+function generate_tentacle(gl, id, translate_val, program) {
+  // constructing a tree of tentacles, all the same node.
+  const json = {} // dynamic json creation.
+  
+  // generate the next segment.
+  verts_and_indices = gen_sphere_points(); // the vertices to start with
+  colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 0.7, 0.8]);
+  static_transforms = [scale([0.8, 0.8, 0.8]), translate(translate_val)];
+
+  // make this a scene node.
+  const base = new SceneObjectNode(`base_${id}`, verts_and_indices, colors, static_transforms, gl, program);
+  json[base.id] = {};
+  json[base.id]["dynamic_transforms"] = [];
+  json[base.id]["joint_transforms"] = [];
+
+  // generate the next segment.
+  verts_and_indices = gen_sphere_points(); // the vertices to start with
+  colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 0.7, 0.8]);
+  static_transforms = [scale([0.8, 0.8, 0.8]), translate(translate_val)];
+
+  // make this a scene node.
+  const seg1 = new SceneObjectNode(`seg1_${id}`, verts_and_indices, colors, static_transforms, gl, program);
+  json[base.id][seg1.id] = {};
+  json[base.id][seg1.id]["dynamic_transforms"] = [];
+  json[base.id][seg1.id]["joint_transforms"] = [];
+
+  // generate the next segment.
+  verts_and_indices = gen_sphere_points(); // the vertices to start with
+  colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 0.7, 0.8]);
+  static_transforms = [scale([0.8, 0.8, 0.8]), translate(translate_val)];
+
+  // make this a scene node.
+  const seg2 = new SceneObjectNode(`seg2_${id}`, verts_and_indices, colors, static_transforms, gl, program);
+  json[base.id][seg1.id][seg2.id] = {};
+  json[base.id][seg1.id][seg2.id]["dynamic_transforms"] = [];
+  json[base.id][seg1.id][seg2.id]["joint_transforms"] = [];
+
+  verts_and_indices = gen_sphere_points(); // the vertices to start with
+  colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 1, 1]);
+  static_transforms = [scale([0.8, 0.8, 0.8]), translate(translate_val)];
+
+  // make this a scene node.
+  const top = new SceneObjectNode(`top_${id}`, verts_and_indices, colors, static_transforms, gl, program);
+  json[base.id][seg1.id][seg2.id][top.id] = {};
+  json[base.id][seg1.id][seg2.id][top.id]["dynamic_transforms"] = [];
+  json[base.id][seg1.id][seg2.id][top.id]["joint_transforms"] = [];
+
+  // TODO: make the top -- need 4, but testing with 3 to start.
+  // object.add_root(base); // format: node to add, parent 
+  base.add_child(seg1);
+  seg1.add_child(seg2);
+  seg2.add_child(top);
+
+  return [json, base];
+} // end function

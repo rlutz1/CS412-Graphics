@@ -374,6 +374,9 @@ class SceneObjectNode {
     this.gl.enableVertexAttribArray(this.color_loc);
     this.gl.vertexAttribPointer(this.color_loc, 3, this.gl.FLOAT, false, 0, 0);
 
+    console.log(dynamic_transforms.dynamic_transforms)
+    console.log(this.static_transforms)
+    console.log(dynamic_transforms.joint_transforms)
     // flatten the dynamic transforms.
     const dynamic_flattened = this.flatten_matrices(dynamic_transforms.dynamic_transforms);
     // also flatten the static transformations.
@@ -384,20 +387,21 @@ class SceneObjectNode {
     // we then need to add to the stack in the CORRECT ORDER!
     // TODO: include a "joint" transformation that would need to be popped off potentially.
     stack = [...static_flattened, ...stack]; // add static so these are done second
+    
     stack = [...dynamic_flattened, ...stack]; // add dynamic so these are done FIRST.
-
+    
     // stack = [...transform([0, 0, 1]), ...stack]
     // const stack_float32 = new Float32Array(stack);
     const stack_float32 = new Float32Array([...this.flatten_matrices(dynamic_transforms.joint_transforms), ...stack]);
-
+    
     // debugging
-    // console.log(
-    //     `HOW MANY TRANSFORMS on ${this.id}:`,
-    //     stack_float32.length / 16, // 4x4 matrices
-    //     "matrices,",
-    //     stack_float32.length, // how many vals
-    //     "floats"
-    // );
+    console.log(
+        `HOW MANY TRANSFORMS on ${this.id}:`,
+        stack_float32.length / 16, // 4x4 matrices
+        "matrices,",
+        stack_float32.length, // how many vals
+        "floats"
+    );
 
     // set this nodes transformation matrix
     this.gl.uniformMatrix4fv(this.dynamic_transforms_loc, false, stack_float32);
