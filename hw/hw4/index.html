@@ -3,18 +3,30 @@
 
 <head>
   <meta charset="utf-8">
-  <title>UNM CS 412/512 HW3</title>
+  <title>UNM CS 412/512 HW4</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <h2>Interactive Controls & Geometric Primitives</h2>
+  <h2>Hierarchical Modelling</h2>
   <p>
-    Edit vertex and fragment shaders on the left to get the result instantly.<br>
-    Use mouse to drag and rotate the cube. <br>
-    Use arrow keys and w, s keys to move the camera.<br>
-    Save your code to source file if you want to save it.<br>
-    Press F12 to see the console for debugging.
+    The following canvas has two options: a basic "cake" structure and <br />
+    (2) a starfish like creature with an animation playing over time. <br />
+    <br />
+    You can play with the cake more with sliders to move all the individual <br />
+    5 segments in order to illustrate the hierarchical modelling of the structure. <br />
+    You can also turn on "Animation Mode" to watch it move with respect to time <br />
+    (achieved with a rotation matrix given to each child in hierarchy).
+    <br />
+    You can also switch to the "starfish", which only moves with respect to time <br />
+    in the same way as mentioned above. There are no sliders for this one because, <br />
+    well, it would be a cluttered nightmare of sliders. So this one is just for fun. <br />
+    <br />
+    You can find the vertex and fragment shaders used in <b>vert_shaders.js</b> and <br />
+    <b>frag_shaders.js</b>. Most of the hierarchical modelling and stack building is <br />
+    within <b>scene_graph.js</b>, where I begin fleshing out the beginning of a personal <br />
+    API for buidling a scene graph. This will be evolving and tuned with time to make more <br />
+    usable and flexible.
   </p>
       
   <h3>Submission by:</h3>
@@ -23,22 +35,16 @@
     CS412 <br />
     10/6/26 <br />
   </p>
-  
-
-  <p>
-    <b>PUT EXPLANATION HERE</b>
-  </p>
 
   <div style="display: flex; gap: 10px; align-items: flex-start;">
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <canvas id="glcanvas" width="800" height="500"></canvas>
+      <!-- select your model -->
       <select name="Models" id="model" style="text-align: center; font-size: 20px">
         <option value="cake">Cake</option>
         <option value="starfish">Starfish</option>
       </select>
     </div>
-    
-    
 
     <div style="display: flex; flex-direction: column; gap: 10px;">
       

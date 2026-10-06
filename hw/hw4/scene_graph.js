@@ -80,7 +80,7 @@ class SceneGraph {
    * render
    * ----------------------------------
    */
-  render(dynamic_transforms) {
+  render(node_transforms) {
     // let's do some scene clearing work.
     this.clear();
 
@@ -88,7 +88,7 @@ class SceneGraph {
     this.objects.forEach((o) => {
       console.log(`Rendering ${o.id} object...`);
       // TODO: can i just put camera views on the stack?
-      o.render(this.projection, this.model_view, dynamic_transforms[o.id], []);
+      o.render(this.projection, this.model_view, node_transforms[o.id], []);
     });
   } // end render
 
@@ -173,8 +173,6 @@ class SceneObject {
   model_view_loc = null; // location in vert shader for model_view transform
   projection_loc = null; // location in vert shader for projection transform
 
-  // todo: add_node(SceneObjectNode, parent id)
-
   /**
    * ----------------------------------
    * constructor and inits
@@ -195,6 +193,9 @@ class SceneObject {
 
     this.vert_shader_raw = vert_shader;
     this.frag_shader_raw = frag_shader;
+    if (vert_shader != null && frag_shader != null) {
+        this.init_shader_program(); // assume to init.
+    } // end if
   } // end constructor
 
   /**
@@ -256,7 +257,7 @@ class SceneObject {
     this.gl.compileShader(shader);
     if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
       throw new Error(this.gl.getShaderInfoLog(shader));
-    }
+    } // end if
     return shader;
   } // end function
 
@@ -265,7 +266,7 @@ class SceneObject {
    * render
    * ----------------------------------
    */
-  render(projection, model_view, dynamic_transforms, stack) {
+  render(projection, model_view, node_transforms, stack) {
     // use this program
     this.gl.useProgram(this.program);
 
@@ -274,10 +275,10 @@ class SceneObject {
     this.gl.uniformMatrix4fv(this.model_view_loc, false, model_view);
 
     this.roots.forEach((r) => {
-      console.log(`Rendering ${r.id} node...`);
+      console.log(`Rendering ${r.id} root node...`);
       // TODO: can i just put camera views on the stack?
       // stack is empty for now here.
-      r.render(dynamic_transforms[r.id], stack);
+      r.render(node_transforms[r.id], stack);
     });
   } // end render
 
@@ -327,10 +328,10 @@ class SceneObjectNode {
   indices_buff = null;
   color_buff = null;
 
-  // these need to be set from get_Location in gl.
+  // these need to be set from getLocation in gl and at minimum should be in shader.
   pos_loc = null; // gl location for placing vertex
   color_loc = null; // gl location for placing color
-  dynamic_transforms_loc = null; // gl location for the transformation matrix
+  node_transforms_loc = null; // gl location for the transformation matrix
   num_my_transforms_loc = null; // gl location to specify how many transforms i have.
 
   /**
@@ -350,7 +351,7 @@ class SceneObjectNode {
     // grab these here for now.
     this.pos_loc = this.gl.getAttribLocation(this.program, "aPosition");
     this.color_loc = this.gl.getAttribLocation(this.program, "aColor");
-    this.dynamic_transforms_loc = this.gl.getUniformLocation(this.program, "uModelTransformationMatrix"); 
+    this.node_transforms_loc = this.gl.getUniformLocation(this.program, "uModelTransformationMatrix"); 
     this.num_my_transforms_loc = this.gl.getUniformLocation(this.program, "transforms_up_to");
 
     // initialize the buffers from the given params.
@@ -385,7 +386,7 @@ class SceneObjectNode {
    * render
    * ----------------------------------
    */
-  render(dynamic_transforms, stack) {
+  render(node_transforms, stack) {
     // vertex/positions buffer
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pos_buff);
     this.gl.enableVertexAttribArray(this.pos_loc);
@@ -400,20 +401,24 @@ class SceneObjectNode {
     this.gl.vertexAttribPointer(this.color_loc, 3, this.gl.FLOAT, false, 0, 0);
 
     // flatten the dynamic transforms.
-    const dynamic_flattened = this.flatten_matrices(dynamic_transforms.dynamic_transforms);
+    const dynamic_flattened = this.flatten_matrices(node_transforms.dynamic_transforms);
     // also flatten the static transformations.
     const static_flattened = this.flatten_matrices(this.static_transforms);
 
     // we are going to add the transforms to the stack. 
     // BUT, we need to remember that they are carried out from FRONT -> BACK
     // we then need to add to the stack in the CORRECT ORDER!
-    // TODO: include a "joint" transformation that would need to be popped off potentially.
     stack = [...static_flattened, ...stack]; // add static so these are done second
     stack = [...dynamic_flattened, ...stack]; // add dynamic so these are done FIRST.
 
-    // stack = [...transform([0, 0, 1]), ...stack]
-    // const stack_float32 = new Float32Array(stack);
-    const stack_float32 = new Float32Array([...this.flatten_matrices(dynamic_transforms.joint_transforms), ...stack]);
+    // stack for this node is given with its unique "joint" transforms, but they are not
+    // saved to the stack passed forward (in effect: popped off).
+    // the joint transforms are for moving the object to a specific point
+    // in order to affect its dynamic origin. this isn't perfect, but a start to the idea.
+    // TODO: potentially a "reverse" transform to undo this joint_transform after the dynamic is complete.
+    //       ie: joint_transform -> rotate -> undo_joint_transform -> carry on with hierarchy.
+    //       but for now: just be aware of this in the static transforms set past this.
+    const stack_float32 = new Float32Array([...this.flatten_matrices(node_transforms.joint_transforms), ...stack]);
 
     // debugging
     // console.log(
@@ -425,7 +430,7 @@ class SceneObjectNode {
     // );
 
     // set this nodes transformation matrix
-    this.gl.uniformMatrix4fv(this.dynamic_transforms_loc, false, stack_float32);
+    this.gl.uniformMatrix4fv(this.node_transforms_loc, false, stack_float32);
     // set how many matrices
     this.gl.uniform1i(this.num_my_transforms_loc, stack_float32.length / 16);
     // draw the node.
@@ -435,7 +440,7 @@ class SceneObjectNode {
     this.children.forEach((c) => {
         console.log(`Rendering ${c.id} node...`);
         c.render(
-            dynamic_transforms[c.id],
+            node_transforms[c.id],
             stack
         );
     });

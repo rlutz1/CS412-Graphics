@@ -1,6 +1,8 @@
 /**
  * file to encap the either static grab or dynamic
  * generation of vertex shaders for different nodes.
+ * 
+ * this is kept as a json -- will be fleshing out more later.
  */
 
 const basic_frag_shader = {

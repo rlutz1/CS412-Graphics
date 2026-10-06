@@ -1,14 +1,16 @@
 /**
  * file to encap the either static grab or dynamic
  * generation of vertex shaders for different nodes.
+ * 
+ * this is kept as a json--will be fleshing this idea out more later.
  */
 
 const basic_vert_shader = {
-  "ins": ["aPosition", "aColor"],
-  "uniforms": ["uProjectionMatrix", "uModelViewMatrix", "uModelTransformationMatrix"],
-  "projection": "uProjectionMatrix", 
-  "model_view": "uModelViewMatrix",
-  // TODO: transforms_up_to
+  // TODO
+  // "ins": ["aPosition", "aColor"],
+  // "uniforms": ["uProjectionMatrix", "uModelViewMatrix", "uModelTransformationMatrix"],
+  // "projection": "uProjectionMatrix", 
+  // "model_view": "uModelViewMatrix",
   "src": `#version 300 es
     in vec3 aPosition;
     in vec3 aColor;

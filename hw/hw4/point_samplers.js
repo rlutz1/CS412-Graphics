@@ -304,10 +304,10 @@ function gen_cylinder_colors(num_vertices, solid_color=null) {
   // use a solid color only.
   for (let v = 0; v < num_vertices; v++) {
     if (v % 6 == 0) { // for a little depth since no lighting.
-        cyl_color.push(...solid_color)
-    } else {
       const offset = solid_color.map(num => num * 1/2);
       cyl_color.push(...offset)
+    } else {
+      cyl_color.push(...solid_color)
     } // end if
   } // end loop
   return new Float32Array(cyl_color)
