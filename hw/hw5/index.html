@@ -171,11 +171,11 @@
           // this is not flexible in its current state.
           // just intended to clean up the main html.
           cake_json = generate_cake_json({
-            "base": [rotate([0, Math.sin(delta_time), 0], true)],
-            "seg2": [rotate([0, Math.sin(delta_time + 1), 0], true)],
-            "seg3": [rotate([0, Math.sin(delta_time + 2), 0], true)],
-            "seg4": [rotate([0, Math.sin(delta_time + 3), 0], true)],
-            "top":  [rotate([0, Math.sin(delta_time + 4), 0], true)]
+            "base": [rotate([0, 0, Math.sin(delta_time)], true)],
+            "seg2": [rotate([0, 0, Math.sin(delta_time + 1)], true)],
+            "seg3": [rotate([0, 0, Math.sin(delta_time + 2)], true)],
+            "seg4": [rotate([0, 0, Math.sin(delta_time + 3)], true)],
+            "top":  [rotate([0, 0, Math.sin(delta_time + 4)], true)]
           })
 
           scene.render(cake_json);
@@ -183,11 +183,11 @@
         } else { 
           // use the sliders
           cake_json = generate_cake_json({
-            "base": [rotate([0, deg_to_rad(document.getElementById(`base_range`).value), 0], true)],
-            "seg2": [rotate([0, deg_to_rad(document.getElementById(`seg2_range`).value), 0], true)],
-            "seg3": [rotate([0, deg_to_rad(document.getElementById(`seg3_range`).value), 0], true)],
-            "seg4": [rotate([0, deg_to_rad(document.getElementById(`seg4_range`).value), 0], true)],
-            "top":  [rotate([0, deg_to_rad(document.getElementById(`top_range`).value), 0], true)]
+            "base": [rotate([0, 0, deg_to_rad(document.getElementById(`base_range`).value)], true)],
+            "seg2": [rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)],
+            "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
+            "seg4": [rotate([0, 0, deg_to_rad(document.getElementById(`seg4_range`).value)], true)],
+            "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
           })
 
           scene.render(cake_json);

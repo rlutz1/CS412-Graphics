@@ -16,7 +16,7 @@
 function gen_sphere_points(
   r=1.0, // radius of the sphere
   center=[0, 0, 0], // center of the sphere
-  h_step=0.2, // horizontal step interval // TODO: 0.2 looks a little funky
+  h_step=0.1, // horizontal step interval 
   v_step=0.1, // vertical step interval
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
   v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
@@ -216,8 +216,8 @@ function gen_cylinder_points(
 
       // gather the points using parametric form
       const x = base_x + (r * cos_h)
-      const y = base_y + (r * sin_h)
-      const z = base_z + (height * v)
+      const z = base_y + (r * sin_h)
+      const y = base_z + (height * v)
 
       vertices.push(x, y, z) // save the points
     } // end loop
@@ -225,7 +225,7 @@ function gen_cylinder_points(
   
   // bottom middle point, mimicking last z value created
   // accounts for anything not quite reaching the actual height value (rounding issues cause lumps!).
-  vertices.push(base_x, base_y, vertices.at(-1)) // save the polar cap
+  vertices.push(base_x, vertices.at(-2), base_z) // save the polar cap
 
   // ==================================
   //  GENERATE INDICES
