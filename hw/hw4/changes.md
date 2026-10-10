@@ -11,4 +11,6 @@ right now i have
 
 problems with the above design:
 + joint transforms doesn't carry through to the children BUT it does affect the chain of transformations and is not undone before the dynamic, statics... 
-  + 
+
+
+don't love the json control. needs to be more dynamic for frontend changes
