@@ -1,0 +1,71 @@
+/**
+ * just your run of the mill css file to clean out the index.html file.
+ */
+
+
+
+body {
+  background: #111;
+  color: #ccc;
+  font-family: monospace;
+}
+
+textarea {
+  background: #222;
+  color: #0f0;
+  font: 14px monospace;
+  width: 400px;
+  height: 250px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas {
+  border: 1px solid #444;
+}
+
+/* below is courtesy of: https://www.w3schools.com/howto/howto_js_rangeslider.asp */
+
+.cake_slide_container {
+  width: 100%; /* Width of the outside container */
+  /* display: block; */
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 10px; /* Specified height */
+  background: #e076db6e; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 30px; /* Set a specific slider handle width */
+  height: 10px; /* Slider handle height */
+  background: #ff5df7; /* slider background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 30px; /* Set a specific slider handle width */
+  height: 10px; /* Slider handle height */
+  background: #ff5df7; /* slider background */
+  cursor: pointer; /* Cursor on hover */
+}
