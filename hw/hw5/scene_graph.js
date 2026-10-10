@@ -111,6 +111,17 @@ class SceneGraph {
   } // end function
 
   /**
+   * top level graph function to add a point light to the scene.
+   * ensure all child objects are handed this point light.
+   */
+  add_point_light(position) {
+     this.objects.forEach((o) => {
+      // TODO: can i just put camera views on the stack?
+      o.add_point_light(position);
+    });
+  } // end function
+
+  /**
    * add a top level object to the scene graph
    */
   add_object(object) {
@@ -173,6 +184,9 @@ class SceneObject {
   // (camera setup)
   model_view_loc = null; // location in vert shader for model_view transform
   projection_loc = null; // location in vert shader for projection transform
+  // (light setup)
+  point_lights = []; // point lights the object should be responding to.
+  point_lights_loc = null;
 
   /**
    * ----------------------------------
@@ -225,6 +239,7 @@ class SceneObject {
       // grab these locations
       this.model_view_loc = this.gl.getUniformLocation(this.program, "uModelViewMatrix"); 
       this.projection_loc = this.gl.getUniformLocation(this.program, "uProjectionMatrix"); 
+      this.point_lights_loc = this.gl.getUniformLocation(this.program, "uPointLights");
     } catch (e) { 
       console.error(e); 
     } // end try catch
@@ -274,6 +289,9 @@ class SceneObject {
     // set gl attributes for the camera_matrices
     this.gl.uniformMatrix4fv(this.projection_loc, false, projection);
     this.gl.uniformMatrix4fv(this.model_view_loc, false, model_view);
+    // TODO: not new on every render call.
+    this.gl.uniform4fv(this.point_lights_loc, new Float32Array(this.point_lights));
+    console.error(this.point_lights)
 
     this.roots.forEach((r) => {
       console.log(`Rendering ${r.id} root node...`);
@@ -288,6 +306,14 @@ class SceneObject {
    * functions
    * ----------------------------------
    */
+
+  /**
+   * add this point light to my list.
+   */
+  add_point_light(position) {
+    console.log("yessum")
+    this.point_lights.push(...position);
+  } // end function
 
   /**
    * add a root node to the object

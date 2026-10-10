@@ -27,7 +27,8 @@ const lighting_frag_shader = {
     in vec3 vNormal;
     in vec3 vColor;
 
-    uniform vec3 uLightPos; // light position in space
+    // TODO: list of light positions
+    uniform vec3 uPointLights; // light position in space
 
     out vec4 fragColor;
 
