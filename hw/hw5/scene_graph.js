@@ -123,6 +123,7 @@ class SceneGraph {
 
   /**
    * add a top level object to the scene graph
+   * TODO: add lights in scene automatically here?
    */
   add_object(object) {
     // TODO: assert same gl for both (same canvas!)
@@ -345,16 +346,19 @@ class SceneObjectNode {
   
   vertices = null; // actual raw vertices of the node
   indices = null; // the indices of the above vertices to join up the triangles 
+  norms = null;
   colors = null; // the colors for each vertex
   static_transforms = null; // the PART transforms of this object -- static positioning
                             // relative to the parent.
   // general buffers for gl for this node.
   pos_buff = null;
+  norm_buff = null;
   indices_buff = null;
   color_buff = null;
 
   // these need to be set from getLocation in gl and at minimum should be in shader.
   pos_loc = null; // gl location for placing vertex
+  norm_loc = null; // gl location for placing norms
   color_loc = null; // gl location for placing color
   node_transforms_loc = null; // gl location for the transformation matrix
   num_my_transforms_loc = null; // gl location to specify how many transforms i have.
@@ -368,6 +372,7 @@ class SceneObjectNode {
     this.id = id;
     this.vertices = verts_and_indices.vertices;
     this.indices = verts_and_indices.indices;
+    this.norms = verts_and_indices.norms;
     this.colors = colors;
     this.static_transforms = static_transforms;
     this.gl = gl; 
@@ -375,6 +380,7 @@ class SceneObjectNode {
 
     // grab these here for now.
     this.pos_loc = this.gl.getAttribLocation(this.program, "aPosition");
+    this.norm_loc = this.gl.getAttribLocation(this.program, "aNormal");
     this.color_loc = this.gl.getAttribLocation(this.program, "aColor");
     this.node_transforms_loc = this.gl.getUniformLocation(this.program, "uModelTransformationMatrix"); 
     this.num_my_transforms_loc = this.gl.getUniformLocation(this.program, "transforms_up_to");
@@ -392,6 +398,7 @@ class SceneObjectNode {
    */
   init_buffers() {
       this.pos_buff = this.init_buffer(this.vertices);
+      this.norm_buff = this.init_buffer(this.norms);
       this.indices_buff = this.init_buffer(this.indices, this.gl.ELEMENT_ARRAY_BUFFER);
       this.color_buff = this.init_buffer(this.colors)
   } // end function
@@ -416,6 +423,11 @@ class SceneObjectNode {
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pos_buff);
     this.gl.enableVertexAttribArray(this.pos_loc);
     this.gl.vertexAttribPointer(this.pos_loc, 3, this.gl.FLOAT, false, 0, 0);
+
+    // norm buffer setup
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.norm_buff);
+    this.gl.enableVertexAttribArray(this.norm_loc);
+    this.gl.vertexAttribPointer(this.norm_loc, 3, this.gl.FLOAT, false, 0, 0);
 
     // index buffer for drawing as triangles
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices_buff);

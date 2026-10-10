@@ -91,12 +91,14 @@ function gen_sphere_points(
 
   const vertices = [] // simple js array for collection of vertices
   const indices = [] // js array for collecting indices
+  const norms = [] // normals of the planes generated
 
   // ==================================
   //  GENERATE POINTS
   // ==================================
 
   vertices.push(center[0], r, center[2]) // save the north polar cap
+  norms.push(0, r, 0); // pointing straight up
 
   // generate the bands of the sphere
   for (let v_i = 1; v_i < v_steps; v_i++) { // for each vertical step
@@ -116,10 +118,12 @@ function gen_sphere_points(
           const z = center[1] + (r * sin_v * sin_h)
           const y = center[2] + (r * cos_v)
           vertices.push(x, y, z) // save the points
+          // TODO norms.push
       } // end loop
     } // end loop
    
     vertices.push(center[0], -r, center[2]) // save the south polar cap
+    norms.push(0, -r, 0); // pointing straight down
 
     // ==================================
     //  GENERATE INDICES
@@ -182,7 +186,8 @@ function gen_sphere_points(
   // return as a js dict
   return {
     "vertices": new Float32Array(vertices), 
-    "indices": new Uint16Array(indices)
+    "indices": new Uint16Array(indices),
+    "norms": new Float32Array([]) // TODO
   } 
 } // end method
 
@@ -252,6 +257,7 @@ function gen_cylinder_points(
 
   const vertices = [] // simple js array for collection of vertices
   const indices = [] // js array for collecting indices
+  const norms = []; // norms for the planes
 
   // ==================================
   //  GENERATE POINTS
@@ -259,6 +265,8 @@ function gen_cylinder_points(
 
   // this is the base middle point
   vertices.push(base_x, base_y, base_z) 
+  norms.push(0, -1, 0); // pointing straight down
+
 
   // generate the bands of the side of the cylinder.
   for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
@@ -277,12 +285,14 @@ function gen_cylinder_points(
       const y = base_z + (height * v)
 
       vertices.push(x, y, z) // save the points
+      norms.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
     } // end loop
   } // end loop
   
   // bottom middle point, mimicking last z value created
   // accounts for anything not quite reaching the actual height value (rounding issues cause lumps!).
   vertices.push(base_x, vertices.at(-2), base_z) // save the polar cap
+  norms.push(0, 1, 0); // pointing straight up
 
   // ==================================
   //  GENERATE INDICES
@@ -338,7 +348,8 @@ function gen_cylinder_points(
   // return as a js dict
   return {
     "vertices": new Float32Array(vertices), 
-    "indices": new Uint16Array(indices)
+    "indices": new Uint16Array(indices),
+    "norms": new Float32Array(norms)
   } 
 } // end method
 
