@@ -5,6 +5,63 @@
  * this holds the functions for generating: sphere, cylinder
  */
 
+/**
+ * static primitive generation of a cube.
+ */
+function gen_cube_points() {
+
+    const vertices = [
+      -1, -1, -1,  // 0
+      1, -1, -1,  // 1
+      1,  1, -1,  // 2
+      -1,  1, -1,  // 3
+      -1, -1,  1,  // 4
+      1, -1,  1,  // 5
+      1,  1,  1,  // 6
+      -1,  1,  1   // 7
+    ];
+
+    const indices = [
+      // Front
+      4, 5, 6,   4, 6, 7,
+      // Back
+      1, 0, 3,   1, 3, 2,
+      // Top
+      3, 7, 6,   3, 6, 2,
+      // Bottom
+      0, 1, 5,   0, 5, 4,
+      // Right
+      1, 2, 6,   1, 6, 5,
+      // Left
+      0, 4, 7,   0, 7, 3,
+    ];
+
+    // return as a js dict
+    return {
+      "vertices": new Float32Array(vertices), 
+      "indices": new Uint16Array(indices)
+    } 
+} // end function
+/**
+ * generate colors of a cube either with dynamicism or
+ * just a solid color.
+ */
+// (num_vertices, solid_color=null)
+function gen_cube_colors(num_vertices, solid_color=null) {
+  if (solid_color != null) {
+    return new Float32Array([
+      1,0,0,  0,1,0,  0,0,1, 1,1,0, 1,0,1, 0,1,1, 1,1,0, 1,0,1
+    ]);
+  } // end if
+  
+  cube_colors = [];
+  for (let i = 0; i < num_vertices; i++) {
+    cube_colors.push(...solid_color);
+  } // end loop
+
+  return new Float32Array(cube_colors);
+} // end function
+
 
 /**
  * generate sphere points from parametric representation.
