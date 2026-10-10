@@ -76,6 +76,7 @@ const lighting_vert_shader = {
       vec4 p = uModelViewMatrix * pos;
       // vec4 p = uProjectionMatrix * uModelViewMatrix * pos;
       vPosition = p.xyz;
+      // vPosition.z *= 0.5;
       // use model view and apply to given normal -- send to frag.
       vNormal = mat3(uModelViewMatrix) * aNormal;
 
