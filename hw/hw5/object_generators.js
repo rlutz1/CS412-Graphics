@@ -51,7 +51,7 @@ function generate_cake(gl) {
   // generate the top segment.
   verts_and_indices = gen_sphere_points(); // the vertices to start with
   colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 1, 1]);
-  static_transforms = [scale([0.5, 0.5, 0.5]), translate([0, 2, 0])];
+  static_transforms = [scale([0.5, 0.5, 0.5]), translate([0, 1, 0])];
 
   // make this a scene node.
   const top = new SceneObjectNode("top", verts_and_indices, colors, static_transforms, gl, object.program);

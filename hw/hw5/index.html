@@ -171,7 +171,7 @@
           // this is not flexible in its current state.
           // just intended to clean up the main html.
           cake_json = generate_cake_json({
-            "base": [rotate([0, 0, Math.sin(delta_time)], true)],
+            "base": [rotate([Math.sin(delta_time), 0, 0], true)],
             "seg2": [rotate([0, 0, Math.sin(delta_time + 1)], true)],
             "seg3": [rotate([0, 0, Math.sin(delta_time + 2)], true)],
             "seg4": [rotate([0, 0, Math.sin(delta_time + 3)], true)],
@@ -183,7 +183,7 @@
         } else { 
           // use the sliders
           cake_json = generate_cake_json({
-            "base": [rotate([0, 0, deg_to_rad(document.getElementById(`base_range`).value)], true)],
+            "base": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
             "seg2": [rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)],
             "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
             "seg4": [rotate([0, 0, deg_to_rad(document.getElementById(`seg4_range`).value)], true)],
