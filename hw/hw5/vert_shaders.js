@@ -56,6 +56,10 @@ const lighting_vert_shader = {
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
 
+    // allow for many matrices in a row
+    uniform mat4 uModelTransformationMatrix[50];
+    uniform int transforms_up_to; // marker of how many transforms
+
     out vec3 vPosition;
     out vec3 vNormal;
     out vec3 vColor;
@@ -72,7 +76,7 @@ const lighting_vert_shader = {
       vec4 p = uModelViewMatrix * pos;
       vPosition = p.xyz;
       // use model view and apply to given normal -- send to frag.
-      vNormal = mat3(uModelViewMatrix) * aNormal
+      vNormal = mat3(uModelViewMatrix) * aNormal;
 
       // set the actual positioning in the projection
       gl_Position = uProjectionMatrix * p;

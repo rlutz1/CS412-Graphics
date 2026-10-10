@@ -12,7 +12,7 @@
 function generate_cake(gl) {
   // construct the hierarchy as a SceneObject
   const object = new SceneObject("cake", gl);
-  object.init(basic_vert_shader, basic_frag_shader);
+  object.init(lighting_vert_shader, lighting_frag_shader);
 
   // generate the base.
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
