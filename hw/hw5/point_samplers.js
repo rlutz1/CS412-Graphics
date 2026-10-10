@@ -39,7 +39,7 @@ function gen_sphere_points(
   //  GENERATE POINTS
   // ==================================
 
-  vertices.push(center[0], center[1], r) // save the north polar cap
+  vertices.push(center[0], r, center[2]) // save the north polar cap
 
   // generate the bands of the sphere
   for (let v_i = 1; v_i < v_steps; v_i++) { // for each vertical step
@@ -56,13 +56,13 @@ function gen_sphere_points(
 
           // gather the points using parametric form
           const x = center[0] + (r * sin_v * cos_h)
-          const y = center[1] + (r * sin_v * sin_h)
-          const z = center[2] + (r * cos_v)
+          const z = center[1] + (r * sin_v * sin_h)
+          const y = center[2] + (r * cos_v)
           vertices.push(x, y, z) // save the points
       } // end loop
     } // end loop
    
-    vertices.push(center[0], center[1], -r) // save the south polar cap
+    vertices.push(center[0], -r, center[2]) // save the south polar cap
 
     // ==================================
     //  GENERATE INDICES
@@ -151,12 +151,12 @@ function gen_sphere_colors(num_vertices, solid_color=null) {
   
   // use a solid color only.
   for (let v = 0; v < num_vertices; v++) {
-    if (v % 6 == 0) { // for a little depth since no lighting.
-        sphere_color.push(...solid_color)
-    } else {
-      const offset = solid_color.map(num => num * 1/2);
-      sphere_color.push(...offset)
-    } // end if
+    // if (v % 6 == 0) { // for a little depth since no lighting.
+      sphere_color.push(...solid_color)
+    // } else {
+    //   const offset = solid_color.map(num => num * 1/2);
+    //   sphere_color.push(...offset)
+    // } // end if
   } // end loop
   return new Float32Array(sphere_color)
 } // end method
@@ -303,12 +303,12 @@ function gen_cylinder_colors(num_vertices, solid_color=null) {
 
   // use a solid color only.
   for (let v = 0; v < num_vertices; v++) {
-    if (v % 6 == 0) { // for a little depth since no lighting.
-      const offset = solid_color.map(num => num * 1/2);
-      cyl_color.push(...offset)
-    } else {
-      cyl_color.push(...solid_color)
-    } // end if
+    // if (v % 6 == 0) { // for a little depth since no lighting.
+    //   const offset = solid_color.map(num => num * 1/2);
+    //   cyl_color.push(...offset)
+    // } else {
+    cyl_color.push(...solid_color)
+    // } // end if
   } // end loop
   return new Float32Array(cyl_color)
 } // end method

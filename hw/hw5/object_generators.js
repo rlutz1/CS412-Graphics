@@ -18,7 +18,7 @@ function generate_cake(gl) {
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
   let verts_and_indices = gen_cylinder_points(); // the vertices to start with
   let colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0, 0]);
-  let static_transforms = [scale([0.8, 1, 0.8]), translate([0, -1, 0])];
+  let static_transforms = [scale([0.8, 1, 0.8]), translate([0, -2, 0])];
 
   // make this a scene node.
   const base = new SceneObjectNode("base", verts_and_indices, colors, static_transforms, gl, object.program);
@@ -50,8 +50,8 @@ function generate_cake(gl) {
 
   // generate the top segment.
   verts_and_indices = gen_sphere_points(); // the vertices to start with
-  colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 1, 1]);
-  static_transforms = [scale([0.5, 0.5, 0.5]), translate([0, 1, 0])];
+  colors = gen_sphere_colors(verts_and_indices.vertices.length, [0.5, 0.5, 0.5]);
+  static_transforms = [scale([0.5, 0.5, 0.5]), translate([0, 2, 0])];
 
   // make this a scene node.
   const top = new SceneObjectNode("top", verts_and_indices, colors, static_transforms, gl, object.program);
@@ -95,7 +95,7 @@ function generate_cake_json(dynamic_transforms) {
 
               "top": {
                 "dynamic_transforms": dynamic_transforms["top"],
-                "joint_transforms": [translate([0, 0, 1])],
+                "joint_transforms": [translate([0, 1, 0])],
               }
             }
           }

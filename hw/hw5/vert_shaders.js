@@ -36,7 +36,7 @@ const basic_vert_shader = {
       } // end loop
 
       gl_Position = uProjectionMatrix * uModelViewMatrix * pos;
-      // address some clipping:
+      // address some clipping while using an orthographic projection:
       // https://stackoverflow.com/questions/66405678/othographic-projection-causing-geometry-to-get-clipped-by-the-far-plane
       gl_Position.z *= 0.5;
       
