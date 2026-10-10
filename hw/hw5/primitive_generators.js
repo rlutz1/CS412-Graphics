@@ -98,7 +98,7 @@ function gen_sphere_points(
   // ==================================
 
   vertices.push(center[0], r, center[2]) // save the north polar cap
-  norms.push(0, r, 0); // pointing straight up
+  norms.push(0, 1, 0); // pointing straight up
 
   // generate the bands of the sphere
   for (let v_i = 1; v_i < v_steps; v_i++) { // for each vertical step
@@ -118,12 +118,12 @@ function gen_sphere_points(
           const z = center[1] + (r * sin_v * sin_h)
           const y = center[2] + (r * cos_v)
           vertices.push(x, y, z) // save the points
-          // TODO norms.push
+          norms.push(x, y, z); // add norm
       } // end loop
     } // end loop
    
     vertices.push(center[0], -r, center[2]) // save the south polar cap
-    norms.push(0, -r, 0); // pointing straight down
+    norms.push(0, -1, 0); // pointing straight down
 
     // ==================================
     //  GENERATE INDICES
@@ -187,7 +187,7 @@ function gen_sphere_points(
   return {
     "vertices": new Float32Array(vertices), 
     "indices": new Uint16Array(indices),
-    "norms": new Float32Array([]) // TODO
+    "norms": new Float32Array(norms) // TODO
   } 
 } // end method
 

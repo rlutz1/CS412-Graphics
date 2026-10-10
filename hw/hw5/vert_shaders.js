@@ -74,12 +74,14 @@ const lighting_vert_shader = {
 
       // save the position of this vertex prior to projection -- send to frag.
       vec4 p = uModelViewMatrix * pos;
+      // vec4 p = uProjectionMatrix * uModelViewMatrix * pos;
       vPosition = p.xyz;
       // use model view and apply to given normal -- send to frag.
       vNormal = mat3(uModelViewMatrix) * aNormal;
 
       // set the actual positioning in the projection
       gl_Position = uProjectionMatrix * p;
+      // gl_Position = p;
       // address some clipping while using an orthographic projection:
       // https://stackoverflow.com/questions/66405678/othographic-projection-causing-geometry-to-get-clipped-by-the-far-plane
       gl_Position.z *= 0.5;

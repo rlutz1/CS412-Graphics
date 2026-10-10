@@ -291,7 +291,7 @@ class SceneObject {
     this.gl.uniformMatrix4fv(this.projection_loc, false, projection);
     this.gl.uniformMatrix4fv(this.model_view_loc, false, model_view);
     // TODO: not new on every render call.
-    this.gl.uniform4fv(this.point_lights_loc, new Float32Array(this.point_lights));
+    this.gl.uniform3fv(this.point_lights_loc, new Float32Array(this.point_lights));
 
     this.roots.forEach((r) => {
       console.log(`Rendering ${r.id} root node...`);
