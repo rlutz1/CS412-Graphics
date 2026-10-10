@@ -110,7 +110,7 @@ function generate_cake_json(dynamic_transforms) {
  */
 function generate_starfish(gl) {
   // construct the hierarchy as a SceneObject
-  const object = new SceneObject("starfish", gl, basic_vert_shader, basic_frag_shader);
+  const object = new SceneObject("starfish", gl, lighting_vert_shader, lighting_frag_shader);
 
   const json = {} // for dynamically creating this instead of doing by hand.
   json["starfish"] = {}

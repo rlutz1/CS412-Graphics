@@ -292,7 +292,7 @@ class SceneObject {
     this.gl.uniformMatrix4fv(this.model_view_loc, false, model_view);
     // TODO: not new on every render call.
     this.gl.uniform3fv(this.point_lights_loc, new Float32Array(this.point_lights));
-
+    console.error(this.point_lights)
     this.roots.forEach((r) => {
       console.log(`Rendering ${r.id} root node...`);
       // TODO: can i just put camera views on the stack?

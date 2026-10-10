@@ -145,7 +145,8 @@
     const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
 
     const test_light = [3, 4, 5]; // a testing point light for the moment.
-
+    cake.add_point_light(test_light);
+    starfish.add_point_light(test_light);
     // todo: remove object
     start_time = Date.now()
 
@@ -163,7 +164,6 @@
         if (!scene.has_object(cake)) {
           scene.remove_all_objects();
           scene.add_object(cake); // add to the scene graph
-          scene.add_point_light(test_light); // add an arbitrary point light to the scene
         } // end if
 
         if (document.getElementById(`animate`).checked) {
@@ -186,7 +186,7 @@
           // use the sliders
           cake_json = generate_cake_json({
             "base": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
-            "seg2": [rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)],
+            "seg2": [rotate([0, deg_to_rad(document.getElementById(`seg2_range`).value), 0], true)],
             "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
             "seg4": [rotate([0, 0, deg_to_rad(document.getElementById(`seg4_range`).value)], true)],
             "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
@@ -203,7 +203,6 @@
         if (!scene.has_object(starfish)) {
           scene.remove_all_objects();
           scene.add_object(starfish); // add to the scene graph
-          scene.add_point_light(test_light); // add an arbitrary point light to the scene
         } // end if
 
         if (document.getElementById(`animate`).checked) {
