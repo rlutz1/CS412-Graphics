@@ -128,7 +128,7 @@ function generate_starfish(gl) {
 
   // make some tentacles, returning the root node of this structure
   const num_tentacles = 4;
-  const translates = [[-2, 0, -2], [0, 2, -2], [2, 0, -2], [0, -2, -2]]
+  const translates = [[-2, 0, -0.5], [0, 2, -0.5], [2, 0, -0.5], [0, -2, -0.5]]
   for (let i = 0; i < num_tentacles; i++) {
     const [json_child, root_child_node] = generate_tentacle(gl, i, translates[i], object.program)
     json["starfish"]["base"][root_child_node.id] = json_child // add to this json
