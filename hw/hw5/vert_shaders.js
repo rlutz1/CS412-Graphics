@@ -5,6 +5,9 @@
  * this is kept as a json--will be fleshing this idea out more later.
  */
 
+/**
+ * the most basic vertex shader, no lighting is considered.
+ */
 const basic_vert_shader = {
   // TODO
   // "ins": ["aPosition", "aColor"],
@@ -46,8 +49,80 @@ const basic_vert_shader = {
   `
 }
 
-// todo: may need diff shaders for different kind of shading/reflection.
-const lighting_vert_shader = {
+/**
+ * a vertex shader that handles gouraud shading, which
+ * conducts the lighting calculations here, letting the
+ * colors found per vertex be interpolated instead of normals.
+ * should be used with: gouraud_frag_shader
+ */
+const gouraud_vert_shader = {
+  "src": `#version 300 es
+
+    in vec3 aPosition;
+    in vec3 aNormal;
+    in vec3 aColor;
+
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+    // allow for many matrices in a row
+    uniform mat4 uModelTransformationMatrix[50];
+    uniform int transforms_up_to; // marker of how many transforms
+
+    uniform vec3 uPointLights; // light position in space
+
+    out vec3 vColor; // only sends out color
+
+    void main() {
+      // cast for transformations to a 4d homogenous coord
+      vec4 pos = vec4(aPosition, 1.0);
+      vec3 norm = aNormal;
+
+      for (int i = 0; i < transforms_up_to; i++) {
+        pos = uModelTransformationMatrix[i] * pos; // add all transforms
+        norm = mat3(uModelTransformationMatrix[i]) * norm; // ensure to also alter the norm
+      } // end loop
+
+      // save the position of this vertex prior to projection
+      vec4 p = uModelViewMatrix * pos;
+      vec3 vPosition = p.xyz;
+
+      // use model view and apply to given normal 
+      vec3 vNormal = mat3(uModelViewMatrix) * norm;
+
+      // calculate lighting and color HERE, not the frag shader
+      vec3 Ka = 0.2 * aColor;
+      vec3 Kd = 0.8 * aColor;
+      vec3 Ks = vec3(0.5);
+      float shininess = 32.0;
+
+      vec3 N = normalize(vNormal); // ensure normalized
+      vec3 L = normalize(uPointLights - vPosition); // get l as vector from this point
+      vec3 V = normalize(-vPosition); // camera sits at the origin
+      vec3 R = reflect(-L, N); // r = 2(dot(n, l) * n - l) 
+
+      float diff = max(dot(N, L), 0.0); // diffuse max
+      float spec = pow(max(dot(V, R), 0.0), shininess); // specular max and power alpha
+
+      vColor = Ka + Kd * diff + Ks * spec; // send color to frag shader
+
+      // set the actual positioning in the projection
+      gl_Position = uProjectionMatrix * p;
+
+      // address some clipping while using an orthographic projection:
+      // https://stackoverflow.com/questions/66405678/othographic-projection-causing-geometry-to-get-clipped-by-the-far-plane
+      // gl_Position.z *= 0.5;
+    }
+  `
+};
+
+/**
+ * a vertex shader that implements the vertex shading of 
+ * phong shading. meaning: phong will pass normal to frag shader
+ * for normal interpolation and lighting calculated per fragment.
+ * should be used with: phong_frag_shader
+ */
+const phong_vert_shader = {
   "src": `#version 300 es
 
     in vec3 aPosition;

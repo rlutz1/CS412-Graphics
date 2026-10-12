@@ -5,6 +5,9 @@
  * this is kept as a json -- will be fleshing out more later.
  */
 
+/**
+ * most basic frag shader to use.
+ */
 const basic_frag_shader = {
   "src": `#version 300 es
     precision mediump float;
@@ -18,8 +21,25 @@ const basic_frag_shader = {
   `
 }
 
+/**
+ * basic frag shader, but named
+ * for clarity in use.
+ */
+const gouraud_frag_shader = {
+  "src": `#version 300 es
+    precision mediump float;
+    in vec3 vColor;
+
+    out vec4 fragColor;
+
+    void main() {
+      fragColor = vec4(vColor,1.0);
+    }
+  `
+}
+
 // todo: may need diff shaders for different kind of shading/reflection.
-const lighting_frag_shader = {
+const phong_frag_shader = {
   "src": `#version 300 es
     precision mediump float;
 
