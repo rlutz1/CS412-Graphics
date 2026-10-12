@@ -30,6 +30,7 @@ const basic_vert_shader = {
     void main() {
       // uProjectionMatrix * uModelViewMatrix * uModelTransformationMatrix * vec4(aPosition,1.0);
       vec4 pos = vec4(aPosition, 1.0);
+      
 
       for (int i = 0; i < transforms_up_to; i++) {
         pos = uModelTransformationMatrix[i] * pos; // add all transforms
@@ -67,9 +68,11 @@ const lighting_vert_shader = {
     void main() {
       // cast for transformations to a 4d vect
       vec4 pos = vec4(aPosition, 1.0);
+      vec3 norm = aNormal;
 
       for (int i = 0; i < transforms_up_to; i++) {
         pos = uModelTransformationMatrix[i] * pos; // add all transforms
+        norm = mat3(uModelTransformationMatrix[i]) * norm;
       } // end loop
 
       // save the position of this vertex prior to projection -- send to frag.
@@ -78,7 +81,7 @@ const lighting_vert_shader = {
       vPosition = p.xyz;
       // vPosition.z *= 0.5;
       // use model view and apply to given normal -- send to frag.
-      vNormal = mat3(uModelViewMatrix) * aNormal;
+      vNormal = mat3(uModelViewMatrix) * norm;
 
       // set the actual positioning in the projection
       gl_Position = uProjectionMatrix * p;

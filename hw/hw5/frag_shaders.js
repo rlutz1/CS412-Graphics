@@ -38,13 +38,13 @@ const lighting_frag_shader = {
       vec3 Ks = vec3(0.5);
       float shininess = 32.0;
 
-      vec3 N = normalize(vNormal);
-      vec3 L = normalize(uPointLights - vPosition);
-      vec3 V = normalize(-vPosition);           // camera sits at the origin
-      vec3 R = reflect(-L, N);
+      vec3 N = normalize(vNormal); // ensure normalized
+      vec3 L = normalize(uPointLights - vPosition); // get l as vector from this point
+      vec3 V = normalize(-vPosition); // camera sits at the origin
+      vec3 R = reflect(-L, N); // r = 2(dot(n, l) * n - l) 
 
-      float diff = max(dot(N, L), 0.0);
-      float spec = pow(max(dot(V, R), 0.0), shininess);
+      float diff = max(dot(N, L), 0.0); // diffuse max
+      float spec = pow(max(dot(V, R), 0.0), shininess); // specular max and power alpha
 
       fragColor = vec4(Ka + Kd * diff + Ks * spec, 1.0);
     }
