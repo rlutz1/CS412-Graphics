@@ -8,9 +8,10 @@
 </head>
 
 <body>
-  <h2>Hierarchical Modeling</h2>
+  <h2>Hierarchical Modeling with Lighting</h2>
   <p>
-    The following canvas has two options: a basic "cake" structure and <br />
+    <b>WIP</b>
+    <!-- The following canvas has two options: a basic "cake" structure and <br />
     (2) a starfish like creature with an animation playing over time. <br />
     <br />
     You can play with the cake more with sliders to move all the individual <br />
@@ -26,14 +27,14 @@
     <b>frag_shaders.js</b>. Most of the hierarchical modelling and stack building is <br />
     within <b>scene_graph.js</b>, where I begin fleshing out the beginning of a personal <br />
     API for buidling a scene graph. This will be evolving and tuned with time to make more <br />
-    usable and flexible.
+    usable and flexible. -->
   </p>
       
   <h3>Submission by:</h3>
   <p>
     Roxanne Krause <br />
     CS412 <br />
-    10/6/26 <br />
+    10/22/26 <br />
   </p>
 
   <div style="display: flex; gap: 10px; align-items: flex-start;">
@@ -127,25 +128,22 @@
     const gl = canvas.getContext("webgl2");
     if (!gl) alert("WebGL2 not supported");
 
-    // just use the most basic fragment shaders.
-    // the src can be accessed via vert_shader.src, frag_shader.src
-    const vert_shader = basic_vert_shader; 
-    const frag_shader = basic_frag_shader;
-
     // generate an arm using 4 cylinders.
     // the hierarchy needs to be base -> seg2 -> seg3 -> top.
     // the rotations are to come from the sliders and are going to be implied x rotations.
     // this generates the shapes for the STATIC arm starting point.
-    const cake = generate_cake(gl);  // returns a SceneObject with the correct hierarchy
+    const [cake_flat, cake_gouraud, cake_phong] = generate_lit_cakes(gl); // get all 3 cakes
     let cake_json;
+
+    // make a for fun star fish
     const [starfish_json, starfish] = generate_starfish(gl);
-    // arm.init(vert_shader, frag_shader); // initalize with the chose shaders
-    // console.log(arm)
 
     const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
 
     const test_light = [3, 4, 5]; // a testing point light for the moment.
-    cake.add_point_light(test_light);
+    cake_flat.add_point_light(test_light);
+    cake_gouraud.add_point_light(test_light);
+    cake_phong.add_point_light(test_light);
     starfish.add_point_light(test_light);
     // todo: remove object
     start_time = Date.now()
@@ -161,9 +159,11 @@
         document.getElementById("ind_seg_header").style.visibility = 'visible';
         document.getElementById("cake_slide_container").style.visibility = 'visible';
         
-        if (!scene.has_object(cake)) {
+        if (!scene.has_object(cake_flat)) {
           scene.remove_all_objects();
-          scene.add_object(cake); // add to the scene graph
+          scene.add_object(cake_flat); // add to the scene graph
+          scene.add_object(cake_gouraud); // add to the scene graph
+          scene.add_object(cake_phong); // add to the scene graph
         } // end if
 
         if (document.getElementById(`animate`).checked) {

@@ -3,30 +3,37 @@
  * a hierarchy.
  */
 
+function generate_lit_cakes(gl) {
+  const cake_flat = generate_cake(gl, flat_vert_shader, flat_frag_shader, -3);  // returns a SceneObject with the correct hierarchy
+  const cake_gouraud = generate_cake(gl, gouraud_vert_shader, gouraud_frag_shader);  // returns a SceneObject with the correct hierarchy
+  const cake_phong = generate_cake(gl, phong_vert_shader, phong_frag_shader, 3);  // returns a SceneObject with the correct hierarchy
+  return [cake_flat, cake_gouraud, cake_phong]
+} // end method 
+
 /**
  * generate a simple cake out of cylinders with sphere at top.
  * going to ret5rn a SceneObject that has the 
  * hierarchy of 4 times: 
  * base -> seg2 -> seg3 -> seg4-> top
  */
-function generate_cake(gl) {
+function generate_cake(gl, vert_shader=flat_vert_shader, frag_shader=flat_frag_shader, x_shift=0) {
   // construct the hierarchy as a SceneObject
-  const object = new SceneObject("cake", gl);
+  const object = new SceneObject("cake", gl, vert_shader, frag_shader);
   // object.init(phong_vert_shader, phong_frag_shader);
-  object.init(flat_vert_shader, flat_frag_shader);
+  // object.init(vert_shader, frag_shader);
 
   // generate the base.
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
   let verts_and_indices = gen_cylinder_points(); // the vertices to start with
   let colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0, 0]);
-  let static_transforms = [translate([0, -2, -10])];
+  let static_transforms = [translate([x_shift, -2, -10])];
 
   // make this a scene node.
   const base = new SceneObjectNode("base", verts_and_indices, colors, static_transforms, gl, object.program);
 
   // generate the next segment.
   verts_and_indices = gen_cylinder_points(); // the vertices to start with
-  colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.2, 0.2]);
+  colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.3, 0.3]);
   static_transforms = [translate([0, 1, 0])];
 
   // make this a scene node.
