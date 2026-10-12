@@ -4,9 +4,9 @@
  */
 
 function generate_lit_cakes(gl) {
-  const cake_flat = generate_cake(gl, flat_vert_shader, flat_frag_shader, -3);  // returns a SceneObject with the correct hierarchy
+  const cake_flat = generate_cake(gl, flat_vert_shader, flat_frag_shader, -3.5);  // returns a SceneObject with the correct hierarchy
   const cake_gouraud = generate_cake(gl, gouraud_vert_shader, gouraud_frag_shader);  // returns a SceneObject with the correct hierarchy
-  const cake_phong = generate_cake(gl, phong_vert_shader, phong_frag_shader, 3);  // returns a SceneObject with the correct hierarchy
+  const cake_phong = generate_cake(gl, phong_vert_shader, phong_frag_shader, 3.5);  // returns a SceneObject with the correct hierarchy
   return [cake_flat, cake_gouraud, cake_phong]
 } // end method 
 
