@@ -230,9 +230,9 @@
 
           // special base circular motion, scaling, moving around canvas
           starfish_json["starfish"]["base"]["dynamic_transforms"] = [
-            scale([Math.abs(Math.sin(delta_time)) + 1, Math.abs(Math.sin(delta_time)) + 1, 0]),
+            //scale([Math.abs(Math.sin(delta_time)) + 1, Math.abs(Math.sin(delta_time)) + 1, 0]),
             rotate([0, 0, Math.sin(delta_time)], true),
-            translate([Math.sin(delta_time), Math.cos(delta_time), 0])
+            translate([Math.sin(delta_time), Math.cos(delta_time), Math.abs(Math.sin(delta_time)) * 5])
           ]
 
           scene.render(starfish_json)

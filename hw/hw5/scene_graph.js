@@ -54,10 +54,10 @@ class SceneGraph {
     // projection setup
     const fov = Math.PI / 4;
     const aspect = this.canvas.width / this.canvas.height
-    const zNear = 0.01; 
+    const zNear = 0.1; 
     // const zFar = 100000000000000; // this can also stop the clipping, but is a bit ridiculuous
     const zFar = 100;
-    const orthoSize = 3.5;
+    const orthoSize = 2.5;
 
     // perspective and orthographic projection
     const projPerspective = perspective(fov, aspect, zNear, zFar);
@@ -66,7 +66,7 @@ class SceneGraph {
       box2Cube(-orthoSize * aspect, orthoSize * aspect, -orthoSize, orthoSize, zNear, zFar),
       flipZ()
     );
-    const projection = projOrtho;
+    const projection = projPerspective;
 
     // init model-view matrix as identity matrix
     const model_view = mat4Identity();
