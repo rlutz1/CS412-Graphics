@@ -26,7 +26,7 @@ function generate_cake(gl, vert_shader=flat_vert_shader, frag_shader=flat_frag_s
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
   let verts_and_indices = gen_cylinder_points(); // the vertices to start with
   let colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0, 0]);
-  let static_transforms = [translate([x_shift, -2, -10])];
+  let static_transforms = [translate([x_shift, -3, -10])];
 
   // make this a scene node.
   const base = new SceneObjectNode("base", verts_and_indices, colors, static_transforms, gl, object.program);
@@ -40,9 +40,9 @@ function generate_cake(gl, vert_shader=flat_vert_shader, frag_shader=flat_frag_s
   const seg2 = new SceneObjectNode("seg2", verts_and_indices, colors, static_transforms, gl, object.program);
 
   // generate the next segment.
-  verts_and_indices = gen_cylinder_points(); // the vertices to start with
-  colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.5, 0.5]);
-  static_transforms = [translate([0, 1, 0])];
+  verts_and_indices = gen_sphere_points(); // the vertices to start with
+  colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 0.5, 0.5]);
+  static_transforms = [scale([0.5, 0.5, 0.5]), translate([0, 3, 0])];
 
   // make this a scene node.
   const seg3 = new SceneObjectNode("seg3", verts_and_indices, colors, static_transforms, gl, object.program);
@@ -51,7 +51,7 @@ function generate_cake(gl, vert_shader=flat_vert_shader, frag_shader=flat_frag_s
   // generate the next segment.
   verts_and_indices = gen_cylinder_points(); // the vertices to start with
   colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.7, 0.7]);
-  static_transforms = [translate([0, 1, 0])];
+  static_transforms = [scale([1.5, 1.5, 1.5]), translate([0, 0.65, 0])];
 
   // make this a scene node.
   const seg4 = new SceneObjectNode("seg4", verts_and_indices, colors, static_transforms, gl, object.program);
