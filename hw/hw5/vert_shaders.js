@@ -50,10 +50,64 @@ const basic_vert_shader = {
 }
 
 /**
+ * phong but with flat
+ * https://stackoverflow.com/questions/27581271/flat-qualifier-in-glsl
+ * https://wikis.khronos.org/opengl/Primitive#Provoking_vertex
+ * allow opengl to pick the vertex from the provoking vertex of the
+ * primitive (our case, 1st vertex of the triangle.)
+ */
+const flat_vert_shader = {
+   "src": `#version 300 es
+
+    in vec3 aPosition;
+    in vec3 aNormal;
+    in vec3 aColor;
+
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+    // allow for many matrices in a row
+    uniform mat4 uModelTransformationMatrix[50];
+    uniform int transforms_up_to; // marker of how many transforms
+
+    out vec3 vPosition;
+    flat out vec3 vNormal;
+    out vec3 vColor;
+
+    void main() {
+      // cast for transformations to a 4d homogenous coord
+      vec4 pos = vec4(aPosition, 1.0);
+      vec3 norm = aNormal;
+
+      for (int i = 0; i < transforms_up_to; i++) {
+        pos = uModelTransformationMatrix[i] * pos; // add all transforms
+        norm = mat3(uModelTransformationMatrix[i]) * norm; // ensure to also alter the norm
+      } // end loop
+
+      // save the position of this vertex prior to projection -- send to frag.
+      vec4 p = uModelViewMatrix * pos;
+      vPosition = p.xyz;
+
+      // use model view and apply to given normal -- send to frag.
+      vNormal = mat3(uModelViewMatrix) * norm;
+
+      // set the actual positioning in the projection
+      gl_Position = uProjectionMatrix * p;
+
+      // address some clipping while using an orthographic projection:
+      // https://stackoverflow.com/questions/66405678/othographic-projection-causing-geometry-to-get-clipped-by-the-far-plane
+      //gl_Position.z *= 0.5;
+
+      vColor = aColor; // send out the vertex color to frag shader
+    }
+  `
+}
+
+/**
  * a vertex shader that handles gouraud shading, which
  * conducts the lighting calculations here, letting the
  * colors found per vertex be interpolated instead of normals.
- * should be used with: gouraud_frag_shader
+ * should be used with: gouraud_frag_shader (or basic_frag_shader)
  */
 const gouraud_vert_shader = {
   "src": `#version 300 es

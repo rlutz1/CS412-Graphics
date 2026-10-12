@@ -13,7 +13,7 @@ function generate_cake(gl) {
   // construct the hierarchy as a SceneObject
   const object = new SceneObject("cake", gl);
   // object.init(phong_vert_shader, phong_frag_shader);
-  object.init(gouraud_vert_shader, gouraud_frag_shader);
+  object.init(flat_vert_shader, flat_frag_shader);
 
   // generate the base.
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
@@ -111,7 +111,7 @@ function generate_cake_json(dynamic_transforms) {
  */
 function generate_starfish(gl) {
   // construct the hierarchy as a SceneObject
-  const object = new SceneObject("starfish", gl, phong_vert_shader, phong_frag_shader);
+  const object = new SceneObject("starfish", gl, flat_vert_shader, flat_frag_shader);
 
   const json = {} // for dynamically creating this instead of doing by hand.
   json["starfish"] = {}
