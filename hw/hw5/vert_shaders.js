@@ -78,7 +78,14 @@ const lighting_vert_shader = {
       vPosition = p.xyz;
       // vPosition.z *= 0.5;
       // use model view and apply to given normal -- send to frag.
-      vNormal = mat3(uModelViewMatrix) * aNormal;
+      vec4 temp_norm = uModelViewMatrix * vec4(aNormal, 1.0);
+
+      for (int i = 0; i < transforms_up_to; i++) {
+        pos = uModelTransformationMatrix[i] * pos; // add all transforms
+        //temp_norm = uModelTransformationMatrix[i] * temp_norm;
+      } // end loop
+
+      vNormal = temp_norm.xyz;
 
       // set the actual positioning in the projection
       gl_Position = uProjectionMatrix * p;

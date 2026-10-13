@@ -95,3 +95,9 @@ hence the transformation for x and y yields:
 final: 
 
 ![matrix](images/image-14.png)
+
+## vs
+
+makes more sense now:
+
+![fov vs bounding box](images/image-15.png)

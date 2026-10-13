@@ -62,10 +62,12 @@ class SceneGraph {
     // perspective and orthographic projection
     const projPerspective = perspective(fov, aspect, zNear, zFar);
 
-    const projOrtho = matMul(
-      box2Cube(-orthoSize * aspect, orthoSize * aspect, -orthoSize, orthoSize, zNear, zFar),
-      flipZ()
-    );
+    // const projOrtho = matMul(
+    //   box2Cube(-orthoSize * aspect, orthoSize * aspect, -orthoSize, orthoSize, zNear, zFar),
+    //   flipZ()
+    // );
+    // changing to use the actual function for ortho projection
+    const projOrtho = ortho(-orthoSize * aspect, orthoSize * aspect, -orthoSize, orthoSize, zNear, zFar);
     const projection = projOrtho;
 
     // init model-view matrix as identity matrix
