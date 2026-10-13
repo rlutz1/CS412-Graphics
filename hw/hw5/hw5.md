@@ -27,3 +27,8 @@ In this assignment, you will extend the provided template code and implement lig
 ![spotlight](images/image-1.png)
 
 ![flat vs smooth shading](images/image-2.png)
+
+
+## other materials
+
+https://people.eecs.ku.edu/~jrmiller/Courses/672/InClass/3DLighting/MaterialProperties.html

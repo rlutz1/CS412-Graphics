@@ -332,11 +332,14 @@
     // Perspective and Orthographic projection
     let projPerspective = perspective(fov, aspect, zNear, zFar);
 
-    let projOrtho = matMul(
-    box2Cube(-orthoSize * aspect, orthoSize * aspect, -orthoSize, orthoSize, zNear, zFar),
-    flipZ()
-);
-    let proj = projOrtho;
+//     let projOrtho = matMul(
+//     box2Cube(-orthoSize * aspect, orthoSize * aspect, -orthoSize, orthoSize, zNear, zFar),
+//     flipZ()
+// );
+    // let projOrtho = ortho(-orthoSize * aspect, orthoSize * aspect, orthoSize, -orthoSize, zNear, zFar);
+    let projOrtho = ortho(-orthoSize, orthoSize, -orthoSize, orthoSize, zNear, zFar);
+
+    let proj = projPerspective;
 
     let startTime = Date.now();
 

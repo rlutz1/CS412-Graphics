@@ -28,14 +28,15 @@ uniform vec3 uColor;
 out vec4 fragColor;
 
 void main() {
-  vec3 Ka = 0.2 * uColor;
-  vec3 Kd = 0.8 * uColor;
-  vec3 Ks = vec3(0.5);
-  float shininess = 32.0;
+  vec3 Ka = 1.0 * uColor;
+  vec3 Kd = 0.0 * uColor;
+  vec3 Ks = vec3(1.0); // vec3(0.5);
+  float shininess = 1.0;
 
   vec3 N = normalize(vNormal);
   vec3 L = normalize(uLightPos - vPosition);
   vec3 V = normalize(-vPosition);           // camera sits at the origin
+  
   vec3 R = reflect(-L, N);
 
   float diff = max(dot(N, L), 0.0);

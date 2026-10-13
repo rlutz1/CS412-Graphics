@@ -3,38 +3,46 @@
  * a hierarchy.
  */
 
+function generate_lit_cakes(gl) {
+  const cake_flat = generate_cake(gl, flat_vert_shader, flat_frag_shader, -3.5);  // returns a SceneObject with the correct hierarchy
+  const cake_gouraud = generate_cake(gl, gouraud_vert_shader, gouraud_frag_shader);  // returns a SceneObject with the correct hierarchy
+  const cake_phong = generate_cake(gl, phong_vert_shader, phong_frag_shader, 3.5);  // returns a SceneObject with the correct hierarchy
+  return [cake_flat, cake_gouraud, cake_phong]
+} // end method 
+
 /**
  * generate a simple cake out of cylinders with sphere at top.
  * going to ret5rn a SceneObject that has the 
  * hierarchy of 4 times: 
  * base -> seg2 -> seg3 -> seg4-> top
  */
-function generate_cake(gl) {
+function generate_cake(gl, vert_shader=flat_vert_shader, frag_shader=flat_frag_shader, x_shift=0) {
   // construct the hierarchy as a SceneObject
-  const object = new SceneObject("cake", gl);
-  object.init(lighting_vert_shader, lighting_frag_shader);
+  const object = new SceneObject("cake", gl, vert_shader, frag_shader);
+  // object.init(phong_vert_shader, phong_frag_shader);
+  // object.init(vert_shader, frag_shader);
 
   // generate the base.
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
   let verts_and_indices = gen_cylinder_points(); // the vertices to start with
   let colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0, 0]);
-  let static_transforms = [scale([0.8, 1, 0.8]), translate([0, -2, 0])];
+  let static_transforms = [translate([x_shift, -3, -10])];
 
   // make this a scene node.
   const base = new SceneObjectNode("base", verts_and_indices, colors, static_transforms, gl, object.program);
 
   // generate the next segment.
   verts_and_indices = gen_cylinder_points(); // the vertices to start with
-  colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.2, 0.2]);
-  static_transforms = [scale([0.8, 1, 0.8]), translate([0, 1, 0])];
+  colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.3, 0.3]);
+  static_transforms = [translate([0, 1, 0])];
 
   // make this a scene node.
   const seg2 = new SceneObjectNode("seg2", verts_and_indices, colors, static_transforms, gl, object.program);
 
   // generate the next segment.
-  verts_and_indices = gen_cylinder_points(); // the vertices to start with
-  colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.5, 0.5]);
-  static_transforms = [scale([0.8, 1, 0.8]), translate([0, 1, 0])];
+  verts_and_indices = gen_sphere_points(); // the vertices to start with
+  colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 0.5, 0.5]);
+  static_transforms = [scale([0.5, 0.5, 0.5]), translate([0, 3, 0])];
 
   // make this a scene node.
   const seg3 = new SceneObjectNode("seg3", verts_and_indices, colors, static_transforms, gl, object.program);
@@ -43,7 +51,7 @@ function generate_cake(gl) {
   // generate the next segment.
   verts_and_indices = gen_cylinder_points(); // the vertices to start with
   colors = gen_cylinder_colors(verts_and_indices.vertices.length, [1, 0.7, 0.7]);
-  static_transforms = [scale([0.8, 1, 0.8]), translate([0, 1, 0])];
+  static_transforms = [scale([1.5, 1.5, 1.5]), translate([0, 0.65, 0])];
 
   // make this a scene node.
   const seg4 = new SceneObjectNode("seg4", verts_and_indices, colors, static_transforms, gl, object.program);
@@ -51,7 +59,7 @@ function generate_cake(gl) {
   // generate the top segment.
   verts_and_indices = gen_sphere_points(); // the vertices to start with
   colors = gen_sphere_colors(verts_and_indices.vertices.length, [0.5, 0.5, 0.5]);
-  static_transforms = [scale([0.5, 0.5, 0.5]), translate([0, 2, 0])];
+  static_transforms = [translate([0, 1, 0])];
 
   // make this a scene node.
   const top = new SceneObjectNode("top", verts_and_indices, colors, static_transforms, gl, object.program);
@@ -110,7 +118,7 @@ function generate_cake_json(dynamic_transforms) {
  */
 function generate_starfish(gl) {
   // construct the hierarchy as a SceneObject
-  const object = new SceneObject("starfish", gl, lighting_vert_shader, lighting_frag_shader);
+  const object = new SceneObject("starfish", gl, flat_vert_shader, flat_frag_shader);
 
   const json = {} // for dynamically creating this instead of doing by hand.
   json["starfish"] = {}
@@ -118,7 +126,7 @@ function generate_starfish(gl) {
   // generate the base.
   let verts_and_indices = gen_sphere_points(); // the vertices to start with
   let colors = gen_sphere_colors(verts_and_indices.vertices.length, [1, 0.5, 0.6]);
-  let static_transforms = [scale([0.5, 0.5, 0.5])];
+  let static_transforms = [scale([0.5, 0.5, 0.5]), translate([0, 0, -10])];
 
   // make this a scene node.
   const base = new SceneObjectNode("base", verts_and_indices, colors, static_transforms, gl, object.program);
@@ -128,7 +136,7 @@ function generate_starfish(gl) {
 
   // make some tentacles, returning the root node of this structure
   const num_tentacles = 4;
-  const translates = [[-2, 0, -2], [0, 2, -2], [2, 0, -2], [0, -2, -2]]
+  const translates = [[-2, 0, -0.5], [0, 2, -0.5], [2, 0, -0.5], [0, -2, -0.5]]
   for (let i = 0; i < num_tentacles; i++) {
     const [json_child, root_child_node] = generate_tentacle(gl, i, translates[i], object.program)
     json["starfish"]["base"][root_child_node.id] = json_child // add to this json
