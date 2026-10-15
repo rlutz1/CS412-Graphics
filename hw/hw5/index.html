@@ -241,9 +241,11 @@
           // use sliders
         } else {
           // get the correct lighting values for that material
-          console.log(material)
+          // console.log(material)
           const material_lighting = get_material_lighting(material);
-          console.log(material_lighting)
+          // console.log(material_lighting)
+          // update the lighting of objects by id
+          scene.update_lighting("cake", material_lighting);
         }
 
 

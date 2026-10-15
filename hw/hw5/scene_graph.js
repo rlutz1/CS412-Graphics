@@ -122,6 +122,13 @@ class SceneGraph {
   } // end function
 
   /**
+   * method to update the lighting parameters of an object.
+   */
+  update_lighting(id, material_lighting) {
+    // TODO
+  } // end function
+
+  /**
    * add a top level object to the scene graph
    * TODO: add lights in scene automatically here?
    */
