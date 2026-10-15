@@ -57,40 +57,54 @@
         <label for="animate">Animation Mode</label>
       </div>
 
-      <!-- sliders for testing the hierarchy -->
-      <h3 id="ind_seg_header">Rotate Individual Segments</h3> 
-      <div id="cake_slide_container" class="cake_slide_container">
+      <!-- accordian panel -->
+      <button class="accordion">Change Materials</button>
+      <div class="panel">
+        <!-- changing the materials radio buttons -->
+      </div>
 
-        <div id="base">
-          <h4>Rotation of Base (degrees)</h4>
-          <p id="curr_base_range"></p>
-          <input type="range" min="0" max="360" value="0" class="slider" step="1" id="base_range">
+      <button class="accordion">Adjust Lighting</button>
+      <div class="panel">
+        <!-- adjust the lighting parameters manually -->
+      </div>
+
+      <button class="accordion">Move Segments</button>
+      <div class="panel">
+        <!-- move the hierarchical structure by segment -->
+        <div id="cake_slide_container" class="cake_slide_container">
+
+          <div id="base">
+            <h4>Rotation of Base (degrees)</h4>
+            <p id="curr_base_range"></p>
+            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="base_range">
+          </div>
+
+          <div id="seg2">
+            <h4>Rotation of Segment 2 (degrees)</h4>
+            <p id="curr_seg2_range"></p>
+            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg2_range">
+          </div>
+
+          <div id="seg3">
+            <h4>Rotation of Segment 3 (degrees)</h4>
+            <p id="curr_seg3_range"></p>
+            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg3_range">
+          </div>
+
+          <div id="seg4">
+            <h4>Rotation of Segment 4 (degrees)</h4>
+            <p id="curr_seg4_range"></p>
+            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg4_range">
+          </div>
+
+          <div id="top">
+            <h4>Rotation of Top (degrees)</h4>
+            <p id="curr_top_range"></p>
+            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="top_range">
+          </div> 
+
         </div>
 
-        <div id="seg2">
-          <h4>Rotation of Segment 2 (degrees)</h4>
-          <p id="curr_seg2_range"></p>
-          <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg2_range">
-        </div>
-
-        <div id="seg3">
-          <h4>Rotation of Segment 3 (degrees)</h4>
-          <p id="curr_seg3_range"></p>
-          <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg3_range">
-        </div>
-
-        <div id="seg4">
-          <h4>Rotation of Segment 4 (degrees)</h4>
-          <p id="curr_seg4_range"></p>
-          <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg4_range">
-        </div>
-
-        <div id="top">
-          <h4>Rotation of Top (degrees)</h4>
-          <p id="curr_top_range"></p>
-          <input type="range" min="0" max="360" value="0" class="slider" step="1" id="top_range">
-        </div>
-        
       </div>
 
     </div>
@@ -120,6 +134,28 @@
         output.innerHTML = `<i>${child.id} Current Rotation:</i> ${this.value} degrees`;
       } // end function
     } // end loop
+  </script>
+
+  <script>
+    // set up accordian panel.
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        /* Toggle between adding and removing the "active" class,
+        to highlight the button that controls the panel */
+        this.classList.toggle("active");
+
+        /* Toggle between hiding and showing the active panel */
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        }
+      });
+    } 
   </script>
 
   <script>
@@ -156,7 +192,6 @@
       
       if (document.getElementById("model").value == "cake") {
         // make this visible
-        document.getElementById("ind_seg_header").style.visibility = 'visible';
         document.getElementById("cake_slide_container").style.visibility = 'visible';
         
         if (!scene.has_object(cake_flat)) {
@@ -197,7 +232,6 @@
 
       } else if (document.getElementById("model").value == "starfish") {
         // make this visible
-        document.getElementById("ind_seg_header").style.visibility = 'hidden';
         document.getElementById("cake_slide_container").style.visibility = 'hidden';
 
         if (!scene.has_object(starfish)) {
