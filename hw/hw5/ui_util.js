@@ -8,7 +8,7 @@
  * returns the values of the check'd boxes.
  * note that there is no order imposed on the transformations.
  */
-function get_all_transforms(checkbox_name) {
+function get_all_checkboxes(checkbox_name) {
   let checkboxes = document.getElementsByName(checkbox_name)
   let checked = []
 
@@ -20,6 +20,21 @@ function get_all_transforms(checkbox_name) {
 
   return checked
 } // end method
+
+/**
+ * get the checked radio box value
+ */
+function get_radio(radio_name) {
+  let radio_buttons = document.getElementsByName(radio_name)
+
+  for (let i = 0; i < radio_buttons.length; i++) {
+    if (radio_buttons[i].checked) {
+      return radio_buttons[i].value;
+    } // end if
+  } // end loop
+
+  return null
+} // end function
 
 /**
  * function to receive a list of readable values
@@ -175,7 +190,7 @@ function get_copper_lighting() {
     "alpha": 12.8,
     "transparency": 1.0
   }
-}
+} // end function
 
 /**
  * get the constants for material: copper
@@ -188,4 +203,17 @@ function get_silver_lighting() {
     "alpha": 51.2,
     "transparency": 1.0
   }
-}
+} // end function
+
+/**
+ * funnel to grab the proper lighting based on 
+ * user selection
+ */
+function get_material_lighting(type) {
+  switch (type) {
+    case "copper":
+      return get_copper_lighting();
+    default:
+      return get_silver_lighting();
+  } // end switch
+} // end function

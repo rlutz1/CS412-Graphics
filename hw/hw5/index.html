@@ -58,9 +58,10 @@
       </div>
 
       <!-- accordian panel -->
-      <button class="accordion">Change Materials</button>
+      <button class="accordion">Change Lighting</button>
       <div class="panel">
         <!-- changing the materials radio buttons -->
+        <legend>Change to specific material</legend>
         <fieldset>
         <div id="material">
           <input type="radio" id="copper" name="material" value="copper" />
@@ -71,11 +72,11 @@
         </div>
       </fieldset>
       </div>
-
-      <button class="accordion">Adjust Lighting</button>
-      <div class="panel">
+ 
+      <!-- <button class="accordion">Adjust Lighting</button> -->
+      <!-- <div class="panel"> -->
         <!-- adjust the lighting parameters manually -->
-      </div>
+      <!-- </div> -->
 
       <button class="accordion">Move Segments</button>
       <div class="panel">
@@ -235,7 +236,13 @@
         } // end if
 
         // handle the dynamic lighting adjustments.
-        
+        const material = get_radio("material");
+        if (material == null) {
+          // use sliders
+        } else {
+          // get the correct lighting values for that material
+          
+        }
 
 
         scene.render(cake_json);
