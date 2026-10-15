@@ -90,7 +90,7 @@ canvas {
 
 /* Style the accordion panel. Note: hidden by default */
 .panel {
-  padding: 0 18px;
+  padding: 5px 18px;
   background-color: rgb(57, 57, 57);
   display: none;
   overflow: hidden;
