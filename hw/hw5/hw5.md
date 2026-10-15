@@ -12,7 +12,7 @@ In this assignment, you will extend the provided template code and implement lig
   - [X] Implement and demonstrate both **flat shading and smooth shading**, either on different geometries or on two copies of the same geometry. (2/4 pts)
 
 - [ ] Multiple Lightings (2 pts):
-   + At least two light sources in the scen e (including the provide light source).
+  - [ ] At least two light sources in the scen e (including the provide light source).
 
 - [ ] Interactive Controls (4 pts)
   - [ ] Add UI controls for the movements of at least two segments/objects, beyond the controls already provided in the template. (2/4 pt)

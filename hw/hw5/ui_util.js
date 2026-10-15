@@ -162,3 +162,30 @@ function select_all(select, checkbox_name){
     checkboxes[i].checked = select
   } // end loop
 } // end method
+
+
+/**
+ * get the constants for material: copper
+ */
+function get_copper_lighting() {
+  return {
+    "ka": [0.19125, 0.0735, 0.0225],
+    "kd": [0.7038, 0.27048, 0.0828],
+    "ks": [0.256777, 0.137622, 0.086014],
+    "alpha": 12.8,
+    "transparency": 1.0
+  }
+}
+
+/**
+ * get the constants for material: copper
+ */
+function get_silver_lighting() {
+  return {
+    "ka": [0.19225, 0.19225, 0.19225],
+    "kd": [0.50754, 0.50754, 0.50754],
+    "ks": [0.508273, 0.508273, 0.508273],
+    "alpha": 51.2,
+    "transparency": 1.0
+  }
+}

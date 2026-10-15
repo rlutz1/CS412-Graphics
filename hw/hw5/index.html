@@ -146,7 +146,7 @@
   </script>
 
   <script>
-    // set up accordian panel.
+    // set up accordion panel.
     var acc = document.getElementsByClassName("accordion");
     var i;
 
@@ -210,9 +210,9 @@
           scene.add_object(cake_phong); // add to the scene graph
         } // end if
 
+        // handle the movement transformations
         if (document.getElementById(`animate`).checked) {
           // do a fun slinky motion
-
           // inputs som values to a json to keep this clean. 
           // this is not flexible in its current state.
           // just intended to clean up the main html.
@@ -223,9 +223,6 @@
             "seg4": [rotate([0, 0, Math.sin(delta_time + 3)], true)],
             "top":  [rotate([0, 0, Math.sin(delta_time + 4)], true)]
           })
-
-          scene.render(cake_json);
-
         } else { 
           // use the sliders
           cake_json = generate_cake_json({
@@ -235,10 +232,13 @@
             "seg4": [rotate([0, 0, deg_to_rad(document.getElementById(`seg4_range`).value)], true)],
             "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
           })
-
-          scene.render(cake_json);
         } // end if
 
+        // handle the dynamic lighting adjustments.
+        
+
+
+        scene.render(cake_json);
       } else if (document.getElementById("model").value == "starfish") {
         // make this visible
         document.getElementById("cake_slide_container").style.visibility = 'hidden';
