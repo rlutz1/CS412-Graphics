@@ -57,6 +57,17 @@ const basic_vert_shader = {
 const flat_vert_shader = {
    "src": `#version 300 es
 
+   // struct to hold light parameters 
+    struct LightParams {
+      vec3 ka;
+      vec3 kd;
+      vec3 ks;
+      float alpha;
+      float transparency;
+    };
+
+    uniform LightParams uLightParams;
+
     in vec3 aPosition;
     in vec3 aNormal;
     in vec3 aColor;
@@ -109,6 +120,17 @@ const flat_vert_shader = {
  */
 const gouraud_vert_shader = {
   "src": `#version 300 es
+
+     // struct to hold light parameters 
+    struct LightParams {
+      vec3 ka;
+      vec3 kd;
+      vec3 ks;
+      float alpha;
+      float transparency;
+    };
+
+    uniform LightParams uLightParams;
 
     in vec3 aPosition;
     in vec3 aNormal;
@@ -186,7 +208,7 @@ const phong_vert_shader = {
       float transparency;
     };
 
-    uniform Light uLightParams;
+    uniform LightParams uLightParams;
 
     in vec3 aPosition;
     in vec3 aNormal;

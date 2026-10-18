@@ -32,6 +32,17 @@ const flat_frag_shader = {
   "src": `#version 300 es
     precision mediump float;
 
+     // struct to hold light parameters 
+    struct LightParams {
+      vec3 ka;
+      vec3 kd;
+      vec3 ks;
+      float alpha;
+      float transparency;
+    };
+
+    uniform LightParams uLightParams;
+
     in vec3 vPosition;
     flat in vec3 vNormal;
     in vec3 vColor;
@@ -67,6 +78,18 @@ const flat_frag_shader = {
 const gouraud_frag_shader = {
   "src": `#version 300 es
     precision mediump float;
+
+     // struct to hold light parameters 
+    struct LightParams {
+      vec3 ka;
+      vec3 kd;
+      vec3 ks;
+      float alpha;
+      float transparency;
+    };
+
+    uniform LightParams uLightParams;
+    
     in vec3 vColor;
 
     out vec4 fragColor;
@@ -91,7 +114,7 @@ const phong_frag_shader = {
       float transparency;
     };
 
-    uniform Light uLightParams;
+    uniform LightParams uLightParams;
 
     in vec3 vPosition;
     in vec3 vNormal;
@@ -103,10 +126,10 @@ const phong_frag_shader = {
     out vec4 fragColor;
 
     void main() {
-      vec3 Ka = 0.2 * vColor;
-      vec3 Kd = 0.8 * vColor;
-      vec3 Ks = vec3(0.5);
-      float shininess = 32.0;
+      // vec3 Ka = 0.2 * vColor;
+      // vec3 Kd = 0.8 * vColor;
+      // vec3 Ks = vec3(0.5);
+      // float shininess = 32.0;
 
       vec3 N = normalize(vNormal); // ensure normalized
       vec3 L = normalize(uPointLights - vPosition); // get l as vector from this point
@@ -114,12 +137,12 @@ const phong_frag_shader = {
       vec3 R = reflect(-L, N); // r = 2(dot(n, l) * n - l) 
 
       float diff = max(dot(N, L), 0.0); // diffuse max
-      float spec = pow(max(dot(V, R), 0.0), shininess); // specular max and power alpha
+      float spec = pow(max(dot(V, R), 0.0), uLightParams.alpha); // specular max and power alpha
 
       fragColor = vec4(
         uLightParams.ka + 
         uLightParams.kd * diff + 
-        uLightParams.ks * uLightParams.alpha, 
+        uLightParams.ks * spec, 
         uLightParams.transparency
         );
     }

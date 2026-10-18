@@ -255,11 +255,11 @@ class SceneObject {
       this.model_view_loc = this.gl.getUniformLocation(this.program, "uModelViewMatrix"); 
       this.projection_loc = this.gl.getUniformLocation(this.program, "uProjectionMatrix"); 
       this.point_lights_loc = this.gl.getUniformLocation(this.program, "uPointLights");
-      this.light_params_locs["ka"] = this.gl.getUniformLocation(program, 'uLightParams.ka');
-      this.light_params_locs["kd"] = this.gl.getUniformLocation(program, 'uLightParams.kd');
-      this.light_params_locs["ks"] = this.gl.getUniformLocation(program, 'uLightParams.ks');
-      this.light_params_locs["alpha"] = this.gl.getUniformLocation(program, 'uLightParams.alpha');
-      this.light_params_locs["transparency"] = this.gl.getUniformLocation(program, 'uLightParams.transparency');
+      this.light_params_locs["ka"] = this.gl.getUniformLocation(this.program, 'uLightParams.ka');
+      this.light_params_locs["kd"] = this.gl.getUniformLocation(this.program, 'uLightParams.kd');
+      this.light_params_locs["ks"] = this.gl.getUniformLocation(this.program, 'uLightParams.ks');
+      this.light_params_locs["alpha"] = this.gl.getUniformLocation(this.program, 'uLightParams.alpha');
+      this.light_params_locs["transparency"] = this.gl.getUniformLocation(this.program, 'uLightParams.transparency');
     } catch (e) { 
       console.error(e); 
     } // end try catch
@@ -312,8 +312,8 @@ class SceneObject {
     // TODO: not new on every render call.
     this.gl.uniform3fv(this.point_lights_loc, new Float32Array(this.point_lights));
     this.gl.uniform3fv(this.light_params_locs["ka"], new Float32Array(this.light_params["ka"]));
-    this.gl.uniform3fv(this.light_params_locs["ka"], new Float32Array(this.light_params["kd"]));
-    this.gl.uniform3fv(this.light_params_locs["ka"], new Float32Array(this.light_params["ks"]));
+    this.gl.uniform3fv(this.light_params_locs["kd"], new Float32Array(this.light_params["kd"]));
+    this.gl.uniform3fv(this.light_params_locs["ks"], new Float32Array(this.light_params["ks"]));
     this.gl.uniform1f(this.light_params_locs["alpha"], this.light_params["alpha"]);
     this.gl.uniform1f(this.light_params_locs["transparency"], this.light_params["transparency"]);
 
