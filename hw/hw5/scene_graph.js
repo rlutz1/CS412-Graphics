@@ -115,7 +115,7 @@ class SceneGraph {
    * ensure all child objects are handed this point light.
    */
   add_point_light(position) {
-     this.objects.forEach((o) => {
+    this.objects.forEach((o) => {
       // TODO: can i just put camera views on the stack?
       o.add_point_light(position);
     });
@@ -125,7 +125,11 @@ class SceneGraph {
    * method to update the lighting parameters of an object.
    */
   update_lighting(id, material_lighting) {
-    // TODO
+    this.objects.forEach((o) => {
+      if (o.id == id) {
+        o.update_lighting(material_lighting);
+      } // end if
+    });
   } // end function
 
   /**
@@ -319,6 +323,13 @@ class SceneObject {
    */
   add_point_light(position) {
     this.point_lights.push(...position);
+  } // end function
+
+  /**
+   * need to update the lighting constants for my shader.
+   */
+  update_lighting(material_lighting) {
+
   } // end function
 
   /**
