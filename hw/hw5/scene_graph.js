@@ -199,6 +199,9 @@ class SceneObject {
   // (light setup)
   point_lights = []; // point lights the object should be responding to.
   point_lights_loc = null;
+  // (light param setup)
+  light_params = null;
+  light_params_locs = {};
 
   /**
    * ----------------------------------
@@ -252,6 +255,11 @@ class SceneObject {
       this.model_view_loc = this.gl.getUniformLocation(this.program, "uModelViewMatrix"); 
       this.projection_loc = this.gl.getUniformLocation(this.program, "uProjectionMatrix"); 
       this.point_lights_loc = this.gl.getUniformLocation(this.program, "uPointLights");
+      this.light_params_locs["ka"] = this.gl.getUniformLocation(program, 'uLightParams.ka');
+      this.light_params_locs["kd"] = this.gl.getUniformLocation(program, 'uLightParams.kd');
+      this.light_params_locs["ks"] = this.gl.getUniformLocation(program, 'uLightParams.ks');
+      this.light_params_locs["alpha"] = this.gl.getUniformLocation(program, 'uLightParams.alpha');
+      this.light_params_locs["transparency"] = this.gl.getUniformLocation(program, 'uLightParams.transparency');
     } catch (e) { 
       console.error(e); 
     } // end try catch
@@ -303,7 +311,12 @@ class SceneObject {
     this.gl.uniformMatrix4fv(this.model_view_loc, false, model_view);
     // TODO: not new on every render call.
     this.gl.uniform3fv(this.point_lights_loc, new Float32Array(this.point_lights));
-    console.error(this.point_lights)
+    this.gl.uniform3fv(this.light_params_locs["ka"], new Float32Array(this.light_params["ka"]));
+    this.gl.uniform3fv(this.light_params_locs["ka"], new Float32Array(this.light_params["kd"]));
+    this.gl.uniform3fv(this.light_params_locs["ka"], new Float32Array(this.light_params["ks"]));
+    this.gl.uniform1f(this.light_params_locs["alpha"], this.light_params["alpha"]);
+    this.gl.uniform1f(this.light_params_locs["transparency"], this.light_params["transparency"]);
+
     this.roots.forEach((r) => {
       console.log(`Rendering ${r.id} root node...`);
       // TODO: can i just put camera views on the stack?
@@ -329,7 +342,7 @@ class SceneObject {
    * need to update the lighting constants for my shader.
    */
   update_lighting(material_lighting) {
-
+    this.light_params = material_lighting;
   } // end function
 
   /**

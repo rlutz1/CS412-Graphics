@@ -82,6 +82,17 @@ const phong_frag_shader = {
   "src": `#version 300 es
     precision mediump float;
 
+    // struct to hold light parameters 
+    struct LightParams {
+      vec3 ka;
+      vec3 kd;
+      vec3 ks;
+      float alpha;
+      float transparency;
+    };
+
+    uniform Light uLightParams;
+
     in vec3 vPosition;
     in vec3 vNormal;
     in vec3 vColor;
@@ -105,7 +116,12 @@ const phong_frag_shader = {
       float diff = max(dot(N, L), 0.0); // diffuse max
       float spec = pow(max(dot(V, R), 0.0), shininess); // specular max and power alpha
 
-      fragColor = vec4(Ka + Kd * diff + Ks * spec, 1.0);
+      fragColor = vec4(
+        uLightParams.ka + 
+        uLightParams.kd * diff + 
+        uLightParams.ks * uLightParams.alpha, 
+        uLightParams.transparency
+        );
     }
   `
 };

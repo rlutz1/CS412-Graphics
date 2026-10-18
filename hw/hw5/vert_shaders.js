@@ -25,10 +25,8 @@ const basic_vert_shader = {
     // allow for many matrices in a row
     uniform mat4 uModelTransformationMatrix[50];
     uniform int transforms_up_to; // marker of how many transforms
-
-    //uniform int depth; // depth?
     
-    out vec3 vColor;
+    out vec3 vColor; // color to interpolate
 
     void main() {
       // uProjectionMatrix * uModelViewMatrix * uModelTransformationMatrix * vec4(aPosition,1.0);
@@ -178,6 +176,17 @@ const gouraud_vert_shader = {
  */
 const phong_vert_shader = {
   "src": `#version 300 es
+
+    // struct to hold light parameters 
+    struct LightParams {
+      vec3 ka;
+      vec3 kd;
+      vec3 ks;
+      float alpha;
+      float transparency;
+    };
+
+    uniform Light uLightParams;
 
     in vec3 aPosition;
     in vec3 aNormal;
