@@ -56,8 +56,9 @@ const basic_vert_shader = {
  */
 const flat_vert_shader = {
    "src": `#version 300 es
+    precision mediump float;
 
-   // struct to hold light parameters 
+    // struct to hold light parameters 
     struct LightParams {
       vec3 ka;
       vec3 kd;
@@ -120,8 +121,9 @@ const flat_vert_shader = {
  */
 const gouraud_vert_shader = {
   "src": `#version 300 es
+    precision mediump float;
 
-     // struct to hold light parameters 
+    // struct to hold light parameters 
     struct LightParams {
       vec3 ka;
       vec3 kd;
@@ -165,27 +167,20 @@ const gouraud_vert_shader = {
       vec3 vNormal = mat3(uModelViewMatrix) * norm;
 
       // calculate lighting and color HERE, not the frag shader
-      vec3 Ka = 0.2 * aColor;
-      vec3 Kd = 0.8 * aColor;
-      vec3 Ks = vec3(0.5);
-      float shininess = 32.0;
-
       vec3 N = normalize(vNormal); // ensure normalized
       vec3 L = normalize(uPointLights - vPosition); // get l as vector from this point
       vec3 V = normalize(-vPosition); // camera sits at the origin
       vec3 R = reflect(-L, N); // r = 2(dot(n, l) * n - l) 
 
       float diff = max(dot(N, L), 0.0); // diffuse max
-      float spec = pow(max(dot(V, R), 0.0), shininess); // specular max and power alpha
+      float spec = pow(max(dot(V, R), 0.0), uLightParams.alpha); // specular max and power alpha
 
-      vColor = Ka + Kd * diff + Ks * spec; // send color to frag shader
+      vColor = (uLightParams.ka * aColor) + 
+        (uLightParams.kd * aColor) * diff + 
+        (uLightParams.ks * aColor) * spec;
 
       // set the actual positioning in the projection
       gl_Position = uProjectionMatrix * p;
-
-      // address some clipping while using an orthographic projection:
-      // https://stackoverflow.com/questions/66405678/othographic-projection-causing-geometry-to-get-clipped-by-the-far-plane
-      // gl_Position.z *= 0.5;
     }
   `
 };
@@ -198,18 +193,8 @@ const gouraud_vert_shader = {
  */
 const phong_vert_shader = {
   "src": `#version 300 es
-
-    // struct to hold light parameters 
-    struct LightParams {
-      vec3 ka;
-      vec3 kd;
-      vec3 ks;
-      float alpha;
-      float transparency;
-    };
-
-    uniform LightParams uLightParams;
-
+    precision mediump float;
+    
     in vec3 aPosition;
     in vec3 aNormal;
     in vec3 aColor;
@@ -244,10 +229,6 @@ const phong_vert_shader = {
 
       // set the actual positioning in the projection
       gl_Position = uProjectionMatrix * p;
-
-      // address some clipping while using an orthographic projection:
-      // https://stackoverflow.com/questions/66405678/othographic-projection-causing-geometry-to-get-clipped-by-the-far-plane
-      //gl_Position.z *= 0.5;
 
       vColor = aColor; // send out the vertex color to frag shader
     }
