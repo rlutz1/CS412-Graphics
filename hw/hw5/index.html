@@ -187,12 +187,15 @@
 
     const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
 
-    const test_light = [0, 4, 5]; // a testing point light for the moment.
-    cake_flat.add_point_light(test_light);
-    cake_gouraud.add_point_light(test_light);
-    cake_phong.add_point_light(test_light);
-    cake_phong.add_point_light([-20, 4, 5]);
-    starfish.add_point_light(test_light);
+    const pt_light_1 = [0, 4, 5]; // a testing point light for the moment.
+    const pt_light_2 = [-20, -20, 5];
+    cake_flat.add_point_light(pt_light_1);
+    cake_gouraud.add_point_light(pt_light_1);
+    cake_phong.add_point_light(pt_light_1);
+    cake_flat.add_point_light(pt_light_2);
+    cake_gouraud.add_point_light(pt_light_2);
+    cake_phong.add_point_light(pt_light_2);
+    starfish.add_point_light(pt_light_1);
     // todo: remove object
     start_time = Date.now()
 

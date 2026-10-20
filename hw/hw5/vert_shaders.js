@@ -145,7 +145,8 @@ const gouraud_vert_shader = {
     uniform mat4 uModelTransformationMatrix[50];
     uniform int transforms_up_to; // marker of how many transforms
 
-    uniform vec3 uPointLights; // light position in space
+    uniform vec3 uPointLights[10]; // points light positions in space
+    uniform int uNumPointLights; // how many point lights
 
     out vec3 vColor; // only sends out color
 
@@ -166,18 +167,26 @@ const gouraud_vert_shader = {
       // use model view and apply to given normal 
       vec3 vNormal = mat3(uModelViewMatrix) * norm;
 
-      // calculate lighting and color HERE, not the frag shader
       vec3 N = normalize(vNormal); // ensure normalized
-      vec3 L = normalize(uPointLights - vPosition); // get l as vector from this point
       vec3 V = normalize(-vPosition); // camera sits at the origin
-      vec3 R = reflect(-L, N); // r = 2(dot(n, l) * n - l) 
 
-      float diff = max(dot(N, L), 0.0); // diffuse max
-      float spec = pow(max(dot(V, R), 0.0), uLightParams.alpha); // specular max and power alpha
+      vec3 diffuse_acc = vec3(0.0);
+      vec3 spec_acc = vec3(0.0);
 
-      vColor = (uLightParams.ka * aColor) + 
-        (uLightParams.kd * aColor) * diff + 
-        (uLightParams.ks * aColor) * spec;
+      for (int i = 0; i < uNumPointLights; i++) {
+        vec3 L = normalize(uPointLights[i] - vPosition); // get l as vector from this point
+        vec3 R = reflect(-L, N); // r = 2(dot(n, l) * n - l) 
+        float diff = max(dot(N, L), 0.0); // diffuse max
+        float spec = pow(max(dot(V, R), 0.0), uLightParams.alpha); // specular max and power alpha
+        diffuse_acc += (uLightParams.kd * aColor) * diff;
+        spec_acc += (uLightParams.ks * aColor) * spec;
+      } // end loop 
+
+      vColor = vec3(
+        (uLightParams.ka * aColor) + 
+        diffuse_acc + 
+        spec_acc
+        );
 
       // set the actual positioning in the projection
       gl_Position = uProjectionMatrix * p;
