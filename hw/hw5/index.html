@@ -206,7 +206,9 @@
   <script>
     let material_radio_buttons = document.getElementById("material");
     let material_sliders = document.getElementById("material_sliders");
+    
     let last_material_control = material_radio_buttons; // assume for this on load
+    update_sliders(get_material_lighting(get_radio("material"))); // initial state for material
 
     for (const child of material_radio_buttons.children) {
       child.addEventListener("click", function() {
@@ -247,15 +249,8 @@
       ks.querySelector("#ks_b").value = material["ks"][2];
 
       alpha.querySelector("#alpha_v").value = material["alpha"];
-      transparency.querySelector("#transparency_v").value = material["transparency"];
-      // let slider;
-      // for (const key of Object.keys(material)) {
-      //   slider = document.getElementById(key);
-      // } // end loop
-      // let ka = document.getElementById("ka");
-      // for (const child of material_radio_buttons.children) {} // end loop
-      // let childElement = parentElement.querySelector('#child-id');
-    }
+      transparency.querySelector("#transparency_v").value = material["transparency"]; 
+    } // end function
 
     /**
      * {
@@ -275,8 +270,6 @@
     const gl = canvas.getContext("webgl2");
     if (!gl) alert("WebGL2 not supported");
 
-    // let last_material_control = document.getElementById("material"); // assume to use this unless changed.
-
     // generate an arm using 4 cylinders.
     // the hierarchy needs to be base -> seg2 -> seg3 -> top.
     // the rotations are to come from the sliders and are going to be implied x rotations.
@@ -289,18 +282,12 @@
 
     const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
 
-    const pt_light_1 = [0, 4, 5]; // a testing point light for the moment.
+    // TODO: comes from front end.
+    const pt_light_1 = [0, 4, 5]; 
     const pt_light_2 = [-20, -20, 5];
     scene.add_point_light_global(pt_light_1);
     scene.add_point_light_global(pt_light_2);
-    // cake_flat.add_point_light(pt_light_1);
-    // cake_gouraud.add_point_light(pt_light_1);
-    // cake_phong.add_point_light(pt_light_1);
-    // cake_flat.add_point_light(pt_light_2);
-    // cake_gouraud.add_point_light(pt_light_2);
-    // cake_phong.add_point_light(pt_light_2);
-    // starfish.add_point_light(pt_light_1);
-    // todo: remove object
+   
     start_time = Date.now()
 
     /**
@@ -344,22 +331,19 @@
           })
         } // end if
 
-
         // handle the dynamic lighting adjustments.
-        const material = get_radio("material");
-        if (material == null) {
+        if (last_material_control == "material_sliders") {
           // use sliders
-        } else {
+        } else { // revert to radio button check
           // get the correct lighting values for that material
-          // console.log(material)
-          const material_lighting = get_material_lighting(material);
-          // console.log(material_lighting)
+          const material_lighting = get_material_lighting(get_radio("material"));
           // update the lighting of objects by id
           scene.update_material_global("cake", material_lighting);
-        }
+        } // end if
 
-
+        // render scene with all transformations
         scene.render(cake_json);
+
       } else if (document.getElementById("model").value == "starfish") {
         // make this visible
         document.getElementById("cake_slide_container").style.visibility = 'hidden';
