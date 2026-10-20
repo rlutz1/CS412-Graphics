@@ -77,23 +77,23 @@
         <div id="material_sliders">
           <h4>Ambient Coefficient</h4>
           <div id="ka">
-            <input id="ka_r" type="number" min="0" max="1" step="0.01">
-            <input id="ka_g" type="number" min="0" max="1" step="0.01">
-            <input id="ka_b" type="number" min="0" max="1" step="0.01">
+            <input id="ka_r" type="number" min="0" max="1" step="0.1">
+            <input id="ka_g" type="number" min="0" max="1" step="0.1">
+            <input id="ka_b" type="number" min="0" max="1" step="0.1">
           </div>
 
           <h4>Diffuse Coefficient</h4>
           <div id="kd">
-            <input id="kd_r" type="number" min="0" max="1" step="0.01">
-            <input id="kd_g" type="number" min="0" max="1" step="0.01">
-            <input id="kd_b" type="number" min="0" max="1" step="0.01">
+            <input id="kd_r" type="number" min="0" max="1" step="0.1">
+            <input id="kd_g" type="number" min="0" max="1" step="0.1">
+            <input id="kd_b" type="number" min="0" max="1" step="0.1">
           </div>
 
           <h4>Specular Coefficient</h4>
           <div id="ks">
-            <input id="ks_r" type="number" min="0" max="1" step="0.01">
-            <input id="ks_g" type="number" min="0" max="1" step="0.01">
-            <input id="ks_b" type="number" min="0" max="1" step="0.01">
+            <input id="ks_r" type="number" min="0" max="1" step="0.1">
+            <input id="ks_g" type="number" min="0" max="1" step="0.1">
+            <input id="ks_b" type="number" min="0" max="1" step="0.1">
           </div>
 
           <h4>Specular Exponent</h4>
@@ -103,7 +103,7 @@
 
           <h4>Transparency</h4>
           <div id="transparency">
-            <input id="transparency_v" type="number" min="0" max="1" step="0.01">
+            <input id="transparency_v" type="number" min="0" max="1" step="0.1">
           </div>
         </div>
       </div>
@@ -260,22 +260,21 @@
       let alpha = document.getElementById("alpha");
       let transparency = document.getElementById("transparency");
 
-      const material_setting = {} // TODO
+      // collect values from the sliders
+      const ka_arr = [ka.querySelector("#ka_r").value, ka.querySelector("#ka_g").value, ka.querySelector("#ka_b").value];
+      const kd_arr = [kd.querySelector("#kd_r").value, kd.querySelector("#kd_g").value, kd.querySelector("#kd_b").value];
+      const ks_arr = [ks.querySelector("#ks_r").value, ks.querySelector("#ks_g").value, ks.querySelector("#ks_b").value];
+      const alpha_v = alpha.querySelector("#alpha_v").value;
+      const transparency_v = transparency.querySelector("#transparency_v").value;
 
-      ka.querySelector("#ka_r").value = material["ka"][0];
-      ka.querySelector("#ka_g").value = material["ka"][1];
-      ka.querySelector("#ka_b").value = material["ka"][2];
+      return {
+        "ka": ka_arr,
+        "kd": kd_arr,
+        "ks": ks_arr,
+        "alpha": alpha_v,
+        "transparency": transparency_v
+      };
 
-      kd.querySelector("#kd_r").value = material["kd"][0];
-      kd.querySelector("#kd_g").value = material["kd"][1];
-      kd.querySelector("#kd_b").value = material["kd"][2];
-
-      ks.querySelector("#ks_r").value = material["ks"][0];
-      ks.querySelector("#ks_g").value = material["ks"][1];
-      ks.querySelector("#ks_b").value = material["ks"][2];
-
-      alpha.querySelector("#alpha_v").value = material["alpha"];
-      transparency.querySelector("#transparency_v").value = material["transparency"]; 
     } // end function
     /**
      * {
@@ -357,8 +356,8 @@
         } // end if
 
         // handle the dynamic lighting adjustments.
-        if (last_material_control == "material_sliders") {
-          // use sliders
+        if (last_material_control.id == "material_sliders") { // use sliders
+          scene.update_material_global("cake", get_sliders_materials());
         } else { // revert to radio button check
           // get the correct lighting values for that material
           const material_lighting = get_material_lighting(get_radio("material"));
