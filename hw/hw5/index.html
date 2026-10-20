@@ -189,13 +189,15 @@
 
     const pt_light_1 = [0, 4, 5]; // a testing point light for the moment.
     const pt_light_2 = [-20, -20, 5];
-    cake_flat.add_point_light(pt_light_1);
-    cake_gouraud.add_point_light(pt_light_1);
-    cake_phong.add_point_light(pt_light_1);
-    cake_flat.add_point_light(pt_light_2);
-    cake_gouraud.add_point_light(pt_light_2);
-    cake_phong.add_point_light(pt_light_2);
-    starfish.add_point_light(pt_light_1);
+    scene.add_point_light_global(pt_light_1);
+    scene.add_point_light_global(pt_light_2);
+    // cake_flat.add_point_light(pt_light_1);
+    // cake_gouraud.add_point_light(pt_light_1);
+    // cake_phong.add_point_light(pt_light_1);
+    // cake_flat.add_point_light(pt_light_2);
+    // cake_gouraud.add_point_light(pt_light_2);
+    // cake_phong.add_point_light(pt_light_2);
+    // starfish.add_point_light(pt_light_1);
     // todo: remove object
     start_time = Date.now()
 
@@ -250,7 +252,7 @@
           const material_lighting = get_material_lighting(material);
           // console.log(material_lighting)
           // update the lighting of objects by id
-          scene.update_lighting("cake", material_lighting);
+          scene.update_material_global("cake", material_lighting);
         }
 
 

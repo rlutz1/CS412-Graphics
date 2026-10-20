@@ -18,6 +18,7 @@
 class SceneGraph {
 
   objects = []; // these are root objects of the scene. can be a single node.
+  point_lights_global = []; // these are point lights that should default be used on all objects
   transform_dict = {}; // this holds mappings of object/node id -> transformations.
                        // this should be dynamically generated from front depending on desired effects.
   canvas = null; // a ref to the associated canvas. likely mostly for debugging as needed.
@@ -114,9 +115,9 @@ class SceneGraph {
    * top level graph function to add a point light to the scene.
    * ensure all child objects are handed this point light.
    */
-  add_point_light(position) {
+  add_point_light_global(position) {
+    this.point_lights_global.push(position); // add to my list
     this.objects.forEach((o) => {
-      // TODO: can i just put camera views on the stack?
       o.add_point_light(position);
     });
   } // end function
@@ -124,10 +125,10 @@ class SceneGraph {
   /**
    * method to update the lighting parameters of an object.
    */
-  update_lighting(id, material_lighting) {
+  update_material_global(id, material_lighting) {
     this.objects.forEach((o) => {
       if (o.id == id) {
-        o.update_lighting(material_lighting);
+        o.update_material(material_lighting);
       } // end if
     });
   } // end function
@@ -141,6 +142,11 @@ class SceneGraph {
     if (object != null) {
       this.objects.push(object);
     } // end if
+
+    // ensure that by default this object is aware of global lighting. 
+    this.point_lights_global.forEach((pos) => {
+      object.add_point_light(pos);
+    })
   } // end function
 
   /**
@@ -201,8 +207,8 @@ class SceneObject {
   point_lights_loc = null;
   num_point_lights_loc = null;
   // (light param setup)
-  light_params = null;
-  light_params_locs = {};
+  material_params = null;
+  material_params_loc = {};
 
   /**
    * ----------------------------------
@@ -257,11 +263,11 @@ class SceneObject {
       this.projection_loc = this.gl.getUniformLocation(this.program, "uProjectionMatrix"); 
       this.point_lights_loc = this.gl.getUniformLocation(this.program, "uPointLights");
       this.num_point_lights_loc =  this.gl.getUniformLocation(this.program, "uNumPointLights"); 
-      this.light_params_locs["ka"] = this.gl.getUniformLocation(this.program, 'uLightParams.ka');
-      this.light_params_locs["kd"] = this.gl.getUniformLocation(this.program, 'uLightParams.kd');
-      this.light_params_locs["ks"] = this.gl.getUniformLocation(this.program, 'uLightParams.ks');
-      this.light_params_locs["alpha"] = this.gl.getUniformLocation(this.program, 'uLightParams.alpha');
-      this.light_params_locs["transparency"] = this.gl.getUniformLocation(this.program, 'uLightParams.transparency');
+      this.material_params_loc["ka"] = this.gl.getUniformLocation(this.program, 'uLightParams.ka');
+      this.material_params_loc["kd"] = this.gl.getUniformLocation(this.program, 'uLightParams.kd');
+      this.material_params_loc["ks"] = this.gl.getUniformLocation(this.program, 'uLightParams.ks');
+      this.material_params_loc["alpha"] = this.gl.getUniformLocation(this.program, 'uLightParams.alpha');
+      this.material_params_loc["transparency"] = this.gl.getUniformLocation(this.program, 'uLightParams.transparency');
     } catch (e) { 
       console.error(e); 
     } // end try catch
@@ -314,11 +320,11 @@ class SceneObject {
     // TODO: not new on every render call.
     this.gl.uniform3fv(this.point_lights_loc, new Float32Array(this.point_lights));
     this.gl.uniform1i(this.num_point_lights_loc, this.point_lights.length / 3);
-    this.gl.uniform3fv(this.light_params_locs["ka"], new Float32Array(this.light_params["ka"]));
-    this.gl.uniform3fv(this.light_params_locs["kd"], new Float32Array(this.light_params["kd"]));
-    this.gl.uniform3fv(this.light_params_locs["ks"], new Float32Array(this.light_params["ks"]));
-    this.gl.uniform1f(this.light_params_locs["alpha"], this.light_params["alpha"]);
-    this.gl.uniform1f(this.light_params_locs["transparency"], this.light_params["transparency"]);
+    this.gl.uniform3fv(this.material_params_loc["ka"], new Float32Array(this.material_params["ka"]));
+    this.gl.uniform3fv(this.material_params_loc["kd"], new Float32Array(this.material_params["kd"]));
+    this.gl.uniform3fv(this.material_params_loc["ks"], new Float32Array(this.material_params["ks"]));
+    this.gl.uniform1f(this.material_params_loc["alpha"], this.material_params["alpha"]);
+    this.gl.uniform1f(this.material_params_loc["transparency"], this.material_params["transparency"]);
 
     this.roots.forEach((r) => {
       console.log(`Rendering ${r.id} root node...`);
@@ -344,8 +350,8 @@ class SceneObject {
   /**
    * need to update the lighting constants for my shader.
    */
-  update_lighting(material_lighting) {
-    this.light_params = material_lighting;
+  update_material(material_lighting) {
+    this.material_params = material_lighting;
   } // end function
 
   /**
