@@ -252,6 +252,31 @@
       transparency.querySelector("#transparency_v").value = material["transparency"]; 
     } // end function
 
+
+    function get_sliders_materials() {
+      let ka = document.getElementById("ka");
+      let kd = document.getElementById("kd");
+      let ks = document.getElementById("ks");
+      let alpha = document.getElementById("alpha");
+      let transparency = document.getElementById("transparency");
+
+      const material_setting = {} // TODO
+
+      ka.querySelector("#ka_r").value = material["ka"][0];
+      ka.querySelector("#ka_g").value = material["ka"][1];
+      ka.querySelector("#ka_b").value = material["ka"][2];
+
+      kd.querySelector("#kd_r").value = material["kd"][0];
+      kd.querySelector("#kd_g").value = material["kd"][1];
+      kd.querySelector("#kd_b").value = material["kd"][2];
+
+      ks.querySelector("#ks_r").value = material["ks"][0];
+      ks.querySelector("#ks_g").value = material["ks"][1];
+      ks.querySelector("#ks_b").value = material["ks"][2];
+
+      alpha.querySelector("#alpha_v").value = material["alpha"];
+      transparency.querySelector("#transparency_v").value = material["transparency"]; 
+    } // end function
     /**
      * {
     "ka": [0.19225, 0.19225, 0.19225],
