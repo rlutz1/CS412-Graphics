@@ -115,7 +115,17 @@
       
       <button class="accordion">Lights</button>
       <div class="panel">
-         <input id="ks_r" type="number" min="0" max="1" step="0.1">
+        <legend>Add a point light</legend>
+        <fieldset>
+          <div id="point_light_position">
+            <label for="light_x">x: </label><input id="light_x" type="number" min="-100" max="100" step="10" value="0">
+            <label for="light_y">y: </label><input id="light_y" type="number" min="-100" max="100" step="10" value="0">
+            <label for="light_z">z: </label><input id="light_z" type="number" min="-100" max="100" step="10" value="0">
+          </div>
+          <br />
+          <button style="width: 100%;" id="add_point_light">Add Light to Scene</button>
+        </fieldset>
+        
       </div>
 
       <button class="accordion">Move Segments</button>
@@ -284,6 +294,10 @@
   </script>
 
   <script>
+     
+  </script>
+
+  <script>
     // WebGL setup
     const canvas = document.getElementById("glcanvas");
     const gl = canvas.getContext("webgl2");
@@ -301,11 +315,23 @@
 
     const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
 
+    let add_point_light_button = document.getElementById("add_point_light");
+     
+    add_point_light_button.addEventListener("click", function() {
+    // add a light at the given position for the global scene.
+    scene.add_point_light_global([
+      document.getElementById("light_x").value,
+      document.getElementById("light_y").value,
+      document.getElementById("light_z").value
+    ]);
+    console.log(`adding? ${scene.point_lights_global}`)
+    })
+
     // TODO: comes from front end.
-    const pt_light_1 = [0, 4, 5]; 
-    const pt_light_2 = [-20, -20, 5];
-    scene.add_point_light_global(pt_light_1);
-    scene.add_point_light_global(pt_light_2);
+    // const pt_light_1 = [0, 4, 5]; 
+    // const pt_light_2 = [-20, -20, 5];
+    // scene.add_point_light_global(pt_light_1);
+    // scene.add_point_light_global(pt_light_2);
    
     start_time = Date.now()
 
