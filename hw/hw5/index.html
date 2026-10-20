@@ -73,27 +73,30 @@
         </div>
         </fieldset>
 
+        <br />
+
         <legend>Advanced material customization</legend>
+        <fieldset>
         <div id="material_sliders">
           <h4>Ambient Coefficient</h4>
           <div id="ka">
-            <input id="ka_r" type="number" min="0" max="1" step="0.1">
-            <input id="ka_g" type="number" min="0" max="1" step="0.1">
-            <input id="ka_b" type="number" min="0" max="1" step="0.1">
+            <label for="ka_r">R: </label><input id="ka_r" type="number" min="0" max="1" step="0.1">
+            <label for="ka_g">G: </label><input id="ka_g" type="number" min="0" max="1" step="0.1">
+            <label for="ka_b">B: </label><input id="ka_b" type="number" min="0" max="1" step="0.1">
           </div>
 
           <h4>Diffuse Coefficient</h4>
           <div id="kd">
-            <input id="kd_r" type="number" min="0" max="1" step="0.1">
-            <input id="kd_g" type="number" min="0" max="1" step="0.1">
-            <input id="kd_b" type="number" min="0" max="1" step="0.1">
+            <label for="kd_r">R: </label><input id="kd_r" type="number" min="0" max="1" step="0.1">
+            <label for="kd_g">G: </label><input id="kd_g" type="number" min="0" max="1" step="0.1">
+            <label for="kd_b">B: </label><input id="kd_b" type="number" min="0" max="1" step="0.1">
           </div>
 
           <h4>Specular Coefficient</h4>
           <div id="ks">
-            <input id="ks_r" type="number" min="0" max="1" step="0.1">
-            <input id="ks_g" type="number" min="0" max="1" step="0.1">
-            <input id="ks_b" type="number" min="0" max="1" step="0.1">
+            <label for="ks_r">R: </label><input id="ks_r" type="number" min="0" max="1" step="0.1">
+            <label for="ks_g">G: </label><input id="ks_g" type="number" min="0" max="1" step="0.1">
+            <label for="ks_b">B: </label><input id="ks_b" type="number" min="0" max="1" step="0.1">
           </div>
 
           <h4>Specular Exponent</h4>
@@ -106,12 +109,14 @@
             <input id="transparency_v" type="number" min="0" max="1" step="0.1">
           </div>
         </div>
+        </fieldset>
+
       </div>
- 
-      <!-- <button class="accordion">Adjust Lighting</button> -->
-      <!-- <div class="panel"> -->
-        <!-- adjust the lighting parameters manually -->
-      <!-- </div> -->
+      
+      <button class="accordion">Lights</button>
+      <div class="panel">
+         <input id="ks_r" type="number" min="0" max="1" step="0.1">
+      </div>
 
       <button class="accordion">Move Segments</button>
       <div class="panel">
@@ -276,16 +281,6 @@
       };
 
     } // end function
-    /**
-     * {
-    "ka": [0.19225, 0.19225, 0.19225],
-    "kd": [0.50754, 0.50754, 0.50754],
-    "ks": [0.508273, 0.508273, 0.508273],
-    "alpha": 51.2,
-    "transparency": 1.0
-  }
-     */
-
   </script>
 
   <script>
