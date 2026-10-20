@@ -123,6 +123,31 @@ class SceneGraph {
   } // end function
 
   /**
+   * remove a point light from this scene
+   */
+  remove_point_light_global(position) {
+    let pos;
+    for (let i = 0; i < this.point_lights_global.length; i++) {
+      pos = this.point_lights_global[i];
+
+      if (
+        position[0] === pos[0] && 
+        position[1] === pos[1] && 
+        position[2] === pos[2] 
+      ) {
+        this.point_lights_global.splice(i, 1); // remove that guy in place
+        break; // dont go any further
+      } // end if
+    } // end loop
+
+    // remove for the objects
+     this.objects.forEach((o) => {
+        o.remove_point_light(position);
+    });
+    
+  } // end function
+
+  /**
    * method to update the lighting parameters of an object.
    */
   update_material_global(id, material_lighting) {
@@ -346,6 +371,26 @@ class SceneObject {
   add_point_light(position) {
     this.point_lights.push(...position);
   } // end function
+
+  /**
+   * remove a point light from this scene
+   */
+  remove_point_light(position) {
+    let pos_x, pos_y, pos_z;
+    for (let i = 0; i < this.point_lights.length; i += 3) {
+      pos_x = this.point_lights[i];
+      pos_y = this.point_lights[i + 1];
+      pos_z = this.point_lights[i + 2];
+      if (
+        position[0] === pos_x && 
+        position[1] === pos_y && 
+        position[2] === pos_z 
+      ) {
+        this.point_lights.splice(i, 3); // remove that guy in place
+        break; // dont go any further
+      } // end if
+    } // end loop
+  } // end func
 
   /**
    * need to update the lighting constants for my shader.

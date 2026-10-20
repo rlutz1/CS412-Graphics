@@ -124,6 +124,9 @@
           </div>
           <br />
           <button style="width: 100%;" id="add_point_light">Add Light to Scene</button>
+          <div id="curr_lights">
+
+          </div>
         </fieldset>
         
       </div>
@@ -316,24 +319,46 @@
     const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
 
     let add_point_light_button = document.getElementById("add_point_light");
-     
+    let pt_lights = 0; let pt_id = 0;
+  
     add_point_light_button.addEventListener("click", function() {
-    // add a light at the given position for the global scene.
-    scene.add_point_light_global([
-      document.getElementById("light_x").value,
-      document.getElementById("light_y").value,
-      document.getElementById("light_z").value
-    ]);
-    console.log(`adding? ${scene.point_lights_global}`)
-    })
+      pt_lights += 1; // increment the point lights count
 
-    // TODO: comes from front end.
-    // const pt_light_1 = [0, 4, 5]; 
-    // const pt_light_2 = [-20, -20, 5];
-    // scene.add_point_light_global(pt_light_1);
-    // scene.add_point_light_global(pt_light_2);
+      const position = [
+        document.getElementById("light_x").value,
+        document.getElementById("light_y").value,
+        document.getElementById("light_z").value
+      ];
+
+      // add a light at the given position for the global scene.
+      scene.add_point_light_global(position);
+      // console.log(`adding? ${scene.point_lights_global}`)
+      const curr_lights_div = document.getElementById("curr_lights");
+
+      const label = document.createElement("label");
+      label.htmlFor = `pt_lights_${pt_id}`;
+
+      const remove_button = document.createElement("button");
+      remove_button.id = `pt_lights_${pt_id}`;
+      remove_button.style = "width: 100%;"
+      remove_button.textContent = `Remove pt_lights_${pt_id}, ${position}`; 
+
+      const spacer = document.createElement("br");
+
+      remove_button.addEventListener("click", function() {
+        scene.remove_point_light_global(position);
+        label.remove();
+        remove_button.remove();
+        spacer.remove();
+        pt_lights -= 1;
+      });
+      curr_lights_div.appendChild(label);
+      curr_lights_div.appendChild(remove_button);
+      curr_lights_div.appendChild(spacer);
+      pt_id += 1;
+    })
    
-    start_time = Date.now()
+    start_time = Date.now() // start the clock 
 
     /**
      * render the scene.
