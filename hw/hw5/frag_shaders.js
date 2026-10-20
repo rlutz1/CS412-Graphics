@@ -122,13 +122,12 @@ const phong_frag_shader = {
 
     // TODO: list of light positions
     uniform vec3 uPointLights[10]; // light position in space
-    // uniform int uNumPointLights; // how many point lights
+    uniform int uNumPointLights; // how many point lights
 
     out vec4 fragColor;
 
     void main() {
       // TODO: min of size of list (10) or the length 
-      int num_pt_lights = uPointLights.length() / 3; // number point lights
 
       vec3 N = normalize(vNormal); // ensure normalized
       vec3 V = normalize(-vPosition); // camera sits at the origin
@@ -137,7 +136,7 @@ const phong_frag_shader = {
       vec3 spec_acc = vec3(0.0);
 
 
-      for (int i = 0; i < num_pt_lights; i++) {
+      for (int i = 0; i < uNumPointLights; i++) {
         vec3 L = normalize(uPointLights[i] - vPosition); // get l as vector from this point
         vec3 R = reflect(-L, N); // r = 2(dot(n, l) * n - l) 
         float diff = max(dot(N, L), 0.0); // diffuse max
@@ -145,7 +144,6 @@ const phong_frag_shader = {
         diffuse_acc += (uLightParams.kd * vColor) * diff;
         spec_acc += (uLightParams.ks * vColor) * spec;
       } // end loop 
-
 
       fragColor = vec4(
         (uLightParams.ka * vColor) + 
