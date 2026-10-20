@@ -199,6 +199,7 @@ class SceneObject {
   // (light setup)
   point_lights = []; // point lights the object should be responding to.
   point_lights_loc = null;
+  // num_point_lights_loc = null;
   // (light param setup)
   light_params = null;
   light_params_locs = {};
@@ -255,6 +256,7 @@ class SceneObject {
       this.model_view_loc = this.gl.getUniformLocation(this.program, "uModelViewMatrix"); 
       this.projection_loc = this.gl.getUniformLocation(this.program, "uProjectionMatrix"); 
       this.point_lights_loc = this.gl.getUniformLocation(this.program, "uPointLights");
+      // this.num_point_lights_loc =  this.gl.getUniformLocation(this.program, "uNumPointLights"); 
       this.light_params_locs["ka"] = this.gl.getUniformLocation(this.program, 'uLightParams.ka');
       this.light_params_locs["kd"] = this.gl.getUniformLocation(this.program, 'uLightParams.kd');
       this.light_params_locs["ks"] = this.gl.getUniformLocation(this.program, 'uLightParams.ks');
@@ -311,6 +313,7 @@ class SceneObject {
     this.gl.uniformMatrix4fv(this.model_view_loc, false, model_view);
     // TODO: not new on every render call.
     this.gl.uniform3fv(this.point_lights_loc, new Float32Array(this.point_lights));
+    // this.gl.uniform1i(this.num_point_lights_loc, this.point_lights.length / 3);
     this.gl.uniform3fv(this.light_params_locs["ka"], new Float32Array(this.light_params["ka"]));
     this.gl.uniform3fv(this.light_params_locs["kd"], new Float32Array(this.light_params["kd"]));
     this.gl.uniform3fv(this.light_params_locs["ks"], new Float32Array(this.light_params["ks"]));

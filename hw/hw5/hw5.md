@@ -5,7 +5,7 @@
 In this assignment, you will extend the provided template code and implement lighting and shading on top of it. 
 
 - [X] Geometric Primitives with Shading (2 pts):
-   + Your scene should include at least **four geometric primitives organized in hierarchical model with at least 4 levels including the root**.
+  - [X] Your scene should include at least **four geometric primitives organized in hierarchical model with at least 4 levels including the root**.
 
 - [ ] Different Types of Reflections and Shading (4 pts):
   - [ ] Implement and demonstrate **different materials and reflection types**. **Both diffuse and specular reflection** must each appear on at least one geometry, either separately or combined. (2/4 pts)
