@@ -86,7 +86,7 @@ class SceneGraph {
 
     // simply: for each main object child, call their render function.
     this.objects.forEach((o) => {
-      console.log(`Rendering ${o.id} object...`);
+      // console.log(`Rendering ${o.id} object...`);
       // TODO: can i just put camera views on the stack?
       o.render(this.projection, this.model_view, dynamic_transforms[o.id], []);
     });
@@ -249,7 +249,7 @@ class SceneObject {
     this.gl.uniformMatrix4fv(this.model_view_loc, false, model_view);
 
     this.roots.forEach((r) => {
-      console.log(`Rendering ${r.id} node...`);
+      // console.log(`Rendering ${r.id} node...`);
       // TODO: can i just put camera views on the stack?
       // stack is empty for now here.
       r.render(dynamic_transforms[r.id], stack);
@@ -412,7 +412,7 @@ class SceneObjectNode {
 
     // move on to next children
     this.children.forEach((c) => {
-        console.log(`Rendering ${c.id} node...`);
+        // console.log(`Rendering ${c.id} node...`);
         c.render(
             dynamic_transforms[c.id],
             stack

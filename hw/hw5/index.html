@@ -71,7 +71,41 @@
           <input type="radio" id="silver" name="material" value="silver" />
           <label for="silver">Silver</label>
         </div>
-      </fieldset>
+        </fieldset>
+
+        <legend>Advanced material customization</legend>
+        <div id="material_sliders">
+          <h4>Ambient Coefficient</h4>
+          <div id="ka">
+            <input id="ka_r" type="number" min="0" max="1" step="0.01">
+            <input id="ka_g" type="number" min="0" max="1" step="0.01">
+            <input id="ka_b" type="number" min="0" max="1" step="0.01">
+          </div>
+
+          <h4>Diffuse Coefficient</h4>
+          <div id="kd">
+            <input id="kd_r" type="number" min="0" max="1" step="0.01">
+            <input id="kd_g" type="number" min="0" max="1" step="0.01">
+            <input id="kd_b" type="number" min="0" max="1" step="0.01">
+          </div>
+
+          <h4>Specular Coefficient</h4>
+          <div id="ks">
+            <input id="ks_r" type="number" min="0" max="1" step="0.01">
+            <input id="ks_g" type="number" min="0" max="1" step="0.01">
+            <input id="ks_b" type="number" min="0" max="1" step="0.01">
+          </div>
+
+          <h4>Specular Exponent</h4>
+          <div id="alpha">
+            <input id="alpha_v" type="number" min="0" max="100" step="1">
+          </div>
+
+          <h4>Transparency</h4>
+          <div id="transparency">
+            <input id="transparency_v" type="number" min="0" max="1" step="0.01">
+          </div>
+        </div>
       </div>
  
       <!-- <button class="accordion">Adjust Lighting</button> -->
@@ -170,10 +204,78 @@
   </script>
 
   <script>
+    let material_radio_buttons = document.getElementById("material");
+    let material_sliders = document.getElementById("material_sliders");
+    let last_material_control = material_radio_buttons; // assume for this on load
+
+    for (const child of material_radio_buttons.children) {
+      child.addEventListener("click", function() {
+          // set the last_material control to the radio buttons.
+          last_material_control = material_radio_buttons;
+          // TODO: update the slider values to the current checked.
+          console.log("clicked radios")
+          update_sliders(get_material_lighting(get_radio("material")));
+      }) // end loop
+    } // end loop
+    
+    for (const child of material_sliders.children) {
+      child.addEventListener("click", function() {
+          // set the last_material control to the radio buttons.
+          last_material_control = material_sliders;
+          // TODO: do nothing? this is for use below
+          console.log("clicked sliders")
+      }) // end loop
+    } // end loop
+
+    function update_sliders(material) {
+      let ka = document.getElementById("ka");
+      let kd = document.getElementById("kd");
+      let ks = document.getElementById("ks");
+      let alpha = document.getElementById("alpha");
+      let transparency = document.getElementById("transparency");
+
+      ka.querySelector("#ka_r").value = material["ka"][0];
+      ka.querySelector("#ka_g").value = material["ka"][1];
+      ka.querySelector("#ka_b").value = material["ka"][2];
+
+      kd.querySelector("#kd_r").value = material["kd"][0];
+      kd.querySelector("#kd_g").value = material["kd"][1];
+      kd.querySelector("#kd_b").value = material["kd"][2];
+
+      ks.querySelector("#ks_r").value = material["ks"][0];
+      ks.querySelector("#ks_g").value = material["ks"][1];
+      ks.querySelector("#ks_b").value = material["ks"][2];
+
+      alpha.querySelector("#alpha_v").value = material["alpha"];
+      transparency.querySelector("#transparency_v").value = material["transparency"];
+      // let slider;
+      // for (const key of Object.keys(material)) {
+      //   slider = document.getElementById(key);
+      // } // end loop
+      // let ka = document.getElementById("ka");
+      // for (const child of material_radio_buttons.children) {} // end loop
+      // let childElement = parentElement.querySelector('#child-id');
+    }
+
+    /**
+     * {
+    "ka": [0.19225, 0.19225, 0.19225],
+    "kd": [0.50754, 0.50754, 0.50754],
+    "ks": [0.508273, 0.508273, 0.508273],
+    "alpha": 51.2,
+    "transparency": 1.0
+  }
+     */
+
+  </script>
+
+  <script>
     // WebGL setup
     const canvas = document.getElementById("glcanvas");
     const gl = canvas.getContext("webgl2");
     if (!gl) alert("WebGL2 not supported");
+
+    // let last_material_control = document.getElementById("material"); // assume to use this unless changed.
 
     // generate an arm using 4 cylinders.
     // the hierarchy needs to be base -> seg2 -> seg3 -> top.
@@ -241,6 +343,7 @@
             "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
           })
         } // end if
+
 
         // handle the dynamic lighting adjustments.
         const material = get_radio("material");
