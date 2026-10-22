@@ -40,11 +40,10 @@
   <div style="display: flex; gap: 10px; align-items: flex-start;">
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <!-- select your model -->
-      <select name="Models" id="model" style="text-align: center; font-size: 20px">
+      <!-- <select name="Models" id="model" style="text-align: center; font-size: 20px">
         <option value="cake">Cake</option>
         <option value="starfish">Starfish</option>
-      </select>
-      
+      </select> -->
       <canvas id="glcanvas" width="800" height="500"></canvas>
     </div>
 
@@ -57,14 +56,13 @@
         <label for="animate">Animation Mode</label>
       </div>
 
-      <!-- accordian panel -->
+      <!-- accordian panel for changing material lighting of the object-->
       <button class="accordion">Change Material</button>
       <div class="panel">
         <!-- changing the materials radio buttons -->
         <legend>Change to specific material</legend>
         <fieldset>
         <div id="material">
-          <!-- TODO: remove checked! -->
           <input type="radio" id="copper" name="material" value="copper" checked />
           <label for="copper">Copper</label>
 
@@ -110,9 +108,9 @@
           </div>
         </div>
         </fieldset>
-
       </div>
       
+      <!-- accordian panel for adding/removing point lights -->
       <button class="accordion">Lights</button>
       <div class="panel">
         <legend>Add a point light</legend>
@@ -124,13 +122,11 @@
           </div>
           <br />
           <button style="width: 100%;" id="add_point_light">Add Light to Scene</button>
-          <div id="curr_lights">
-
-          </div>
+          <div id="curr_lights"></div>
         </fieldset>
-        
       </div>
 
+      <!-- accordian panel for moving the segments of the hierarchy -->
       <button class="accordion">Move Segments</button>
       <div class="panel">
         <!-- move the hierarchical structure by segment -->
@@ -165,7 +161,6 @@
             <p id="curr_top_range"></p>
             <input type="range" min="0" max="360" value="0" class="slider" step="1" id="top_range">
           </div> 
-
         </div>
 
       </div>
@@ -182,6 +177,7 @@
   <script src="scene_graph.js"></script>
   <script src="object_generators.js"></script>
   <script src="ui_util.js"></script>
+  <!-- script for the hierarchical modeling value grab for output -->
   <script>
     // set up a simple value grab/feedback for the sliders used for testing hierarchical setup.
     let sliders = document.getElementById("cake_slide_container");
@@ -199,6 +195,7 @@
     } // end loop
   </script>
 
+  <!-- script for accordian panel action -->
   <script>
     // set up accordion panel.
     var acc = document.getElementsByClassName("accordion");
@@ -216,11 +213,11 @@
           panel.style.display = "none";
         } else {
           panel.style.display = "block";
-        }
+        } // end if
       });
     } 
   </script>
-
+  <!-- script for handling the material changes manually from ui -->
   <script>
     let material_radio_buttons = document.getElementById("material");
     let material_sliders = document.getElementById("material_sliders");
@@ -247,6 +244,7 @@
       }) // end loop
     } // end loop
 
+    // on click of the radio buttons, automatically change the sliders to those values.
     function update_sliders(material) {
       let ka = document.getElementById("ka");
       let kd = document.getElementById("kd");
@@ -270,7 +268,7 @@
       transparency.querySelector("#transparency_v").value = material["transparency"]; 
     } // end function
 
-
+    // if the sliders are used, get the values from the sliders for material changes
     function get_sliders_materials() {
       let ka = document.getElementById("ka");
       let kd = document.getElementById("kd");
@@ -292,31 +290,11 @@
         "alpha": alpha_v,
         "transparency": transparency_v
       };
-
     } // end function
   </script>
 
   <script>
-     
-  </script>
-
-  <script>
-    // WebGL setup
-    const canvas = document.getElementById("glcanvas");
-    const gl = canvas.getContext("webgl2");
-    if (!gl) alert("WebGL2 not supported");
-
-    // generate an arm using 4 cylinders.
-    // the hierarchy needs to be base -> seg2 -> seg3 -> top.
-    // the rotations are to come from the sliders and are going to be implied x rotations.
-    // this generates the shapes for the STATIC arm starting point.
-    const [cake_flat, cake_gouraud, cake_phong] = generate_lit_cakes(gl); // get all 3 cakes
-    let cake_json;
-
-    // make a for fun star fish
-    const [starfish_json, starfish] = generate_starfish(gl);
-
-    const scene = new SceneGraph(canvas); // create a top level scene root with top level objects
+    let scene = null;
 
     let add_point_light_button = document.getElementById("add_point_light");
     let pt_lights = 0; let pt_id = 0;
@@ -346,7 +324,9 @@
       const spacer = document.createElement("br");
 
       remove_button.addEventListener("click", function() {
-        scene.remove_point_light_global(position);
+        if (scene != null) {
+          scene.remove_point_light_global(position);
+        } // end if
         label.remove();
         remove_button.remove();
         spacer.remove();
@@ -357,6 +337,28 @@
       curr_lights_div.appendChild(spacer);
       pt_id += 1;
     })
+  </script>
+
+  <script>
+    // WebGL setup
+    const canvas = document.getElementById("glcanvas");
+    const gl = canvas.getContext("webgl2");
+    if (!gl) alert("WebGL2 not supported");
+
+    // generate an arm using 4 cylinders.
+    // the hierarchy needs to be base -> seg2 -> seg3 -> top.
+    // the rotations are to come from the sliders and are going to be implied x rotations.
+    // this generates the shapes for the STATIC arm starting point.
+    const [cake_flat, cake_gouraud, cake_phong] = generate_lit_cakes(gl); // get all 3 cakes
+    let cake_dynamics;
+
+    // make a for fun star fish
+    // const [starfish_json, starfish] = generate_starfish(gl);
+
+    scene = new SceneGraph(canvas); // create a top level scene root with top level objects
+    scene.add_object(cake_flat); // add to the scene graph
+    scene.add_object(cake_gouraud); // add to the scene graph
+    scene.add_object(cake_phong); // add to the scene graph
    
     start_time = Date.now() // start the clock 
 
@@ -364,106 +366,44 @@
      * render the scene.
      */
     function render() {
-      delta_time = (start_time - Date.now()) / 1000.0;
-      
-      if (document.getElementById("model").value == "cake") {
-        // make this visible
-        document.getElementById("cake_slide_container").style.visibility = 'visible';
-        
-        if (!scene.has_object(cake_flat)) {
-          scene.remove_all_objects();
-          scene.add_object(cake_flat); // add to the scene graph
-          scene.add_object(cake_gouraud); // add to the scene graph
-          scene.add_object(cake_phong); // add to the scene graph
-        } // end if
+      delta_time = (start_time - Date.now()) / 1000.0; // dt since last render
 
-        // handle the movement transformations
-        if (document.getElementById(`animate`).checked) {
-          // do a fun slinky motion
-          // inputs som values to a json to keep this clean. 
-          // this is not flexible in its current state.
-          // just intended to clean up the main html.
-          cake_json = generate_cake_json({
-            "base": [rotate([Math.sin(delta_time), 0, 0], true)],
-            "seg2": [rotate([0, 0, Math.sin(delta_time + 1)], true)],
-            "seg3": [rotate([0, 0, Math.sin(delta_time + 2)], true)],
-            "seg4": [rotate([0, 0, Math.sin(delta_time + 3)], true)],
-            "top":  [rotate([0, 0, Math.sin(delta_time + 4)], true)]
-          })
-        } else { 
-          // use the sliders
-          cake_json = generate_cake_json({
-            "base": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
-            "seg2": [rotate([0, deg_to_rad(document.getElementById(`seg2_range`).value), 0], true)],
-            "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
-            "seg4": [rotate([0, 0, deg_to_rad(document.getElementById(`seg4_range`).value)], true)],
-            "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
-          })
-        } // end if
-
-        // handle the dynamic lighting adjustments.
-        if (last_material_control.id == "material_sliders") { // use sliders
-          scene.update_material_global("cake", get_sliders_materials());
-        } else { // revert to radio button check
-          // get the correct lighting values for that material
-          const material_lighting = get_material_lighting(get_radio("material"));
-          // update the lighting of objects by id
-          scene.update_material_global("cake", material_lighting);
-        } // end if
-
-        // render scene with all transformations
-        scene.render(cake_json);
-
-      } else if (document.getElementById("model").value == "starfish") {
-        // make this visible
-        document.getElementById("cake_slide_container").style.visibility = 'hidden';
-
-        if (!scene.has_object(starfish)) {
-          scene.remove_all_objects();
-          scene.add_object(starfish); // add to the scene graph
-        } // end if
-
-        if (document.getElementById(`animate`).checked) {
-          // do a fun slinky motion
-
-          // add this rotation to all components so they all have their own motion
-          // to propogate through hierarchy
-          const slinker = [rotate([0, 0, Math.sin(delta_time)], true)];
-          const queue = [];
-          let temp = starfish_json;
-          queue.push(temp["starfish"]);
-
-          while(queue.length > 0) {
-            temp = queue.splice(0, 1)[0];
-
-            for (const [key, value] of Object.entries(temp)) {
-              console.log(`${key}: ${value}`);
-              if (key == "dynamic_transforms") {
-                temp[key] = slinker
-              } else {
-                queue.push(temp[key]);
-              } // end if
-            } // end loop
-          } // end while
-
-          // special base circular motion, scaling, moving around canvas
-          starfish_json["starfish"]["base"]["dynamic_transforms"] = [
-            //scale([Math.abs(Math.sin(delta_time)) + 1, Math.abs(Math.sin(delta_time)) + 1, 0]),
-            rotate([0, 0, Math.sin(delta_time)], true),
-            translate([Math.sin(delta_time), Math.cos(delta_time), Math.abs(Math.sin(delta_time)) * 5])
-          ]
-
-          scene.render(starfish_json)
-
-        } else {
-          // just stop the motion where it is
-          scene.render(starfish_json);
-        } // end if
-
-      } else {
-        scene.remove_all_objects();
-        Console.warn("Somehow nothing selected on the dropdown! Weirdness afoot!");
+      /* handle the movement transformations */
+      if (document.getElementById(`animate`).checked) {
+        // do a fun slinky motion
+        // inputs som values to a json to keep this clean. 
+        // this is not flexible in its current state.
+        // just intended to clean up the main html.
+        cake_dynamics = generate_cake_json({
+          "base": [rotate([Math.sin(delta_time), 0, 0], true)],
+          "seg2": [rotate([0, 0, Math.sin(delta_time + 1)], true)],
+          "seg3": [rotate([0, 0, Math.sin(delta_time + 2)], true)],
+          "seg4": [rotate([Math.sin(delta_time + 3), 0 ,0], true)],
+          "top":  [rotate([0, 0, Math.sin(delta_time + 4)], true)]
+        })
+      } else { 
+        // use the sliders
+        cake_dynamics = generate_cake_json({
+          "base": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
+          "seg2": [rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)],
+          "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
+          "seg4": [rotate([deg_to_rad(document.getElementById(`seg4_range`).value), 0, 0], true)],
+          "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
+        })
       } // end if
+
+      /* handle the dynamic lighting adjustments. */
+      if (last_material_control.id == "material_sliders") { // use sliders
+        scene.update_material_global("cake", get_sliders_materials());
+      } else { // revert to radio button check
+        // get the correct lighting values for that material
+        const material_lighting = get_material_lighting(get_radio("material"));
+        // update the lighting of objects by id
+        scene.update_material_global("cake", material_lighting);
+      } // end if
+
+      // render scene with all transformations
+      scene.render(cake_dynamics);
     } // end render
 
     // Initialize when page loads
