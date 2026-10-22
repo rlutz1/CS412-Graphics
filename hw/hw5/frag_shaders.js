@@ -47,7 +47,7 @@ const flat_frag_shader = {
     flat in vec3 vNormal;
     in vec3 vColor;
 
-    uniform vec3 uPointLights[10]; // points light positions in space
+    uniform vec3 uPointLights[50]; // points light positions in space
     uniform int uNumPointLights; // how many point lights
 
     out vec4 fragColor;
@@ -127,7 +127,7 @@ const phong_frag_shader = {
     in vec3 vNormal;
     in vec3 vColor;
 
-    uniform vec3 uPointLights[10]; // points light positions in space
+    uniform vec3 uPointLights[50]; // points light positions in space
     uniform int uNumPointLights; // how many point lights
 
     out vec4 fragColor;

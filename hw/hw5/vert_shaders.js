@@ -145,7 +145,7 @@ const gouraud_vert_shader = {
     uniform mat4 uModelTransformationMatrix[50];
     uniform int transforms_up_to; // marker of how many transforms
 
-    uniform vec3 uPointLights[10]; // points light positions in space
+    uniform vec3 uPointLights[50]; // points light positions in space
     uniform int uNumPointLights; // how many point lights
 
     out vec3 vColor; // only sends out color

@@ -106,8 +106,7 @@ class SceneGraph {
   clear() {
     // clear things.
     this.gl.enable(this.gl.DEPTH_TEST);
-    // this.gl.depthFunc(this.gl.LEQUAL);
-    this.gl.clearColor(0, 0, 0, 1);
+    this.gl.clearColor(0.2, 0.2, 0.2, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
   } // end function
 

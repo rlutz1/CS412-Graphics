@@ -3,47 +3,62 @@
 
 <head>
   <meta charset="utf-8">
-  <title>UNM CS 412/512 HW4</title>
+  <title>UNM CS 412/512 HW5</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <h2>Hierarchical Modeling with Lighting</h2>
-  <p>
-    <b>WIP</b>
-    <!-- The following canvas has two options: a basic "cake" structure and <br />
-    (2) a starfish like creature with an animation playing over time. <br />
-    <br />
-    You can play with the cake more with sliders to move all the individual <br />
-    5 segments in order to illustrate the hierarchical modelling of the structure. <br />
-    You can also turn on "Animation Mode" to watch it move with respect to time <br />
-    (achieved with a rotation matrix given to each child in hierarchy). <br />
-    <br />
-    You can also switch to the "starfish", which only moves with respect to time <br />
-    in the same way as mentioned above. There are no sliders for this one because, <br />
-    well, it would be a cluttered nightmare of sliders. So this one is just for fun. <br />
-    <br />
-    You can find the vertex and fragment shaders used in <b>vert_shaders.js</b> and <br />
-    <b>frag_shaders.js</b>. Most of the hierarchical modelling and stack building is <br />
-    within <b>scene_graph.js</b>, where I begin fleshing out the beginning of a personal <br />
-    API for buidling a scene graph. This will be evolving and tuned with time to make more <br />
-    usable and flexible. -->
-  </p>
-      
+
   <h3>Submission by:</h3>
-  <p>
+  <p><b>
     Roxanne Krause <br />
     CS412 <br />
     10/22/26 <br />
+  </b></p>
+
+  <h3>General Breakdown of Submission</h3>
+  <p>
+    The following canvas builds off the "cake" structures built in the last homework. <br />
+    The left-most structure implements flat shading, the structure <br />
+    in the middle implements Gouraud shading, and the right-most implements <br />
+    Phong shading.<br />
+    <br />
+
+    <b>Animate with Time</b> <br />
+    Select the "Animation Mode" check box to see the structures move with time. <br />
+    More, finer-tuned controls are discussed below. <br />
+    <br />
+
+    <b>Changing Material</b> <br />
+    Select the "Change Material" accordian button to see how the cake material <br />
+    can be updated. All values of the materials were taken from 
+    <a href="https://people.eecs.ku.edu/~jrmiller/Courses/672/InClass/3DLighting/MaterialProperties.html" target="_blank">this source</a>. <br />
+    The scene nodes are given a baseline color of [0.5, 0.5, 0.5] and all coefficients are <br />
+    used accordingly in the shaders (found in <i>vert_shaders.js</i> and <i>frag_shaders.js</i>).<br />
+    A radio button selection will set the coefficients common to that material and also update the<br />
+    sliders to those default values. If the sliders are used, the radio selection is ignored<br />
+    until the radio buttons are interacted with again.<br />
+    <br />
+
+    <b>Adding/Removing Lights</b>
+    Select the "Adding/Removing Lights" accordian button to play with adding point lights<br />
+    to different global positions in the scene. You can add up to 50 point lights<br />
+    which is a limit imposed by an array size in the shaders (avoiding overflow issues).<br />
+    Removing the lights will remove the first occurrence of that light's position in the<br />
+    global light list. The id's are arbitrary, and mostly to provide visual feedback that<br />
+    There is more than one light, despite the same position.<br />
+    <br />
+
+    <b>Move Segments</b>
+    Select the "Move Segments" accordian button to play with the dynamic rotations<br />
+    of each segment of the hierarchical structure. These are the same rotation<br />
+    matrices used in the animation mode over time, but this gives you the ability<br />
+    to move these separately.
   </p>
 
   <div style="display: flex; gap: 10px; align-items: flex-start;">
     <div style="display: flex; flex-direction: column; gap: 10px;">
-      <!-- select your model -->
-      <!-- <select name="Models" id="model" style="text-align: center; font-size: 20px">
-        <option value="cake">Cake</option>
-        <option value="starfish">Starfish</option>
-      </select> -->
       <canvas id="glcanvas" width="800" height="500"></canvas>
     </div>
 
@@ -111,7 +126,7 @@
       </div>
       
       <!-- accordian panel for adding/removing point lights -->
-      <button class="accordion">Lights</button>
+      <button class="accordion">Adding/Removing Lights</button>
       <div class="panel">
         <legend>Add a point light</legend>
         <fieldset>
@@ -229,8 +244,6 @@
       child.addEventListener("click", function() {
           // set the last_material control to the radio buttons.
           last_material_control = material_radio_buttons;
-          // TODO: update the slider values to the current checked.
-          console.log("clicked radios")
           update_sliders(get_material_lighting(get_radio("material")));
       }) // end loop
     } // end loop
@@ -239,8 +252,6 @@
       child.addEventListener("click", function() {
           // set the last_material control to the radio buttons.
           last_material_control = material_sliders;
-          // TODO: do nothing? this is for use below
-          console.log("clicked sliders")
       }) // end loop
     } // end loop
 
@@ -300,6 +311,9 @@
     let pt_lights = 0; let pt_id = 0;
   
     add_point_light_button.addEventListener("click", function() {
+      if (pt_lights < 50) {
+
+      
       pt_lights += 1; // increment the point lights count
 
       const position = [
@@ -336,6 +350,7 @@
       curr_lights_div.appendChild(remove_button);
       curr_lights_div.appendChild(spacer);
       pt_id += 1;
+    }
     })
   </script>
 
