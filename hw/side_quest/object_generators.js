@@ -16,17 +16,15 @@ function generate_lit_cakes(gl) {
  * hierarchy of 4 times: 
  * base -> seg2 -> seg3 -> seg4-> top
  */
-function generate_cake(gl, vert_shader=flat_vert_shader, frag_shader=flat_frag_shader, x_shift=0) {
+function generate_cake(gl, id, vert_shader=flat_vert_shader, frag_shader=flat_frag_shader, initial_position=[0, 0, 0]) {
   // construct the hierarchy as a SceneObject
-  const object = new SceneObject("cake", gl, vert_shader, frag_shader);
-  // object.init(phong_vert_shader, phong_frag_shader);
-  // object.init(vert_shader, frag_shader);
+  const object = new SceneObject(id, gl, vert_shader, frag_shader);
 
   // generate the base.
   // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
   let verts_and_indices = gen_cylinder_points(); // the vertices to start with
   let colors = gen_cylinder_colors(verts_and_indices.vertices.length, [0.5, 0.5, 0.5]);
-  let static_transforms = [translate([x_shift, -3, -10])];
+  let static_transforms = [translate(initial_position)];
 
   // make this a scene node.
   const base = new SceneObjectNode("base", verts_and_indices, colors, static_transforms, gl, object.program);
@@ -80,10 +78,10 @@ function generate_cake(gl, vert_shader=flat_vert_shader, frag_shader=flat_frag_s
  * to allow for dynamic changing of the movement of this
  * object from the front end input.
  */
-function generate_cake_json(dynamic_transforms) {
+function generate_cake_json(id, dynamic_transforms) {
 
-  return {
-    "cake": {
+   return {
+    [id]: {
       
       "base": {
         "dynamic_transforms": dynamic_transforms["base"],
@@ -111,6 +109,7 @@ function generate_cake_json(dynamic_transforms) {
       }
     }
   }
+
 } // end function
 
 /**

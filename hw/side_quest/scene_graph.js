@@ -90,7 +90,10 @@ class SceneGraph {
     this.objects.forEach((o) => {
       // console.log(`Rendering ${o.id} object...`);
       // TODO: can i just put camera views on the stack?
-      o.render(this.projection, this.model_view, node_transforms[o.id], []);
+      if (o.id in node_transforms) {
+        o.render(this.projection, this.model_view, node_transforms[o.id], []);
+      }
+      
     });
   } // end render
 

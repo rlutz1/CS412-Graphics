@@ -363,16 +363,39 @@
   </script>
 
   <script>
+    let pressed = null;
+
     document.addEventListener('keydown', (event) => {
       // Check for specific keys
       if (event.key === 'w') {
-        console.log('w');
+        // console.log('w');
+        pressed = 'w';
       } else if (event.key === 'a') {
-        console.log('a');
+        // console.log('a');
+        pressed = 'a';
       } else if (event.key === 's') {
-        console.log('s');
+        // console.log('s');
+        pressed = 's';
       } else if (event.key === 'd') {
-        console.log('d');
+        // console.log('d');
+        pressed = 'd';
+      } // end if
+    });
+
+    document.addEventListener('keyup', (event) => {
+      // Check for specific keys
+      if (event.key === 'w') {
+        // console.log('released w');
+        pressed = null;
+      } else if (event.key === 'a') {
+        // console.log('released a');
+        pressed = null;
+      } else if (event.key === 's') {
+        // console.log('released s');
+        pressed = null;
+      } else if (event.key === 'd') {
+        // console.log('released d');
+        pressed = null;
       } // end if
     });
 
@@ -384,20 +407,24 @@
     const gl = canvas.getContext("webgl2");
     if (!gl) alert("WebGL2 not supported");
 
-    // generate an arm using 4 cylinders.
-    // the hierarchy needs to be base -> seg2 -> seg3 -> top.
-    // the rotations are to come from the sliders and are going to be implied x rotations.
-    // this generates the shapes for the STATIC arm starting point.
-    const [cake_flat, cake_gouraud, cake_phong] = generate_lit_cakes(gl); // get all 3 cakes
+    const obstacle_id = "obstacle";
+    const my_id = "main";
+    // generate 4 "obstacles" to test movement with
+    const obstacles = [
+      generate_cake(gl, obstacle_id, flat_vert_shader, flat_frag_shader, [0, -3, -90]), // front
+      generate_cake(gl, obstacle_id, flat_vert_shader, flat_frag_shader, [50, -3, 0]), // right
+      generate_cake(gl, obstacle_id, flat_vert_shader, flat_frag_shader, [0, -3, 50]), // behind
+      generate_cake(gl, obstacle_id, flat_vert_shader, flat_frag_shader, [-40, -3, 0]) // left
+    ] 
     let cake_dynamics;
 
-    // make a for fun star fish
-    // const [starfish_json, starfish] = generate_starfish(gl);
-
     scene = new SceneGraph(canvas); // create a top level scene root with top level objects
-    scene.add_object(cake_flat); // add to the scene graph
-    scene.add_object(cake_gouraud); // add to the scene graph
-    scene.add_object(cake_phong); // add to the scene graph
+    for (let i = 0; i < obstacles.length; i++) {
+      scene.add_object(obstacles[i])
+    } // end loop
+
+    const main = generate_cake(gl, my_id, phong_vert_shader, phong_frag_shader, [0, -3, -10])
+    scene.add_object(main);  // add myself
    
     start_time = Date.now() // start the clock 
 
@@ -406,43 +433,73 @@
      */
     function render() {
       delta_time = (start_time - Date.now()) / 1000.0; // dt since last render
+      let obstacle_dynamics;
 
       /* handle the movement transformations */
-      if (document.getElementById(`animate`).checked) {
-        // do a fun slinky motion
-        // inputs som values to a json to keep this clean. 
-        // this is not flexible in its current state.
-        // just intended to clean up the main html.
-        cake_dynamics = generate_cake_json({
-          "base": [rotate([Math.sin(delta_time), 0, 0], true)],
-          "seg2": [rotate([0, 0, Math.sin(delta_time + 1)], true)],
-          "seg3": [rotate([0, 0, Math.sin(delta_time + 2)], true)],
-          "seg4": [rotate([Math.sin(delta_time + 3), 0 ,0], true)],
-          "top":  [rotate([0, 0, Math.sin(delta_time + 4)], true)]
-        })
-      } else { 
-        // use the sliders
-        cake_dynamics = generate_cake_json({
-          "base": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
-          "seg2": [rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)],
-          "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
-          "seg4": [rotate([deg_to_rad(document.getElementById(`seg4_range`).value), 0, 0], true)],
-          "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
-        })
-      } // end if
+      if (pressed == 'd') {
+        // rotate all objects around the y axis to the right in their position
+        obstacle_dynamics = generate_cake_json(
+          obstacle_id, 
+          {
+          "base": [rotate([delta_time, 0, 0], true)],
+          "seg2": [],
+          "seg3": [],
+          "seg4": [],
+          "top":  []
+          }
+        )
+      } else {
+        // do nothing
+        obstacle_dynamics = generate_cake_json(
+          obstacle_id, 
+          {
+          "base": [],
+          "seg2": [],
+          "seg3": [],
+          "seg4": [],
+          "top":  []
+          }
+        )
+      }
+      console.log(obstacle_dynamics)
+
+      // if (document.getElementById(`animate`).checked) {
+      //   // do a fun slinky motion
+      //   // inputs som values to a json to keep this clean. 
+      //   // this is not flexible in its current state.
+      //   // just intended to clean up the main html.
+      //   cake_dynamics = generate_cake_json({
+      //     "base": [rotate([Math.sin(delta_time), 0, 0], true)],
+      //     "seg2": [rotate([0, 0, Math.sin(delta_time + 1)], true)],
+      //     "seg3": [rotate([0, 0, Math.sin(delta_time + 2)], true)],
+      //     "seg4": [rotate([Math.sin(delta_time + 3), 0 ,0], true)],
+      //     "top":  [rotate([0, 0, Math.sin(delta_time + 4)], true)]
+      //   })
+      // } else { 
+      //   // use the sliders
+      //   cake_dynamics = generate_cake_json({
+      //     "base": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
+      //     "seg2": [rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)],
+      //     "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
+      //     "seg4": [rotate([deg_to_rad(document.getElementById(`seg4_range`).value), 0, 0], true)],
+      //     "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
+      //   })
+      // } // end if
 
       /* handle the dynamic lighting adjustments. */
+      scene.update_material_global(my_id, get_black_rubber_lighting());
+
       if (last_material_control.id == "material_sliders") { // use sliders
-        scene.update_material_global("cake", get_sliders_materials());
+        scene.update_material_global(obstacle_id, get_sliders_materials());
       } else { // revert to radio button check
         // get the correct lighting values for that material
         const material_lighting = get_material_lighting(get_radio("material"));
         // update the lighting of objects by id
-        scene.update_material_global("cake", material_lighting);
+        scene.update_material_global(obstacle_id, material_lighting);
       } // end if
 
       // render scene with all transformations
-      scene.render(cake_dynamics);
+      scene.render(obstacle_dynamics);
     } // end render
 
     // Initialize when page loads
