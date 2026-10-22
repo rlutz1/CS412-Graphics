@@ -206,6 +206,42 @@ function get_silver_lighting() {
 } // end function
 
 /**
+ * get the constants for material: polished silver
+ */
+function get_polished_silver_lighting() {
+  return {
+    "ka": [0.23125, 0.23125, 0.23125],
+    "kd": [0.2775, 0.2775, 0.2775],
+    "ks": [0.773911, 0.773911, 0.773911],
+    "alpha": 89.6,
+    "transparency": 1.0
+  }
+} // end function
+
+/**
+ * 0.02
+0.02
+0.02 	0.01
+0.01
+0.01 	0.4
+0.4
+0.4 	10 	1.0
+ */
+
+/**
+ * get the constants for material: polished silver
+ */
+function get_black_rubber_lighting() {
+  return {
+    "ka": [0.02, 0.02, 0.02],
+    "kd": [0.01, 0.01, 0.01],
+    "ks": [0.4, 0.4, 0.4],
+    "alpha": 10,
+    "transparency": 1.0
+  }
+} // end function
+
+/**
  * funnel to grab the proper lighting based on 
  * user selection
  */
@@ -213,6 +249,10 @@ function get_material_lighting(type) {
   switch (type) {
     case "copper":
       return get_copper_lighting();
+    case "polished_silver":
+      return get_polished_silver_lighting();
+    case "black_rubber":
+      return get_black_rubber_lighting();
     default:
       return get_silver_lighting();
   } // end switch
