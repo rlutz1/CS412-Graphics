@@ -363,6 +363,22 @@
   </script>
 
   <script>
+    document.addEventListener('keydown', (event) => {
+      // Check for specific keys
+      if (event.key === 'w') {
+        console.log('w');
+      } else if (event.key === 'a') {
+        console.log('a');
+      } else if (event.key === 's') {
+        console.log('s');
+      } else if (event.key === 'd') {
+        console.log('d');
+      } // end if
+    });
+
+  </script>
+
+  <script>
     // WebGL setup
     const canvas = document.getElementById("glcanvas");
     const gl = canvas.getContext("webgl2");
