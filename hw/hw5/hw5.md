@@ -7,17 +7,17 @@ In this assignment, you will extend the provided template code and implement lig
 - [X] Geometric Primitives with Shading (2 pts):
   - [X] Your scene should include at least **four geometric primitives organized in hierarchical model with at least 4 levels including the root**.
 
-- [ ] Different Types of Reflections and Shading (4 pts):
+- [X] Different Types of Reflections and Shading (4 pts):
   - [X] Implement and demonstrate **different materials and reflection types**. **Both diffuse and specular reflection** must each appear on at least one geometry, either separately or combined. (2/4 pts)
-    - [ ] add a couple more presets
+    - [X] add a couple more presets
   - [X] Implement and demonstrate both **flat shading and smooth shading**, either on different geometries or on two copies of the same geometry. (2/4 pts)
 
 - [X] Multiple Lightings (2 pts):
   - [X] At least two light sources in the scen e (including the provide light source).
 
-- [ ] Interactive Controls (4 pts)
+- [X] Interactive Controls (4 pts)
   - [X] Add UI controls for the movements of at least two segments/objects, beyond the controls already provided in the template. (2/4 pt)
-    - [ ] QUESTION: do i need to include the movements provided or can i build off what i did for the last hw?
+    ~~- [ ] QUESTION: do i need to include the movements provided or can i build off what i did for the last hw?~~
    - [X] Add UI controls for adjusting lighting or materials on at least two segments/objects. (2/4 pt)
 
 - [ ] Outstanding effects and creativities will get 1 extra points. (+1 pt)
