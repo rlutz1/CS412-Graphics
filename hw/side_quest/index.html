@@ -377,7 +377,7 @@
         // console.log('s');
         pressed = 's';
       } else if (event.key === 'd') {
-        // console.log('d');
+        console.log('d');
         pressed = 'd';
       } // end if
     });
@@ -394,7 +394,7 @@
         // console.log('released s');
         pressed = null;
       } else if (event.key === 'd') {
-        // console.log('released d');
+        console.log('released d');
         pressed = null;
       } // end if
     });
@@ -411,7 +411,7 @@
     const my_id = "main";
     // generate 4 "obstacles" to test movement with
     const obstacles = [
-      generate_cake(gl, obstacle_id, flat_vert_shader, flat_frag_shader, [0, -3, -90]), // front
+      generate_cake(gl, obstacle_id, flat_vert_shader, flat_frag_shader, [0, -3, -60]), // front
       generate_cake(gl, obstacle_id, flat_vert_shader, flat_frag_shader, [50, -3, 0]), // right
       generate_cake(gl, obstacle_id, flat_vert_shader, flat_frag_shader, [0, -3, 50]), // behind
       generate_cake(gl, obstacle_id, flat_vert_shader, flat_frag_shader, [-40, -3, 0]) // left
@@ -437,11 +437,12 @@
 
       /* handle the movement transformations */
       if (pressed == 'd') {
+        console.log("skdfdjsfn")
         // rotate all objects around the y axis to the right in their position
         obstacle_dynamics = generate_cake_json(
           obstacle_id, 
           {
-          "base": [rotate([delta_time, 0, 0], true)],
+          "base": [rotate([0, 0, 1], true)],
           "seg2": [],
           "seg3": [],
           "seg4": [],
