@@ -248,8 +248,6 @@ const texture_vertex_shader = `#version 300 es
   in vec3 aPosition;
   in vec3 aNormal;
   in vec3 aColor;
-  // in vec3 aPosition;
-  // in vec3 aNormal;
   in vec3 aTangent;
   in vec2 aTexCoord;
 

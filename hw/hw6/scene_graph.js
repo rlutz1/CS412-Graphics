@@ -146,6 +146,14 @@ class SceneGraph {
     
   } // end function
 
+  assign_texture_global(id, texture) {
+    this.objects.forEach((o) => {
+      if (o.id == id) {
+        o.assign_texture(texture);
+      } // end if
+    });
+  } // end function
+
   /**
    * method to update the lighting parameters of an object.
    */
@@ -234,6 +242,12 @@ class SceneObject {
   material_params = null;
   material_params_loc = {};
 
+  texture = null;
+  texture_loc = null;
+
+  mapping = 0;
+  mapping_loc = null;
+
   /**
    * ----------------------------------
    * constructor and inits
@@ -292,6 +306,10 @@ class SceneObject {
       this.material_params_loc["ks"] = this.gl.getUniformLocation(this.program, 'uLightParams.ks');
       this.material_params_loc["alpha"] = this.gl.getUniformLocation(this.program, 'uLightParams.alpha');
       this.material_params_loc["transparency"] = this.gl.getUniformLocation(this.program, 'uLightParams.transparency');
+      
+  
+      this.texture_loc =  this.gl.getUniformLocation(this.program, "uTexture");
+      this.mapping_loc =  this.gl.getUniformLocation(this.program, "uMapping");
     } catch (e) { 
       console.error(e); 
     } // end try catch
@@ -350,6 +368,10 @@ class SceneObject {
     this.gl.uniform1f(this.material_params_loc["alpha"], this.material_params["alpha"]);
     this.gl.uniform1f(this.material_params_loc["transparency"], this.material_params["transparency"]);
 
+    gl.activeTexture(gl.TEXTURE0); // TODO: Whyyy?
+    gl.uniform1i(this.mapping_loc, this.mapping);
+    gl.bindTexture(gl.TEXTURE_2D, this.texture);
+
     this.roots.forEach((r) => {
       // console.log(`Rendering ${r.id} root node...`);
       // TODO: can i just put camera views on the stack?
@@ -390,6 +412,10 @@ class SceneObject {
       } // end if
     } // end loop
   } // end func
+
+  assign_texture(texture) {
+    this.texture = texture;
+  } // end function
 
   /**
    * need to update the lighting constants for my shader.
@@ -447,16 +473,21 @@ class SceneObjectNode {
   node_transforms_loc = null; // gl location for the transformation matrix
   num_my_transforms_loc = null; // gl location to specify how many transforms i have.
 
+  tangent_loc = null;
+  texel_loc = null;
+
   /**
    * ----------------------------------
    * constructor and inits
    * ----------------------------------
    */
-  constructor(id, verts_and_indices, colors, static_transforms, gl, program) {
+  constructor(id, math_pack, colors, static_transforms, gl, program) {
     this.id = id;
-    this.vertices = verts_and_indices.vertices;
-    this.indices = verts_and_indices.indices;
-    this.norms = verts_and_indices.norms;
+    this.vertices = math_pack.vertices;
+    this.indices = math_pack.indices;
+    this.norms = math_pack.norms;
+    this.tangents = math_pack.tangents;
+    this.texels = math_pack.texels;
     this.colors = colors;
     this.static_transforms = static_transforms;
     this.gl = gl; 
@@ -466,6 +497,8 @@ class SceneObjectNode {
     this.pos_loc = this.gl.getAttribLocation(this.program, "aPosition");
     this.norm_loc = this.gl.getAttribLocation(this.program, "aNormal");
     this.color_loc = this.gl.getAttribLocation(this.program, "aColor");
+    this.tangent_loc = this.gl.getAttribLocation(this.program, "aTangent");
+    this.texel_loc = this.gl.getAttribLocation(this.program, "aTexCoord");
     this.node_transforms_loc = this.gl.getUniformLocation(this.program, "uModelTransformationMatrix"); 
     this.num_my_transforms_loc = this.gl.getUniformLocation(this.program, "transforms_up_to");
 
@@ -483,6 +516,8 @@ class SceneObjectNode {
   init_buffers() {
       this.pos_buff = this.init_buffer(this.vertices);
       this.norm_buff = this.init_buffer(this.norms);
+      this.tangent_buff = this.init_buffer(this.tangents);
+      this.texel_buff = this.init_buffer(this.texels);
       this.indices_buff = this.init_buffer(this.indices, this.gl.ELEMENT_ARRAY_BUFFER);
       this.color_buff = this.init_buffer(this.colors)
   } // end function
@@ -512,6 +547,16 @@ class SceneObjectNode {
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.norm_buff);
     this.gl.enableVertexAttribArray(this.norm_loc);
     this.gl.vertexAttribPointer(this.norm_loc, 3, this.gl.FLOAT, false, 0, 0);
+
+    // tangent buffer setup
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.tangent_buff);
+    this.gl.enableVertexAttribArray(this.tangent_loc);
+    this.gl.vertexAttribPointer(this.tangent_loc, 3, this.gl.FLOAT, false, 0, 0);
+
+    // texel buffer setup
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texel_buff);
+    this.gl.enableVertexAttribArray(this.texel_loc);
+    this.gl.vertexAttribPointer(this.texel_loc, 2, this.gl.FLOAT, false, 0, 0);
 
     // index buffer for drawing as triangles
     this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indices_buff);
