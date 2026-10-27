@@ -244,7 +244,8 @@ const phong_vert_shader = {
   `
 };
 
-const texture_vertex_shader = `#version 300 es
+const texture_vertex_shader = {
+  "src": `#version 300 es
   in vec3 aPosition;
   in vec3 aNormal;
   in vec3 aColor;
@@ -295,4 +296,5 @@ const texture_vertex_shader = `#version 300 es
     vColor = aColor; // send out the vertex color to frag shader
     vTexCoord = aTexCoord; // also send on out
   }
-`;
+`
+};

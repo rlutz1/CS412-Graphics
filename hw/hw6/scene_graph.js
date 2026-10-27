@@ -245,7 +245,7 @@ class SceneObject {
   texture = null;
   texture_loc = null;
 
-  mapping = 0;
+  mapping = 1;
   mapping_loc = null;
 
   /**
@@ -475,6 +475,9 @@ class SceneObjectNode {
 
   tangent_loc = null;
   texel_loc = null;
+  norms = null;
+  tangents = null;
+  texels = null;
 
   /**
    * ----------------------------------
@@ -516,8 +519,11 @@ class SceneObjectNode {
   init_buffers() {
       this.pos_buff = this.init_buffer(this.vertices);
       this.norm_buff = this.init_buffer(this.norms);
+      // console.log(`norms ${this.norms}`)
       this.tangent_buff = this.init_buffer(this.tangents);
+      // console.log(`tan ${this.tangents}`)
       this.texel_buff = this.init_buffer(this.texels);
+      // console.log(`tex ${this.texels}`)
       this.indices_buff = this.init_buffer(this.indices, this.gl.ELEMENT_ARRAY_BUFFER);
       this.color_buff = this.init_buffer(this.colors)
   } // end function

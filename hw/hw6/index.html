@@ -375,7 +375,8 @@
     const [cake_flat, cake_gouraud, cake_phong] = generate_lit_cakes(gl); // get all 3 cakes
     let cake_dynamics;
 
-    const basic_cyl = new SceneObject("cyl", gl, phong_vert_shader, phong_frag_shader);
+    // const basic_cyl = new SceneObject("cyl", gl, phong_vert_shader, phong_frag_shader);
+    const basic_cyl = new SceneObject("cyl", gl, texture_vertex_shader, texture_frag_shader);
 
     // generate the base.
     // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
@@ -409,6 +410,27 @@
 
     start_time = Date.now() // start the clock 
     
+      // texture add
+    function loadTexture(url) {
+      const texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([128, 128, 255, 255]));
+
+      const image = new Image();
+      image.onload = () => {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);  // images start at the top row, texture coordinates at the bottom
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        gl.generateMipmap(gl.TEXTURE_2D);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      };
+      image.src = url;
+      return texture;
+    }
+
+    const brickTexture = loadTexture("brick.png");
+    const normalTexture = loadTexture("texture2.jpg");
+    scene.assign_texture_global("cyl", normalTexture);
 
     /**
      * render the scene.
@@ -451,28 +473,9 @@
       // } // end if
 
 
-      // texture add
-    function loadTexture(url) {
-      const texture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([128, 128, 255, 255]));
+    
 
-      const image = new Image();
-      image.onload = () => {
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);  // images start at the top row, texture coordinates at the bottom
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-        gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-      };
-      image.src = url;
-      return texture;
-    }
-
-    const brickTexture = loadTexture("brick.png");
-    const normalTexture = loadTexture("texture2.jpg");
-
-    scene.assign_texture_global("cyl", brickTexture);
+    
 
     // render scene with all transformations
     scene.render(dynamics);
