@@ -375,15 +375,40 @@
     const [cake_flat, cake_gouraud, cake_phong] = generate_lit_cakes(gl); // get all 3 cakes
     let cake_dynamics;
 
+    const basic_cyl = new SceneObject("cyl", gl, phong_vert_shader, phong_frag_shader);
+
+    // generate the base.
+    // basic cylinder, rotated on x to appear upright, just basic fat cylinder.
+    let math_pack = gen_cylinder_points(); // the vertices to start with
+    let colors = gen_cylinder_colors(math_pack.vertices.length, [0.5, 0.0, 0.0]);
+    let static_transforms = [translate([0, 0, -5])];
+
+    // make this a scene node.
+    const base = new SceneObjectNode("base", math_pack, colors, static_transforms, gl, basic_cyl.program);
+    basic_cyl.add_root(base);
+
+    let dynamics = {
+      "cyl": {
+        "base": {
+          "dynamic_transforms": [],
+          "joint_transforms": []
+        }
+      }
+    }
+
     // make a for fun star fish
     // const [starfish_json, starfish] = generate_starfish(gl);
 
     scene = new SceneGraph(canvas); // create a top level scene root with top level objects
-    scene.add_object(cake_flat); // add to the scene graph
-    scene.add_object(cake_gouraud); // add to the scene graph
-    scene.add_object(cake_phong); // add to the scene graph
-   
+    // scene.add_object(cake_flat); // add to the scene graph
+    // scene.add_object(cake_gouraud); // add to the scene graph
+    // scene.add_object(cake_phong); // add to the scene graph
+    scene.add_point_light_global([0, 5, 5]); // just to have a base light
+    scene.add_object(basic_cyl);
+    scene.update_material_global("cyl", get_silver_lighting());
+
     start_time = Date.now() // start the clock 
+    
 
     /**
      * render the scene.
@@ -391,42 +416,42 @@
     function render() {
       delta_time = (start_time - Date.now()) / 1000.0; // dt since last render
 
-      /* handle the movement transformations */
-      if (document.getElementById(`animate`).checked) {
-        // do a fun slinky motion
-        // inputs som values to a json to keep this clean. 
-        // this is not flexible in its current state.
-        // just intended to clean up the main html.
-        cake_dynamics = generate_cake_json({
-          "base": [rotate([Math.sin(delta_time), 0, 0], true)],
-          "seg2": [rotate([0, 0, Math.sin(delta_time + 1)], true)],
-          "seg3": [rotate([0, 0, Math.sin(delta_time + 2)], true)],
-          "seg4": [rotate([Math.sin(delta_time + 3), 0 ,0], true)],
-          "top":  [rotate([0, 0, Math.sin(delta_time + 4)], true)]
-        })
-      } else { 
-        // use the sliders
-        cake_dynamics = generate_cake_json({
-          "base": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
-          "seg2": [rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)],
-          "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
-          "seg4": [rotate([deg_to_rad(document.getElementById(`seg4_range`).value), 0, 0], true)],
-          "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
-        })
-      } // end if
+      // /* handle the movement transformations */
+      // if (document.getElementById(`animate`).checked) {
+      //   // do a fun slinky motion
+      //   // inputs som values to a json to keep this clean. 
+      //   // this is not flexible in its current state.
+      //   // just intended to clean up the main html.
+      //   cake_dynamics = generate_cake_json({
+      //     "base": [rotate([Math.sin(delta_time), 0, 0], true)],
+      //     "seg2": [rotate([0, 0, Math.sin(delta_time + 1)], true)],
+      //     "seg3": [rotate([0, 0, Math.sin(delta_time + 2)], true)],
+      //     "seg4": [rotate([Math.sin(delta_time + 3), 0 ,0], true)],
+      //     "top":  [rotate([0, 0, Math.sin(delta_time + 4)], true)]
+      //   })
+      // } else { 
+      //   // use the sliders
+      //   cake_dynamics = generate_cake_json({
+      //     "base": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
+      //     "seg2": [rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)],
+      //     "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
+      //     "seg4": [rotate([deg_to_rad(document.getElementById(`seg4_range`).value), 0, 0], true)],
+      //     "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
+      //   })
+      // } // end if
 
-      /* handle the dynamic lighting adjustments. */
-      if (last_material_control.id == "material_sliders") { // use sliders
-        scene.update_material_global("cake", get_sliders_materials());
-      } else { // revert to radio button check
-        // get the correct lighting values for that material
-        const material_lighting = get_material_lighting(get_radio("material"));
-        // update the lighting of objects by id
-        scene.update_material_global("cake", material_lighting);
-      } // end if
+      // /* handle the dynamic lighting adjustments. */
+      // if (last_material_control.id == "material_sliders") { // use sliders
+      //   scene.update_material_global("cake", get_sliders_materials());
+      // } else { // revert to radio button check
+      //   // get the correct lighting values for that material
+      //   const material_lighting = get_material_lighting(get_radio("material"));
+      //   // update the lighting of objects by id
+      //   scene.update_material_global("cake", material_lighting);
+      // } // end if
 
       // render scene with all transformations
-      scene.render(cake_dynamics);
+      scene.render(dynamics);
     } // end render
 
     // Initialize when page loads

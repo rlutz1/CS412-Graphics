@@ -36,7 +36,7 @@ in vec3 vTangent;
 in vec2 vTexCoord;
 
 uniform vec3 uLightPos;
-uniform sampler2D uTexture;
+uniform sampler2D uTexture; // interface for the texture unit
 uniform int uMapping;  // 0 = bump mapping, 1 = normal mapping
 
 out vec4 fragColor;

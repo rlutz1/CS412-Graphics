@@ -258,6 +258,8 @@ function gen_cylinder_points(
   const vertices = [] // simple js array for collection of vertices
   const indices = [] // js array for collecting indices
   const norms = []; // norms for the planes
+  const tangents = []; // for texture mapping; tangent to the minisurface
+  const texels = []; // texture coordinates for sampling
 
   // ==================================
   //  GENERATE POINTS
@@ -266,6 +268,8 @@ function gen_cylinder_points(
   // this is the base middle point
   vertices.push(base_x, base_y, base_z) 
   norms.push(0, -1, 0); // pointing straight down
+  tangents.push(1, 0, 0); // pointing to the side
+  texels.push(0.5, 0.5); // TODO
 
 
   // generate the bands of the side of the cylinder.
@@ -286,6 +290,8 @@ function gen_cylinder_points(
 
       vertices.push(x, y, z) // save the points
       norms.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
+      tangents.push(0, y, 0); // push the tangent at that point
+      texels.push(h_i / h_steps, v_i / v_steps); // grab the conversion to the texture map
     } // end loop
   } // end loop
   
@@ -293,6 +299,8 @@ function gen_cylinder_points(
   // accounts for anything not quite reaching the actual height value (rounding issues cause lumps!).
   vertices.push(base_x, vertices.at(-2), base_z) // save the polar cap
   norms.push(0, 1, 0); // pointing straight up
+  tangents.push(1, 0, 0); // pointing to the side
+  texels.push(0.5, 0.5); // TODO
 
   // ==================================
   //  GENERATE INDICES
@@ -349,7 +357,9 @@ function gen_cylinder_points(
   return {
     "vertices": new Float32Array(vertices), 
     "indices": new Uint16Array(indices),
-    "norms": new Float32Array(norms)
+    "norms": new Float32Array(norms),
+    "tangents": new Float32Array(tangents),
+    "texels": new Float32Array(texels)
   } 
 } // end method
 

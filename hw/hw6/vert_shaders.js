@@ -243,3 +243,58 @@ const phong_vert_shader = {
     }
   `
 };
+
+const texture_vertex_shader = `#version 300 es
+  in vec3 aPosition;
+  in vec3 aNormal;
+  in vec3 aColor;
+  // in vec3 aPosition;
+  // in vec3 aNormal;
+  in vec3 aTangent;
+  in vec2 aTexCoord;
+
+  uniform mat4 uModelViewMatrix;
+  uniform mat4 uProjectionMatrix;
+
+  // allow for many matrices in a row
+  uniform mat4 uModelTransformationMatrix[50];
+  uniform int transforms_up_to; // marker of how many transforms
+
+  out vec3 vPosition;
+  out vec3 vNormal;
+  out vec3 vColor;
+  out vec3 vTangent;
+  out vec2 vTexCoord;
+
+  void main() {
+    // cast for transformations to a 4d homogenous coord
+    vec4 pos = vec4(aPosition, 1.0);
+    vec3 norm = aNormal;
+    vec3 tangent = aTangent;
+
+    for (int i = 0; i < transforms_up_to; i++) {
+      pos = uModelTransformationMatrix[i] * pos; // add all transforms
+      norm = mat3(uModelTransformationMatrix[i]) * norm; // ensure to also alter the norm
+      tangent = mat3(uModelTransformationMatrix[i]) * tangent; // and tangent
+
+      // norm = transpose(inverse(mat3(uModelTransformationMatrix[i]))) * norm; // TODO
+      // tangent = ...
+    } // end loop
+
+    // save the position of this vertex prior to projection -- send to frag.
+    vec4 p = uModelViewMatrix * pos;
+    vPosition = p.xyz;
+
+    // use model view and apply to given normal -- send to frag.
+    vNormal = mat3(uModelViewMatrix) * norm;
+    vTangent = mat3(uModelViewMatrix) * tangent;
+    // vNormal = transpose(inverse(mat3(uModelViewMatrix))) * aNormal; // TODO 
+    // vTangent....
+
+    // set the actual positioning in the projection
+    gl_Position = uProjectionMatrix * p;
+
+    vColor = aColor; // send out the vertex color to frag shader
+    vTexCoord = aTexCoord; // also send on out
+  }
+`;
