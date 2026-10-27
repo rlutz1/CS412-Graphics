@@ -434,6 +434,16 @@
     function render() {
       delta_time = (start_time - Date.now()) / 1000.0; // dt since last render
       let obstacle_dynamics;
+      let my_dynamics = generate_cake_json(
+          my_id, 
+          {
+          "base": [],
+          "seg2": [],
+          "seg3": [],
+          "seg4": [],
+          "top":  []
+          }
+        )
 
       /* handle the movement transformations */
       if (pressed == 'd') {
@@ -442,7 +452,7 @@
         obstacle_dynamics = generate_cake_json(
           obstacle_id, 
           {
-          "base": [rotate([0, 0, 1], true)],
+          "base": [rotate([0, 10, 0], true)],
           "seg2": [],
           "seg3": [],
           "seg4": [],
@@ -463,6 +473,13 @@
         )
       }
       console.log(obstacle_dynamics)
+
+      const dynamics = {
+        [my_id]: my_dynamics[my_id],
+        [obstacle_id]: obstacle_dynamics[obstacle_id]
+      }
+
+
 
       // if (document.getElementById(`animate`).checked) {
       //   // do a fun slinky motion
@@ -500,7 +517,7 @@
       } // end if
 
       // render scene with all transformations
-      scene.render(obstacle_dynamics);
+      scene.render(dynamics);
     } // end render
 
     // Initialize when page loads
