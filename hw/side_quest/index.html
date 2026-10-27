@@ -479,31 +479,6 @@
         [obstacle_id]: obstacle_dynamics[obstacle_id]
       }
 
-
-
-      // if (document.getElementById(`animate`).checked) {
-      //   // do a fun slinky motion
-      //   // inputs som values to a json to keep this clean. 
-      //   // this is not flexible in its current state.
-      //   // just intended to clean up the main html.
-      //   cake_dynamics = generate_cake_json({
-      //     "base": [rotate([Math.sin(delta_time), 0, 0], true)],
-      //     "seg2": [rotate([0, 0, Math.sin(delta_time + 1)], true)],
-      //     "seg3": [rotate([0, 0, Math.sin(delta_time + 2)], true)],
-      //     "seg4": [rotate([Math.sin(delta_time + 3), 0 ,0], true)],
-      //     "top":  [rotate([0, 0, Math.sin(delta_time + 4)], true)]
-      //   })
-      // } else { 
-      //   // use the sliders
-      //   cake_dynamics = generate_cake_json({
-      //     "base": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
-      //     "seg2": [rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)],
-      //     "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
-      //     "seg4": [rotate([deg_to_rad(document.getElementById(`seg4_range`).value), 0, 0], true)],
-      //     "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
-      //   })
-      // } // end if
-
       /* handle the dynamic lighting adjustments. */
       scene.update_material_global(my_id, get_black_rubber_lighting());
 

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>UNM CS 412/512 HW5</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h2>Hierarchical Modeling with Lighting</h2>
+
+  <h3>Submission by:</h3>
+  <p><b>
+    Roxanne Krause <br />
+    CS412 <br />
+    10/22/26 <br />
+  </b></p>
+
+  <h3>General Breakdown of Submission</h3>
+  <p>
+    The following canvas builds off the "cake" structures built in the last homework. <br />
+    The left-most structure implements flat shading, the structure <br />
+    in the middle implements Gouraud shading, and the right-most implements <br />
+    Phong shading.<br />
+    <br />
+
+    <b>Animate with Time</b> <br />
+    Select the "Animation Mode" check box to see the structures move with time. <br />
+    More, finer-tuned controls are discussed below. <br />
+    <br />
+
+    <b>Changing Material</b> <br />
+    Select the "Change Material" accordian button to see how the cake material <br />
+    can be updated. All values of the materials were taken from 
+    <a href="https://people.eecs.ku.edu/~jrmiller/Courses/672/InClass/3DLighting/MaterialProperties.html" target="_blank">this source</a>. <br />
+    The scene nodes are given a baseline color of [0.5, 0.5, 0.5] and all coefficients are <br />
+    used accordingly in the shaders (found in <i>vert_shaders.js</i> and <i>frag_shaders.js</i>).<br />
+    A radio button selection will set the coefficients common to that material and also update the<br />
+    sliders to those default values. If the sliders are used, the radio selection is ignored<br />
+    until the radio buttons are interacted with again.<br />
+    <br />
+
+    <b>Adding/Removing Lights</b> <br />
+    Select the "Adding/Removing Lights" accordian button to play with adding point lights<br />
+    to different global positions in the scene. You can add up to 50 point lights<br />
+    which is a limit imposed by an array size in the shaders (avoiding overflow issues).<br />
+    Removing the lights will remove the first occurrence of that light's position in the<br />
+    global light list. The id's are arbitrary, and mostly to provide visual feedback that<br />
+    There is more than one light, despite the same position.<br />
+    <br />
+
+    <b>Move Segments</b> <br />
+    Select the "Move Segments" accordian button to play with the dynamic rotations<br />
+    of each segment of the hierarchical structure. These are the same rotation<br />
+    matrices used in the animation mode over time, but this gives you the ability<br />
+    to move these separately.
+  </p>
+
+  <div style="display: flex; gap: 10px; align-items: flex-start;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <canvas id="glcanvas" width="800" height="500"></canvas>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      
+      <!-- slinky mode for funsies. -->
+      <h3>Enable "Animation Mode"</h3>
+      <div>
+        <input type="checkbox" id="animate" name="animate" value="animate">
+        <label for="animate">Animation Mode</label>
+      </div>
+
+      <!-- accordian panel for changing material lighting of the object-->
+      <button class="accordion">Change Material</button>
+      <div class="panel">
+        <!-- changing the materials radio buttons -->
+        <legend>Change to specific material</legend>
+        <fieldset>
+        <div id="material">
+          <input type="radio" id="copper" name="material" value="copper" checked />
+          <label for="copper">Copper</label>
+
+          <input type="radio" id="silver" name="material" value="silver" />
+          <label for="silver">Silver</label>
+
+          <br />
+
+          <input type="radio" id="polished_silver" name="material" value="polished_silver" />
+          <label for="polished_silver">Polished Silver</label>
+
+          <input type="radio" id="black_rubber" name="material" value="black_rubber" />
+          <label for="black_rubber">Black Rubber</label>
+        </div>
+        </fieldset>
+
+        <br />
+
+        <legend>Advanced material customization</legend>
+        <fieldset>
+        <div id="material_sliders">
+          <h4>Ambient Coefficient</h4>
+          <div id="ka">
+            <label for="ka_r">R: </label><input id="ka_r" type="number" min="0" max="1" step="0.1">
+            <label for="ka_g">G: </label><input id="ka_g" type="number" min="0" max="1" step="0.1">
+            <label for="ka_b">B: </label><input id="ka_b" type="number" min="0" max="1" step="0.1">
+          </div>
+
+          <h4>Diffuse Coefficient</h4>
+          <div id="kd">
+            <label for="kd_r">R: </label><input id="kd_r" type="number" min="0" max="1" step="0.1">
+            <label for="kd_g">G: </label><input id="kd_g" type="number" min="0" max="1" step="0.1">
+            <label for="kd_b">B: </label><input id="kd_b" type="number" min="0" max="1" step="0.1">
+          </div>
+
+          <h4>Specular Coefficient</h4>
+          <div id="ks">
+            <label for="ks_r">R: </label><input id="ks_r" type="number" min="0" max="1" step="0.1">
+            <label for="ks_g">G: </label><input id="ks_g" type="number" min="0" max="1" step="0.1">
+            <label for="ks_b">B: </label><input id="ks_b" type="number" min="0" max="1" step="0.1">
+          </div>
+
+          <h4>Specular Exponent</h4>
+          <div id="alpha">
+            <input id="alpha_v" type="number" min="0" max="100" step="1">
+          </div>
+
+          <h4>Transparency</h4>
+          <div id="transparency">
+            <input id="transparency_v" type="number" min="0" max="1" step="0.1">
+          </div>
+        </div>
+        </fieldset>
+      </div>
+      
+      <!-- accordian panel for adding/removing point lights -->
+      <button class="accordion">Adding/Removing Lights</button>
+      <div class="panel">
+        <legend>Add a point light</legend>
+        <fieldset>
+          <div id="point_light_position">
+            <label for="light_x">x: </label><input id="light_x" type="number" min="-100" max="100" step="10" value="0">
+            <label for="light_y">y: </label><input id="light_y" type="number" min="-100" max="100" step="10" value="0">
+            <label for="light_z">z: </label><input id="light_z" type="number" min="-100" max="100" step="10" value="0">
+          </div>
+          <br />
+          <button style="width: 100%;" id="add_point_light">Add Light to Scene</button>
+          <div id="curr_lights"></div>
+        </fieldset>
+      </div>
+
+      <!-- accordian panel for moving the segments of the hierarchy -->
+      <button class="accordion">Move Segments</button>
+      <div class="panel">
+        <!-- move the hierarchical structure by segment -->
+        <div id="cake_slide_container" class="cake_slide_container">
+
+          <div id="base">
+            <h4>Rotation of Base (degrees)</h4>
+            <p id="curr_base_range"></p>
+            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="base_range">
+          </div>
+
+          <div id="seg2">
+            <h4>Rotation of Segment 2 (degrees)</h4>
+            <p id="curr_seg2_range"></p>
+            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg2_range">
+          </div>
+
+          <div id="seg3">
+            <h4>Rotation of Segment 3 (degrees)</h4>
+            <p id="curr_seg3_range"></p>
+            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg3_range">
+          </div>
+
+          <div id="seg4">
+            <h4>Rotation of Segment 4 (degrees)</h4>
+            <p id="curr_seg4_range"></p>
+            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg4_range">
+          </div>
+
+          <div id="top">
+            <h4>Rotation of Top (degrees)</h4>
+            <p id="curr_top_range"></p>
+            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="top_range">
+          </div> 
+        </div>
+
+      </div>
+
+    </div>
+     
+  </div>
+
+  <!-- JAVASCRIPT SETUP -->
+  <script src="transformations.js"></script>
+  <script src="primitive_generators.js"></script>
+  <script src="vert_shaders.js"></script>
+  <script src="frag_shaders.js"></script>
+  <script src="scene_graph.js"></script>
+  <script src="object_generators.js"></script>
+  <script src="ui_util.js"></script>
+  <!-- script for the hierarchical modeling value grab for output -->
+  <script>
+    // set up a simple value grab/feedback for the sliders used for testing hierarchical setup.
+    let sliders = document.getElementById("cake_slide_container");
+
+    for (const child of sliders.children) {
+      console.log(`SCRIPT: curr_${child.id}_range`); // Accesses each HTML element
+      let slider = document.getElementById(`${child.id}_range`);
+      let output = document.getElementById(`curr_${child.id}_range`);
+      output.innerHTML = `<i>${child.id} Current Rotation:</i> ${slider.value} degrees`; // Display the default slider value
+
+      // Update the current slider value (each time you drag the slider handle)
+      slider.oninput = function() {
+        output.innerHTML = `<i>${child.id} Current Rotation:</i> ${this.value} degrees`;
+      } // end function
+    } // end loop
+  </script>
+
+  <!-- script for accordian panel action -->
+  <script>
+    // set up accordion panel.
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        /* Toggle between adding and removing the "active" class,
+        to highlight the button that controls the panel */
+        this.classList.toggle("active");
+
+        /* Toggle between hiding and showing the active panel */
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        } // end if
+      });
+    } 
+  </script>
+  <!-- script for handling the material changes manually from ui -->
+  <script>
+    let material_radio_buttons = document.getElementById("material");
+    let material_sliders = document.getElementById("material_sliders");
+    
+    let last_material_control = material_radio_buttons; // assume for this on load
+    update_sliders(get_material_lighting(get_radio("material"))); // initial state for material
+
+    for (const child of material_radio_buttons.children) {
+      child.addEventListener("click", function() {
+          // set the last_material control to the radio buttons.
+          last_material_control = material_radio_buttons;
+          update_sliders(get_material_lighting(get_radio("material")));
+      }) // end loop
+    } // end loop
+    
+    for (const child of material_sliders.children) {
+      child.addEventListener("click", function() {
+          // set the last_material control to the radio buttons.
+          last_material_control = material_sliders;
+      }) // end loop
+    } // end loop
+
+    // on click of the radio buttons, automatically change the sliders to those values.
+    function update_sliders(material) {
+      let ka = document.getElementById("ka");
+      let kd = document.getElementById("kd");
+      let ks = document.getElementById("ks");
+      let alpha = document.getElementById("alpha");
+      let transparency = document.getElementById("transparency");
+
+      ka.querySelector("#ka_r").value = material["ka"][0];
+      ka.querySelector("#ka_g").value = material["ka"][1];
+      ka.querySelector("#ka_b").value = material["ka"][2];
+
+      kd.querySelector("#kd_r").value = material["kd"][0];
+      kd.querySelector("#kd_g").value = material["kd"][1];
+      kd.querySelector("#kd_b").value = material["kd"][2];
+
+      ks.querySelector("#ks_r").value = material["ks"][0];
+      ks.querySelector("#ks_g").value = material["ks"][1];
+      ks.querySelector("#ks_b").value = material["ks"][2];
+
+      alpha.querySelector("#alpha_v").value = material["alpha"];
+      transparency.querySelector("#transparency_v").value = material["transparency"]; 
+    } // end function
+
+    // if the sliders are used, get the values from the sliders for material changes
+    function get_sliders_materials() {
+      let ka = document.getElementById("ka");
+      let kd = document.getElementById("kd");
+      let ks = document.getElementById("ks");
+      let alpha = document.getElementById("alpha");
+      let transparency = document.getElementById("transparency");
+
+      // collect values from the sliders
+      const ka_arr = [ka.querySelector("#ka_r").value, ka.querySelector("#ka_g").value, ka.querySelector("#ka_b").value];
+      const kd_arr = [kd.querySelector("#kd_r").value, kd.querySelector("#kd_g").value, kd.querySelector("#kd_b").value];
+      const ks_arr = [ks.querySelector("#ks_r").value, ks.querySelector("#ks_g").value, ks.querySelector("#ks_b").value];
+      const alpha_v = alpha.querySelector("#alpha_v").value;
+      const transparency_v = transparency.querySelector("#transparency_v").value;
+
+      return {
+        "ka": ka_arr,
+        "kd": kd_arr,
+        "ks": ks_arr,
+        "alpha": alpha_v,
+        "transparency": transparency_v
+      };
+    } // end function
+  </script>
+
+  <script>
+    let scene = null;
+
+    let add_point_light_button = document.getElementById("add_point_light");
+    let pt_lights = 0; let pt_id = 0;
+  
+    add_point_light_button.addEventListener("click", function() {
+      if (pt_lights < 50) {
+
+      
+      pt_lights += 1; // increment the point lights count
+
+      const position = [
+        document.getElementById("light_x").value,
+        document.getElementById("light_y").value,
+        document.getElementById("light_z").value
+      ];
+
+      // add a light at the given position for the global scene.
+      scene.add_point_light_global(position);
+      // console.log(`adding? ${scene.point_lights_global}`)
+      const curr_lights_div = document.getElementById("curr_lights");
+
+      const label = document.createElement("label");
+      label.htmlFor = `pt_lights_${pt_id}`;
+
+      const remove_button = document.createElement("button");
+      remove_button.id = `pt_lights_${pt_id}`;
+      remove_button.style = "width: 100%;"
+      remove_button.textContent = `Remove pt_lights_${pt_id}, ${position}`; 
+
+      const spacer = document.createElement("br");
+
+      remove_button.addEventListener("click", function() {
+        if (scene != null) {
+          scene.remove_point_light_global(position);
+        } // end if
+        label.remove();
+        remove_button.remove();
+        spacer.remove();
+        pt_lights -= 1;
+      });
+      curr_lights_div.appendChild(label);
+      curr_lights_div.appendChild(remove_button);
+      curr_lights_div.appendChild(spacer);
+      pt_id += 1;
+    }
+    })
+  </script>
+
+  <script>
+    // WebGL setup
+    const canvas = document.getElementById("glcanvas");
+    const gl = canvas.getContext("webgl2");
+    if (!gl) alert("WebGL2 not supported");
+
+    // generate an arm using 4 cylinders.
+    // the hierarchy needs to be base -> seg2 -> seg3 -> top.
+    // the rotations are to come from the sliders and are going to be implied x rotations.
+    // this generates the shapes for the STATIC arm starting point.
+    const [cake_flat, cake_gouraud, cake_phong] = generate_lit_cakes(gl); // get all 3 cakes
+    let cake_dynamics;
+
+    // make a for fun star fish
+    // const [starfish_json, starfish] = generate_starfish(gl);
+
+    scene = new SceneGraph(canvas); // create a top level scene root with top level objects
+    scene.add_object(cake_flat); // add to the scene graph
+    scene.add_object(cake_gouraud); // add to the scene graph
+    scene.add_object(cake_phong); // add to the scene graph
+   
+    start_time = Date.now() // start the clock 
+
+    /**
+     * render the scene.
+     */
+    function render() {
+      delta_time = (start_time - Date.now()) / 1000.0; // dt since last render
+
+      /* handle the movement transformations */
+      if (document.getElementById(`animate`).checked) {
+        // do a fun slinky motion
+        // inputs som values to a json to keep this clean. 
+        // this is not flexible in its current state.
+        // just intended to clean up the main html.
+        cake_dynamics = generate_cake_json({
+          "base": [rotate([Math.sin(delta_time), 0, 0], true)],
+          "seg2": [rotate([0, 0, Math.sin(delta_time + 1)], true)],
+          "seg3": [rotate([0, 0, Math.sin(delta_time + 2)], true)],
+          "seg4": [rotate([Math.sin(delta_time + 3), 0 ,0], true)],
+          "top":  [rotate([0, 0, Math.sin(delta_time + 4)], true)]
+        })
+      } else { 
+        // use the sliders
+        cake_dynamics = generate_cake_json({
+          "base": [rotate([deg_to_rad(document.getElementById(`base_range`).value), 0, 0], true)],
+          "seg2": [rotate([0, 0, deg_to_rad(document.getElementById(`seg2_range`).value)], true)],
+          "seg3": [rotate([0, 0, deg_to_rad(document.getElementById(`seg3_range`).value)], true)],
+          "seg4": [rotate([deg_to_rad(document.getElementById(`seg4_range`).value), 0, 0], true)],
+          "top":  [rotate([0, 0, deg_to_rad(document.getElementById(`top_range`).value)], true)]
+        })
+      } // end if
+
+      /* handle the dynamic lighting adjustments. */
+      if (last_material_control.id == "material_sliders") { // use sliders
+        scene.update_material_global("cake", get_sliders_materials());
+      } else { // revert to radio button check
+        // get the correct lighting values for that material
+        const material_lighting = get_material_lighting(get_radio("material"));
+        // update the lighting of objects by id
+        scene.update_material_global("cake", material_lighting);
+      } // end if
+
+      // render scene with all transformations
+      scene.render(cake_dynamics);
+    } // end render
+
+    // Initialize when page loads
+    window.onload = function () {
+      setInterval(render, 30); // execute this code with a 30 ms delay on each call
+    }
+
+  </script>
+</body>
+
+</html>
