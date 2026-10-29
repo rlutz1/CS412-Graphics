@@ -233,8 +233,8 @@ function gen_sphere_colors(num_vertices, solid_color=null) {
  */
 function gen_cylinder_points(
   r=0.5, // radius of the cylinder
-  h_step=0.5, // horizontal step interval (u)
-  v_step=0.5, // vertical step interval (v)
+  h_step=0.1, // horizontal step interval (u)
+  v_step=0.1, // vertical step interval (v)
 ) {
 
   // how many steps we are taking in that range.
@@ -286,7 +286,8 @@ function gen_cylinder_points(
         norms.push(0, 1, 0); // pointing straight up
       } // end if
       tangents.push(1, 0, 0); // push the tangent at that point
-      texels.push(0.5 + r * Math.cos(tex_theta), 0.5 + r * Math.sin(tex_theta)); // TODO: grab the conversion to the texture max
+      // texels.push(0.5 + r * Math.cos(tex_theta), 0.5 + r * Math.sin(tex_theta)); // TODO: grab the conversion to the texture max
+      texels.push((cos_h + 1) * 0.5, (sin_h + 1) * 0.5); 
     } // end loop
     tex_theta += inc;
   } // end loop
@@ -323,8 +324,10 @@ function gen_cylinder_points(
 
       vertices.push(x, y, z) // save the points
       norms.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
-      tangents.push(0, y, 0); // push the tangent at that point
-      texels.push(h_i / h_steps, v_i / v_steps); // grab the conversion to the texture map
+      tangents.push(z, 0, -x); // push the tangent at that point
+      // looks bad:
+      // texels.push((Math.atan(x, z) / (2 * Math.PI)) + 0.5, y + 0.5); // grab the conversion to the texture map
+      texels.push((h_i / h_steps) * Math.PI, y); // grab the conversion to the texture map1
     } // end loop
   } // end loop
 
