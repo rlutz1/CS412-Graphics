@@ -188,7 +188,7 @@ const texture_frag_shader = {
 
   out vec4 fragColor;
 
-  const float bumpScale = 3.0;
+  const float bumpScale = 15.0;
 
   // convert RGB to luminance (Rec._601 standard, https://en.wikipedia.org/wiki/Rec._601)
   // or you can use a height map texture

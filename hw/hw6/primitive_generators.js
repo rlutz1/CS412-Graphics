@@ -72,7 +72,7 @@ function gen_cube_colors(num_vertices, solid_color=null) {
  */
 function gen_sphere_points(
   r=1.0, // radius of the sphere
-  h_step=0.5, // horizontal step interval 
+  h_step=0.1, // horizontal step interval 
   v_step=0.1, // vertical step interval
 ) {
 

@@ -245,7 +245,7 @@ class SceneObject {
   texture = null;
   texture_loc = null;
 
-  mapping = 1;
+  mapping = 0;
   mapping_loc = null;
 
   /**

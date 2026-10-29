@@ -219,7 +219,7 @@ function get_polished_silver_lighting() {
 } // end function
 
 /**
- * get the constants for material: polished silver
+ * get the constants for material: black rubber
  */
 function get_black_rubber_lighting() {
   return {
