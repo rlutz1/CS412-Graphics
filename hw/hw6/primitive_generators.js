@@ -72,11 +72,8 @@ function gen_cube_colors(num_vertices, solid_color=null) {
  */
 function gen_sphere_points(
   r=1.0, // radius of the sphere
-  // center=[0, 0, 0], // center of the sphere
   h_step=0.5, // horizontal step interval 
   v_step=0.1, // vertical step interval
-  // h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
-  // v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
 ) {
 
   // how many steps we are taking in that range.
