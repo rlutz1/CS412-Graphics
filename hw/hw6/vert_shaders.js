@@ -273,11 +273,11 @@ const texture_vertex_shader = {
 
     for (int i = 0; i < transforms_up_to; i++) {
       pos = uModelTransformationMatrix[i] * pos; // add all transforms
-      norm = mat3(uModelTransformationMatrix[i]) * norm; // ensure to also alter the norm
-      tangent = mat3(uModelTransformationMatrix[i]) * tangent; // and tangent
+      //norm = mat3(uModelTransformationMatrix[i]) * norm; // ensure to also alter the norm
+      //tangent = mat3(uModelTransformationMatrix[i]) * tangent; // and tangent
 
-      // norm = transpose(inverse(mat3(uModelTransformationMatrix[i]))) * norm; // TODO
-      // tangent = ...
+      norm = transpose(inverse(mat3(uModelTransformationMatrix[i]))) * norm; // TODO
+      tangent = transpose(inverse(mat3(uModelTransformationMatrix[i]))) * tangent;
     } // end loop
 
     // save the position of this vertex prior to projection -- send to frag.
@@ -285,10 +285,10 @@ const texture_vertex_shader = {
     vPosition = p.xyz;
 
     // use model view and apply to given normal -- send to frag.
-    vNormal = mat3(uModelViewMatrix) * norm;
-    vTangent = mat3(uModelViewMatrix) * tangent;
-    // vNormal = transpose(inverse(mat3(uModelViewMatrix))) * aNormal; // TODO 
-    // vTangent....
+    //vNormal = mat3(uModelViewMatrix) * norm;
+    //vTangent = mat3(uModelViewMatrix) * tangent;
+    vNormal = transpose(inverse(mat3(uModelViewMatrix))) * norm; // TODO 
+    vTangent = transpose(inverse(mat3(uModelViewMatrix))) * tangent;
 
     // set the actual positioning in the projection
     gl_Position = uProjectionMatrix * p;

@@ -388,6 +388,8 @@
     const base = new SceneObjectNode("base", math_pack, colors, static_transforms, gl, basic_cyl.program);
     basic_cyl.add_root(base);
 
+    
+
     // make a for fun star fish
     // const [starfish_json, starfish] = generate_starfish(gl);
 
@@ -421,7 +423,7 @@
 
     const brickTexture = loadTexture("brick.png");
     const normalTexture = loadTexture("texture2.jpg");
-    scene.assign_texture_global("cyl", normalTexture);
+    scene.assign_texture_global("cyl", brickTexture);
 
     /**
      * render the scene.
@@ -429,6 +431,15 @@
     function render() {
       delta_time = (start_time - Date.now()) / 1000.0; // dt since last render
 
+
+      let dynamics = {
+      "cyl": {
+        "base": {
+          "dynamic_transforms": [rotate([delta_time, 0, 0], true), shear([Math.cos(delta_time), 0, 0])],
+          "joint_transforms": []
+        }
+      }
+    }
       // /* handle the movement transformations */
       // if (document.getElementById(`animate`).checked) {
       //   // do a fun slinky motion
