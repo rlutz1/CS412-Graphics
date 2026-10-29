@@ -266,6 +266,9 @@ function gen_cylinder_points(
     tangents.push(1, 0, 0); // pointing to the side
     texels.push(0.5, 0.5); // pick the halfway texel
 
+    let tex_theta = 0; // walker for picking points from texture
+    const inc = (2 * Math.PI) / h_steps
+
     for (let h_i = 0; h_i < h_steps; h_i++) {
       // get our current h, which is the h in (h, v)
       const h = h_i * h_step
@@ -283,8 +286,9 @@ function gen_cylinder_points(
         norms.push(0, 1, 0); // pointing straight up
       } // end if
       tangents.push(1, 0, 0); // push the tangent at that point
-      texels.push(0.5, 0.5); // TODO: grab the conversion to the texture max
+      texels.push(0.5 + r * Math.cos(tex_theta), 0.5 + r * Math.sin(tex_theta)); // TODO: grab the conversion to the texture max
     } // end loop
+    tex_theta += inc;
   } // end loop
   
   // generate the caps' indexing
