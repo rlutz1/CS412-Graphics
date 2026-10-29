@@ -336,8 +336,7 @@ function gen_cylinder_points(
 
   // put together the index mapping of side vertices
   for (let i = 0; i < v_steps; i++) { // each band
-    const band_walker = curr_index; // a traverser
-    
+
     for (let j = 0; j < h_steps - 1; j++) { // each step along the base band
       const bottom_left = curr_index + j;
       const bottom_right = bottom_left + 1;
@@ -358,8 +357,6 @@ function gen_cylinder_points(
     curr_index += h_steps; // move up the cylinder
   } // end loop
   
-
-  console.log(indices)
   // return as a js dict
   return {
     "vertices": new Float32Array(vertices), 
