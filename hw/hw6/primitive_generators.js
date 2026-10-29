@@ -232,11 +232,11 @@ function gen_sphere_colors(num_vertices, solid_color=null) {
  * 
  */
 function gen_cylinder_points(
-  r=1.0, // radius of the cylinder
+  r=0.5, // radius of the cylinder
   height=1.0, // height of the cylinder
   base=[0, 0, 0], // base of the cylinder
-  h_step=0.1, // horizontal step interval (u)
-  v_step=0.1, // vertical step interval (v)
+  h_step=0.5, // horizontal step interval (u)
+  v_step=0.5, // vertical step interval (v)
   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
   v_range=[0, 1] // the interval of the longitudinal point generation (vertical, relatively)
 ) {
@@ -265,94 +265,54 @@ function gen_cylinder_points(
   //  GENERATE POINTS
   // ==================================
 
-  // this is the base middle point
-  vertices.push(base_x, base_y, base_z) 
-  norms.push(0, -1, 0); // pointing straight down
-  tangents.push(1, 0, 0); // pointing to the side
-  texels.push(0.5, 0.5); // TODO
+   let curr_index = 0; // this will be used for setting up indices as an incrementer
+  
+  // generate the cap points
+  for (let y of [0, 1]) { // grows on the y axis
 
+    // this is the middle point
+    vertices.push(0, y, 0) // at the origin
+    if (y == 0) {
+      norms.push(0, -1, 0); // pointing straight down
+    } else {
+      norms.push(0, y, 0); // pointing straight up
+    } // end if
+    tangents.push(1, 0, 0); // pointing to the side
+    texels.push(0.5, 0.5); // pick the halfway texel
 
-  // generate the bands of the side of the cylinder.
-  for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
-    // get our current v, which is the v in (h, v)
-    const v = v_min + (v_i * v_step)
-
-    for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
+    for (let h_i = 0; h_i < h_steps; h_i++) {
       // get our current h, which is the h in (h, v)
-      const h = h_min + (h_i * h_step)
+      const h = h_i * h_step
       const cos_h = Math.cos(h) // save for later
       const sin_h = Math.sin(h)
 
       // gather the points using parametric form
-      const x = base_x + (r * cos_h)
-      const z = base_y + (r * sin_h)
-      const y = base_z + (height * v)
+      const x = r * cos_h
+      const z = r * sin_h
 
       vertices.push(x, y, z) // save the points
-      norms.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
-      tangents.push(0, y, 0); // push the tangent at that point
-      texels.push(h_i / h_steps, v_i / v_steps); // grab the conversion to the texture map
+      if (y == 0) {
+        norms.push(0, -1, 0); // pointing straight down
+      } else {
+        norms.push(0, 1, 0); // pointing straight up
+      } // end if
+      tangents.push(1, 0, 0); // push the tangent at that point
+      texels.push(0.5, 0.5); // TODO: grab the conversion to the texture max
     } // end loop
   } // end loop
   
-  // bottom middle point, mimicking last z value created
-  // accounts for anything not quite reaching the actual height value (rounding issues cause lumps!).
-  vertices.push(base_x, vertices.at(-2), base_z) // save the polar cap
-  norms.push(0, 1, 0); // pointing straight up
-  tangents.push(1, 0, 0); // pointing to the side
-  texels.push(0.5, 0.5); // TODO
-
-  // ==================================
-  //  GENERATE INDICES
-  // ==================================
-
-  // this is done wiht ~the same approach as the sphere!
-  // see that method for more detailed explanations.
-
-  let last_pt_index = (vertices.length / 3) - 1 // last poss index
-  let lower_band = last_pt_index - h_steps // the start of the last band
-
-  // create the base indeces, again making a spokes-in-wheel connection
-  for (let i = 1; i < h_steps; i++) {
-    indices.push(0, i, i + 1)
+  // generate the caps' indexing
+  for (let num_caps = 0; num_caps < 2; num_caps++) {
+    const center = curr_index; // this will be the center point
+    for (let i = 0; i < h_steps - 1; i++) { // for all but last index connection
+      indices.push(center, center + i + 1, center + i + 2); // (0, 1, 2), (0, 2, 3)....
+    } // end loop
+    indices.push(center, center + 1, center + h_steps) // final special case wrap around: (0, 6, 1)
+    curr_index += h_steps + 1; // increment to the next center point
   } // end loop
-  indices.push(0, h_steps, 1) // special case wrap around
+  
 
-  // set up the banding indeces in the same triangular way as sphere
-  for (let band_index = 1; band_index < lower_band; band_index += h_steps) { 
-    for (let inc = 0; inc < h_steps - 1; inc++) {
-      // grab all 4 indeces for 2 triangles
-      const bottom_left = band_index + inc 
-      const top_left = bottom_left + h_steps 
-      const top_right = bottom_left + h_steps + 1 
-      const bottom_right = bottom_left + 1 
-
-      // and the two triangles
-      indices.push(
-        bottom_left, top_left, top_right,
-        bottom_left, bottom_right, top_right
-      )
-    } // end loop 
-
-    // special last case wrap around
-    const bottom_left = band_index + h_steps - 1 
-    const top_left = bottom_left + h_steps 
-    const top_right = band_index + h_steps 
-    const bottom_right = band_index 
-
-    // add the triangles
-    indices.push(
-        bottom_left, top_left, top_right,
-        bottom_left, bottom_right, top_right
-      )
-  } // end loop
-
-  // finally, set up the top center spoke pattern
-  for (let i = lower_band; i < last_pt_index - 1; i++) {
-    indices.push(last_pt_index, i, i + 1)
-  } // end loop
-  indices.push(last_pt_index, last_pt_index - 1, lower_band) // special case wrap around
-
+  console.log(indices)
   // return as a js dict
   return {
     "vertices": new Float32Array(vertices), 
@@ -362,6 +322,164 @@ function gen_cylinder_points(
     "texels": new Float32Array(texels)
   } 
 } // end method
+
+// /**
+//  * cylinder point generation using parametric forms:
+//  * x = x_c + r * cos(u)
+//  * y = x_c + r * sin(u) 
+//  * z = x_c + r * h * v
+//  * 
+//  */
+// function gen_cylinder_points(
+//   r=0.5, // radius of the cylinder
+//   height=1.0, // height of the cylinder
+//   base=[0, 0, 0], // base of the cylinder
+//   h_step=0.5, // horizontal step interval (u)
+//   v_step=0.5, // vertical step interval (v)
+//   h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
+//   v_range=[0, 1] // the interval of the longitudinal point generation (vertical, relatively)
+// ) {
+//   // save for non-constant indexing
+//   const v_min = v_range[0]
+//   const v_max = v_range[1]
+//   const h_min = h_range[0]
+//   const h_max = h_range[1]
+
+//   // how many steps we are taking in that range.
+//   let h_steps = Math.round(Math.abs(h_max - h_min) / h_step)
+//   let v_steps = Math.round(Math.abs(v_max - v_min) / v_step)
+
+//   // save for later use.
+//   const base_x = base[0]
+//   const base_y = base[1]
+//   const base_z = base[2]
+
+//   const vertices = [] // simple js array for collection of vertices
+//   const indices = [] // js array for collecting indices
+//   const norms = []; // norms for the planes
+//   const tangents = []; // for texture mapping; tangent to the minisurface
+//   const texels = []; // texture coordinates for sampling
+
+//   // ==================================
+//   //  GENERATE POINTS
+//   // ==================================
+
+//   // this is the base middle point
+//   vertices.push(base_x, base_y, base_z) 
+//   norms.push(0, -1, 0); // pointing straight down
+//   tangents.push(1, 0, 0); // pointing to the side
+//   texels.push(0.5, 0.5); // TODO
+  
+//   let v = v_min;
+
+//   for (let h_i = 0; h_i < h_steps; h_i++) {
+//     // get our current h, which is the h in (h, v)
+//       const h = h_min + (h_i * h_step)
+//       const cos_h = Math.cos(h) // save for later
+//       const sin_h = Math.sin(h)
+
+//       // gather the points using parametric form
+//       const x = base_x + (r * cos_h)
+//       const z = base_y + (r * sin_h)
+//       const y = base_z + (height * v)
+
+//       vertices.push(x, y, z) // save the points
+//       norms.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
+//       tangents.push(0, y, 0); // push the tangent at that point
+//       texels.push(0.5 + x/r, 0.5 + y/r); // grab the conversion to the texture max
+//   } // end loop
+
+//   let center = 0;
+//   for (let i = 0; i < h_steps - 1; i++) {
+//     const a = center + 1 + i, b = a + 1;
+//       indices.push(center, b, a);
+//   }
+//   indices.push(center, 1, h_steps)
+
+//   // generate the bands of the side of the cylinder.
+//   for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
+//     // get our current v, which is the v in (h, v)
+//     v = v_min + (v_i * v_step)
+
+//     for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
+//       // get our current h, which is the h in (h, v)
+//       const h = h_min + (h_i * h_step)
+//       const cos_h = Math.cos(h) // save for later
+//       const sin_h = Math.sin(h)
+
+//       // gather the points using parametric form
+//       const x = base_x + (r * cos_h)
+//       const z = base_y + (r * sin_h)
+//       const y = base_z + (height * v)
+
+//       vertices.push(x, y, z) // save the points
+//       norms.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
+//       tangents.push(0, y, 0); // push the tangent at that point
+//       texels.push(h_i / h_steps, v_i / v_steps); // grab the conversion to the texture map
+//     } // end loop
+//   } // end loop
+
+//   const start = h_steps + 1; 
+//   for (let i = 0; i < v_steps; i++) {
+//     for (let j = 0; j < h_steps - 1; j++) {
+//       const bottom_left = start + j;
+//       const bottom_right = bottom_left + 1;
+//       const top_left = bottom_left + h_steps;
+//       const top_right = top_left + 1;
+
+//       indices.push(bottom_left, bottom_right, top_right, bottom_left, top_left, top_right);
+//     }
+//     const bottom_left = start + h_steps - 1;
+//     const bottom_right = bottom_left - h_steps + 1;
+//     const top_left = bottom_left + h_steps;
+//     const top_right = top_left - h_steps + 1;
+
+//     indices.push(bottom_left, bottom_right, top_right, bottom_left, top_left, top_right);
+//   }
+//   // indices.push()
+  
+//   // bottom middle point, mimicking last z value created
+//   // accounts for anything not quite reaching the actual height value (rounding issues cause lumps!).
+//   vertices.push(base_x, vertices.at(-2), base_z) // save the polar cap
+//   norms.push(0, 1, 0); // pointing straight up
+//   tangents.push(1, 0, 0); // pointing to the side
+//   texels.push(0.5, 0.5); // TODO
+
+//   v = v_min + (v_steps * v_step);
+  
+//   for (let h_i = 0; h_i < h_steps; h_i++) {
+//     // get our current h, which is the h in (h, v)
+//       const h = h_min + (h_i * h_step)
+//       const cos_h = Math.cos(h) // save for later
+//       const sin_h = Math.sin(h)
+
+//       // gather the points using parametric form
+//       const x = base_x + (r * cos_h)
+//       const z = base_y + (r * sin_h)
+//       const y = base_z + (height * v)
+
+//       vertices.push(x, y, z) // save the points
+//       norms.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
+//       tangents.push(0, y, 0); // push the tangent at that point
+//       texels.push(0.5 + x, 0.5 + y); // grab the conversion to the texture map
+//   } // end loop
+
+//   center = vertices.length / 3 - h_steps;
+//   for (let i = 0; i < h_steps; i++) {
+//     const a = center + 1 + i, b = a + 1;
+//      indices.push(center, a, b);
+//   }
+
+//   console.log(indices)
+//   // return as a js dict
+//   return {
+//     "vertices": new Float32Array(vertices), 
+//     "indices": new Uint16Array(indices),
+//     "norms": new Float32Array(norms),
+//     "tangents": new Float32Array(tangents),
+//     "texels": new Float32Array(texels)
+//   } 
+// } // end method
 
 // quick testing colors for fun
 function gen_cylinder_colors(num_vertices, solid_color=null) {
