@@ -233,27 +233,13 @@ function gen_sphere_colors(num_vertices, solid_color=null) {
  */
 function gen_cylinder_points(
   r=0.5, // radius of the cylinder
-  height=1.0, // height of the cylinder
-  base=[0, 0, 0], // base of the cylinder
   h_step=0.5, // horizontal step interval (u)
   v_step=0.5, // vertical step interval (v)
-  h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
-  v_range=[0, 1] // the interval of the longitudinal point generation (vertical, relatively)
 ) {
-  // save for non-constant indexing
-  const v_min = v_range[0]
-  const v_max = v_range[1]
-  const h_min = h_range[0]
-  const h_max = h_range[1]
 
   // how many steps we are taking in that range.
-  let h_steps = Math.round(Math.abs(h_max - h_min) / h_step)
-  let v_steps = Math.round(Math.abs(v_max - v_min) / v_step)
-
-  // save for later use.
-  const base_x = base[0]
-  const base_y = base[1]
-  const base_z = base[2]
+  let h_steps = Math.round((2 * Math.PI) / h_step)
+  let v_steps = Math.round(1 / v_step)
 
   const vertices = [] // simple js array for collection of vertices
   const indices = [] // js array for collecting indices
