@@ -399,7 +399,7 @@
     // scene.add_object(cake_phong); // add to the scene graph
     scene.add_point_light_global([0, 5, 5]); // just to have a base light
     scene.add_object(basic_cyl);
-    scene.update_material_global("cyl", get_black_rubber_lighting());
+    scene.update_material_global("cyl", get_silver_lighting());
 
     start_time = Date.now() // start the clock 
     
@@ -437,7 +437,7 @@
       let dynamics = {
       "cyl": {
         "base": {
-          "dynamic_transforms": [rotate([delta_time, delta_time, 0], true), shear([Math.cos(delta_time), 0, 0])],
+          "dynamic_transforms": [rotate([delta_time, delta_time, 0], true)],
           "joint_transforms": []
         }
       }
