@@ -265,7 +265,7 @@ function gen_cylinder_points(
   //  GENERATE POINTS
   // ==================================
 
-   let curr_index = 0; // this will be used for setting up indices as an incrementer
+  let curr_index = 0; // this will be used for setting up indices as an incrementer
   
   // generate the cap points
   for (let y of [0, 1]) { // grows on the y axis
@@ -309,6 +309,53 @@ function gen_cylinder_points(
     } // end loop
     indices.push(center, center + 1, center + h_steps) // final special case wrap around: (0, 6, 1)
     curr_index += h_steps + 1; // increment to the next center point
+  } // end loop
+
+  // generate the bands of the side of the cylinder.
+  for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
+    // get our current v, which is the v in (h, v)
+    const v = v_i * v_step
+
+    for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
+      // get our current h, which is the h in (h, v)
+      const h = h_i * h_step
+      const cos_h = Math.cos(h) // save for later
+      const sin_h = Math.sin(h)
+
+      // gather the points using parametric form
+      const x = r * cos_h
+      const z = r * sin_h
+      const y = v
+
+      vertices.push(x, y, z) // save the points
+      norms.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
+      tangents.push(0, y, 0); // push the tangent at that point
+      texels.push(h_i / h_steps, v_i / v_steps); // grab the conversion to the texture map
+    } // end loop
+  } // end loop
+
+  // put together the index mapping of side vertices
+  for (let i = 0; i < v_steps; i++) { // each band
+    const band_walker = curr_index; // a traverser
+    
+    for (let j = 0; j < h_steps - 1; j++) { // each step along the base band
+      const bottom_left = curr_index + j;
+      const bottom_right = bottom_left + 1;
+      const top_left = bottom_left + h_steps;
+      const top_right = top_left + 1;
+
+      indices.push(bottom_left, bottom_right, top_right, bottom_left, top_left, top_right);
+    } // end loop
+
+    // special last case to wrap around
+    const bottom_left = curr_index + h_steps - 1;
+    const bottom_right = curr_index;
+    const top_left = bottom_left + h_steps;
+    const top_right = bottom_right + h_steps;
+
+    indices.push(bottom_left, bottom_right, top_right, bottom_left, top_left, top_right);
+    
+    curr_index += h_steps; // move up the cylinder
   } // end loop
   
 
