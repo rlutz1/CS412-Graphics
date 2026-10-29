@@ -72,58 +72,58 @@ function gen_cube_colors(num_vertices, solid_color=null) {
  */
 function gen_sphere_points(
   r=1.0, // radius of the sphere
-  center=[0, 0, 0], // center of the sphere
-  h_step=0.1, // horizontal step interval 
+  // center=[0, 0, 0], // center of the sphere
+  h_step=0.5, // horizontal step interval 
   v_step=0.1, // vertical step interval
-  h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
-  v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
+  // h_range=[0, (2 * Math.PI)], // the interval of the latitudinal point generation (horizontal, relatively)
+  // v_range=[0, Math.PI] // the interval of the longitudinal point generation (vertical, relatively)
 ) {
 
-  // save for later use indexing
-  const v_min = v_range[0]
-  const v_max = v_range[1]
-  const h_min = h_range[0]
-  const h_max = h_range[1]
-
   // how many steps we are taking in that range.
-  let h_steps = Math.round(Math.abs(h_max - h_min) / h_step)
-  let v_steps = Math.round(Math.abs(v_max - v_min) / v_step)
+  let h_steps = Math.round((2 * Math.PI) / h_step)
+  let v_steps = Math.round(Math.PI / v_step)
 
   const vertices = [] // simple js array for collection of vertices
   const indices = [] // js array for collecting indices
-  const norms = [] // normals of the planes generated
+  const norms = []; // norms for the planes
+  const tangents = []; // for texture mapping; tangent to the minisurface
+  const texels = []; // texture coordinates for sampling
 
   // ==================================
   //  GENERATE POINTS
   // ==================================
 
-  vertices.push(center[0], r, center[2]) // save the north polar cap
+  vertices.push(0, r, 0) // save the north polar cap
   norms.push(0, 1, 0); // pointing straight up
+  tangents.push(-1, 0, 0); // push the tangent at that point
+  texels.push(0.5, 0.5); // grab the conversion to the texture map
 
   // generate the bands of the sphere
   for (let v_i = 1; v_i < v_steps; v_i++) { // for each vertical step
        // get our current v, which is the v in (h, v)
-        const v = v_min + (v_i * v_step)
+        const v = (v_i / v_steps) * Math.PI;
         const sin_v = Math.sin(v) // save for later
         const cos_v = Math.cos(v)
 
-        for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
-          // get our current h, which is the h in (h, v)
-          const h = h_min + (h_i * h_step)
-          const cos_h = Math.cos(h) // save for later
-          const sin_h = Math.sin(h)
+        for (let h_i = 0; h_i <= h_steps; h_i++) { // for each horizontal step
+          const h = (h_i / h_steps) * 2 * Math.PI; // percent of steps, re-mapped to an angle
 
-          // gather the points using parametric form
-          const x = center[0] + (r * sin_v * cos_h)
-          const z = center[1] + (r * sin_v * sin_h)
-          const y = center[2] + (r * cos_v)
-          vertices.push(x, y, z) // save the points
-          norms.push(x, y, z); // add norm
+          // gather points
+          const x = r * sin_v * Math.cos(h);
+          const z = r * sin_v * Math.sin(h);
+          const y = r * cos_v;
+
+          vertices.push(x, y, z); // get vertex
+          norms.push(x, y, z); // norm is just the point here 
+          tangents.push(-z, 0, x); // basic tangent for this points
+          texels.push(h_i / h_steps, v_i / v_steps); // do a very basic mapping pull
       } // end loop
     } // end loop
    
-    vertices.push(center[0], -r, center[2]) // save the south polar cap
+    vertices.push(0, -r, 0) // save the south polar cap
     norms.push(0, -1, 0); // pointing straight down
+    tangents.push(1, 0, 0); // push the tangent at that point
+    texels.push(0.5, 0.5); // grab the conversion to the texture map
 
     // ==================================
     //  GENERATE INDICES
@@ -150,11 +150,12 @@ function gen_sphere_points(
     //      |       /    |
     // top_left    -- top_right
     for (let band_walker = 1; band_walker < lower_band; band_walker += h_steps) {  // walk through all bands until reach south pole
-      for (let i = 0; i < h_steps - 1; i++) { // walk across the band, with special case on final setup
+      for (let i = 0; i < h_steps; i++) { // walk across the band, with special case on final setup
         const bottom_left = band_walker + i // the "bottom left" point
+        const bottom_right = bottom_left + 1 // "bottom right" point
         const top_left = bottom_left + h_steps // the "top left" point
         const top_right = bottom_left + h_steps + 1 // "top right" point
-        const bottom_right = bottom_left + 1 // "bottom right" point
+        
 
         // add the two triangles this set of vertices makes.
         indices.push(
@@ -165,10 +166,10 @@ function gen_sphere_points(
 
       // special last case: we need to wrap around slightly
       const bottom_left = band_walker + h_steps - 1 // final addition/point on band
-      const top_left = bottom_left + h_steps // still normal top left
-      const top_right = band_walker + h_steps // wrap around to the beginning of the lower band vertex
       const bottom_right = band_walker // wrap around to the beginning of the band vertex
-
+      const top_left = bottom_left + h_steps // still normal top left
+      const top_right = bottom_right + h_steps // wrap around to the beginning of the lower band vertex
+      
       // push the final index
       indices.push(
           bottom_left, top_left, top_right,
@@ -187,7 +188,9 @@ function gen_sphere_points(
   return {
     "vertices": new Float32Array(vertices), 
     "indices": new Uint16Array(indices),
-    "norms": new Float32Array(norms) // TODO
+    "norms": new Float32Array(norms),
+    "tangents": new Float32Array(tangents),
+    "texels": new Float32Array(texels)
   } 
 } // end method
 
@@ -266,9 +269,6 @@ function gen_cylinder_points(
     tangents.push(1, 0, 0); // pointing to the side
     texels.push(0.5, 0.5); // pick the halfway texel
 
-    let tex_theta = 0; // walker for picking points from texture
-    const inc = (2 * Math.PI) / h_steps
-
     for (let h_i = 0; h_i < h_steps; h_i++) {
       // get our current h, which is the h in (h, v)
       const h = h_i * h_step
@@ -289,7 +289,6 @@ function gen_cylinder_points(
       // texels.push(0.5 + r * Math.cos(tex_theta), 0.5 + r * Math.sin(tex_theta)); // TODO: grab the conversion to the texture max
       texels.push((cos_h + 1) * 0.5, (sin_h + 1) * 0.5); 
     } // end loop
-    tex_theta += inc;
   } // end loop
   
   // generate the caps' indexing
@@ -327,7 +326,8 @@ function gen_cylinder_points(
       tangents.push(z, 0, -x); // push the tangent at that point
       // looks bad:
       // texels.push((Math.atan(x, z) / (2 * Math.PI)) + 0.5, y + 0.5); // grab the conversion to the texture map
-      texels.push((h_i / h_steps) * Math.PI, y); // grab the conversion to the texture map1
+      texels.push((h_i / h_steps) * Math.PI, y); // grab the conversion to the texture map
+      // texels.push((h)  * Math.PI, y); // grab the conversion to the texture map
     } // end loop
   } // end loop
 
