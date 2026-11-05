@@ -1,0 +1,299 @@
+
+/**
+ * generate a sphere mesh programmatically.
+ * if anything else needed, add it here!
+ */
+
+/**
+ * basic sphere mesh generation (dont @me i know it's a pile of trash)
+ */
+export function gen_sphere_mesh(
+  r=1.0, // radius
+  h_step=0.1, // horizontal "resolution"
+  v_step=0.1 // vertical "resolution"
+) {
+  // how many steps we are taking in that range.
+  let h_steps = Math.round((2 * Math.PI) / h_step)
+  let v_steps = Math.round(Math.PI / v_step)
+
+  const vertices = [] // simple js array for collection of vertices
+  const indices = [] // js array for collecting indices
+  const norms = []; // norms for the planes
+  const tangents = []; // for texture mapping; tangent to the minisurface
+  const texels = []; // texture coordinates for sampling
+  const colors = []; // basic colors of the primitive mesh
+
+  // ==================================
+  //  GENERATE POINTS
+  // ==================================
+
+  vertices.push(0, r, 0) // save the north polar cap
+  norms.push(0, 1, 0); // pointing straight up
+  tangents.push(-1, 0, 0); // push the tangent at that point
+  texels.push(0.5, 0.5); // grab the conversion to the texture map
+  colors.push(0.5, 0.5, 0.5); // baseline color
+
+  // generate the bands of the sphere
+  for (let v_i = 1; v_i < v_steps; v_i++) { // for each vertical step
+    // get our current v, which is the v in (h, v)
+    const v = (v_i / v_steps) * Math.PI;
+    const sin_v = Math.sin(v) // save for later
+    const cos_v = Math.cos(v)
+
+    for (let h_i = 0; h_i <= h_steps; h_i++) { // for each horizontal step
+      const h = (h_i / h_steps) * 2 * Math.PI; // percent of steps, re-mapped to an angle
+
+      // gather points
+      const x = r * sin_v * Math.cos(h);
+      const z = r * sin_v * Math.sin(h);
+      const y = r * cos_v;
+
+      vertices.push(x, y, z); // get vertex
+      norms.push(x, y, z); // norm is just the point here 
+      tangents.push(-z, 0, x); // basic tangent for this points
+      texels.push(h_i / h_steps, v_i / v_steps); // do a very basic mapping pull
+      colors.push(0.5, 0.5, 0.5); // baseline color
+    } // end loop
+  } // end loop
+
+  vertices.push(0, -r, 0) // save the south polar cap
+  norms.push(0, -1, 0); // pointing straight down
+  tangents.push(1, 0, 0); // push the tangent at that point
+  texels.push(0.5, 0.5); // grab the conversion to the texture map
+  colors.push(0.5, 0.5, 0.5); // baseline color
+
+  // ==================================
+  //  GENERATE INDICES
+  // ==================================
+
+  // Each horizontal ring actually contains (h_steps + 1) vertices due to the <= h_steps loop
+  const vertices_per_ring = h_steps + 1; 
+  let last_pt_index = (vertices.length / 3) - 1; // the south polar cap index
+
+  // NORTH POLAR CAP INDICES
+  // index 0 is the north pole. the first ring starts at index 1.
+  for (let h_i = 0; h_i < h_steps; h_i++) {
+    const current_ring_pt = 1 + h_i;
+    const next_ring_pt = current_ring_pt + 1;
+    indices.push(0, current_ring_pt, next_ring_pt);
+  } // end loop
+
+  // MIDDLE BANDING INDICES
+  // we have (v_steps - 1) rings of vertices in the middle.
+  for (let v_i = 0; v_i < v_steps - 2; v_i++) {
+    const current_ring_start = 1 + (v_i * vertices_per_ring);
+    const next_ring_start = current_ring_start + vertices_per_ring;
+
+    for (let h_i = 0; h_i < h_steps; h_i++) {
+      const bottom_left  = current_ring_start + h_i;
+      const bottom_right = bottom_left + 1;
+      const top_left     = next_ring_start + h_i;
+      const top_right    = top_left + 1;
+
+      indices.push(
+        bottom_left, top_left, top_right,
+        bottom_left, top_right, bottom_right
+      );
+    } // end loop
+  } // end loop
+
+  // SOUTH POLAR CAP INDICES
+  // the last ring of vertices before the south pole starts here:
+  const last_ring_start = 1 + ((v_steps - 2) * vertices_per_ring);
+  for (let h_i = 0; h_i < h_steps; h_i++) {
+    const current_ring_pt = last_ring_start + h_i;
+    const next_ring_pt = current_ring_pt + 1;
+    indices.push(last_pt_index, next_ring_pt, current_ring_pt);
+  }
+
+  // return as a js dict
+  return {
+    "vertices": new Float32Array(vertices), 
+    "indices": new Uint16Array(indices),
+    "normals": new Float32Array(norms),
+    "tangents": new Float32Array(tangents),
+    "texels": new Float32Array(texels),
+    "colors": new Float32Array(colors)
+  };
+} // end function
+
+
+/**
+ * cylinder mesh (basic)
+ */
+export function gen_cylinder_mesh(
+  r=0.5, // radius of the cylinder
+  h_step=0.1, // horizontal step interval (u)
+  v_step=0.1, // vertical step interval (v)
+) {
+
+  // how many steps we are taking in that range.
+  let h_steps = Math.round((2 * Math.PI) / h_step)
+  let v_steps = Math.round(1 / v_step)
+
+  const vertices = [] // simple js array for collection of vertices
+  const indices = [] // js array for collecting indices
+  const norms = []; // norms for the planes
+  const tangents = []; // for texture mapping; tangent to the minisurface
+  const texels = []; // texture coordinates for sampling
+  const colors = []; // just some basic coloring for the primitive.
+
+  // ==================================
+  //  GENERATE CAPS
+  // ==================================
+
+  let curr_index = 0; // this will be used for setting up indices as an incrementer
+  
+  // generate the cap points
+  for (let y of [0, 1]) { // grows on the y axis
+
+    // this is the middle point
+    vertices.push(0, y, 0) // at the origin
+    if (y == 0) {
+      norms.push(0, -1, 0); // pointing straight down
+    } else {
+      norms.push(0, y, 0); // pointing straight up
+    } // end if
+    tangents.push(1, 0, 0); // pointing to the side
+    texels.push(0.5, 0.5); // pick the halfway texel
+    colors.push(0.5, 0.5, 0.5); // basic color
+
+    for (let h_i = 0; h_i < h_steps; h_i++) {
+      // get our current h, which is the h in (h, v)
+      const h = h_i * h_step
+      const cos_h = Math.cos(h) // save for later
+      const sin_h = Math.sin(h)
+
+      // gather the points using parametric form
+      const x = r * cos_h
+      const z = r * sin_h
+
+      vertices.push(x, y, z) // save the points
+      if (y == 0) {
+        norms.push(0, -1, 0); // pointing straight down
+      } else {
+        norms.push(0, 1, 0); // pointing straight up
+      } // end if
+      tangents.push(1, 0, 0); // push the tangent at that point
+      // texels.push(0.5 + r * Math.cos(tex_theta), 0.5 + r * Math.sin(tex_theta)); // TODO: grab the conversion to the texture max
+      texels.push((cos_h + 1) * 0.5, (sin_h + 1) * 0.5); 
+      colors.push(0.5, 0.5, 0.5); // basic color
+    } // end loop
+  } // end loop
+  
+  // generate the caps' indexing
+  for (let num_caps = 0; num_caps < 2; num_caps++) {
+    const center = curr_index; // this will be the center point
+    for (let i = 0; i < h_steps - 1; i++) { // for all but last index connection
+      indices.push(center, center + i + 1, center + i + 2); // (0, 1, 2), (0, 2, 3)....
+    } // end loop
+    indices.push(center, center + 1, center + h_steps) // final special case wrap around: (0, 6, 1)
+    curr_index += h_steps + 1; // increment to the next center point
+  } // end loop
+
+  // ==================================
+  //  GENERATE SIDES
+  // ==================================
+
+  // generate the bands of the side of the cylinder.
+  for (let v_i = 0; v_i <= v_steps; v_i++) { // for each vertical step
+    // get our current v, which is the v in (h, v)
+    const v = v_i * v_step
+
+    for (let h_i = 0; h_i < h_steps; h_i++) { // for each horizontal step
+      // get our current h, which is the h in (h, v)
+      const h = h_i * h_step
+      const cos_h = Math.cos(h) // save for later
+      const sin_h = Math.sin(h)
+
+      // gather the points using parametric form
+      const x = r * cos_h
+      const z = r * sin_h
+      const y = v
+
+      vertices.push(x, y, z) // save the points
+      norms.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
+      tangents.push(z, 0, -x); // push the tangent at that point
+      // looks bad:
+      // texels.push((Math.atan(x, z) / (2 * Math.PI)) + 0.5, y + 0.5); // grab the conversion to the texture map
+      texels.push((h_i / h_steps) * Math.PI, y); // grab the conversion to the texture map
+      // texels.push((h)  * Math.PI, y); // grab the conversion to the texture map
+      colors.push(0.5, 0.5, 0.5); // basic color
+    } // end loop
+  } // end loop
+
+  // put together the index mapping of side vertices
+  for (let i = 0; i < v_steps; i++) { // each band
+
+    for (let j = 0; j < h_steps - 1; j++) { // each step along the base band
+      const bottom_left = curr_index + j;
+      const bottom_right = bottom_left + 1;
+      const top_left = bottom_left + h_steps;
+      const top_right = top_left + 1;
+
+      indices.push(bottom_left, bottom_right, top_right, bottom_left, top_left, top_right);
+    } // end loop
+
+    // special last case to wrap around
+    const bottom_left = curr_index + h_steps - 1;
+    const bottom_right = curr_index;
+    const top_left = bottom_left + h_steps;
+    const top_right = bottom_right + h_steps;
+
+    indices.push(bottom_left, bottom_right, top_right, bottom_left, top_left, top_right);
+    
+    curr_index += h_steps; // move up the cylinder
+  } // end loop
+  
+  // return as a js dict
+  return {
+    "vertices": new Float32Array(vertices), 
+    "indices": new Uint16Array(indices),
+    "norms": new Float32Array(norms),
+    "tangents": new Float32Array(tangents),
+    "texels": new Float32Array(texels),
+    "colors": new Float32Array(colors)
+  } 
+} // end method
+
+
+/**
+ * TODO
+ */
+/**
+ * static primitive generation of a cube.
+ */
+// export function gen_cube_mesh() {
+
+//     const vertices = [
+//       -1, -1, -1,  // 0
+//       1, -1, -1,  // 1
+//       1,  1, -1,  // 2
+//       -1,  1, -1,  // 3
+//       -1, -1,  1,  // 4
+//       1, -1,  1,  // 5
+//       1,  1,  1,  // 6
+//       -1,  1,  1   // 7
+//     ];
+
+//     const indices = [
+//       // Front
+//       4, 5, 6,   4, 6, 7,
+//       // Back
+//       1, 0, 3,   1, 3, 2,
+//       // Top
+//       3, 7, 6,   3, 6, 2,
+//       // Bottom
+//       0, 1, 5,   0, 5, 4,
+//       // Right
+//       1, 2, 6,   1, 6, 5,
+//       // Left
+//       0, 4, 7,   0, 7, 3,
+//     ];
+
+//     // return as a js dict
+//     return {
+//       "vertices": new Float32Array(vertices), 
+//       "indices": new Uint16Array(indices)
+//     } 
+// } // end function
