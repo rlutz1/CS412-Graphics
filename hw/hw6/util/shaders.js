@@ -205,12 +205,10 @@ export class PhongShader extends Shader {
  * just call with a basic phong shader.
  * an example of how to implement a custom shader.
  */
-export class TexturePhongShader extends Shader {
-
-  bump_mapping = true; // simple control up top
+export class TextureBumpMappingShader extends Shader {
 
   constructor(gl) {
-    super(SourceDicts.texture_phong_basic.vertex_shader, SourceDicts.texture_phong_basic.fragment_shader, gl);
+    super(SourceDicts.texture_basic.vertex_shader, SourceDicts.texture_basic.fragment_shader, gl);
     // camera and light items (may be able to pull out into the renderer if consistent.)
     this.model_view_loc = gl.getUniformLocation(this.program, "uModelViewMatrix"); 
     this.projection_loc = gl.getUniformLocation(this.program, "uProjectionMatrix"); 
@@ -267,13 +265,11 @@ export class TexturePhongShader extends Shader {
     gl.uniform1f(this.material_params_loc["transparency"], node.material.transparency);
 
     // set the texture type
-    if (this.bump_mapping) gl.uniform1i(this.mapping_loc, 0);
-    else                   gl.uniform1i(this.mapping_loc, 1);
+    gl.uniform1i(this.mapping_loc, 0);
 
     // set up the texture
     gl.activeTexture(gl.TEXTURE0); 
     gl.bindTexture(gl.TEXTURE_2D, node.mesh.texture);
-    console.log(node.mesh.texture)
 
     // vertex/positions buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, node.mesh.vert_buff);
@@ -312,15 +308,25 @@ export class TexturePhongShader extends Shader {
     gl.drawElements(gl.TRIANGLES, node.mesh.indices.length, gl.UNSIGNED_SHORT, 0);
   } // end function
 
-  /**
-   * next two: just a little readable on/off
-   */
-  use_bump_mapping() {
-    this.bump_mapping = true;
-  } // end function
+} // end class
 
-  use_normal_mapping() {
-    this.bump_mapping = false;
+/**
+ * just call with a basic phong shader.
+ * an example of how to implement a custom shader.
+ */
+export class TextureNormalMappingShader extends TextureBumpMappingShader {
+
+  /**
+   * shader is here to (1) hold the compiled shader program.
+   * and (2) bind and load up the buffers that it is aware of.
+   * this is intended highly customizable to whatever shader you want to build.
+   * just implement a new shader with load() and draw() and set the id in the node.
+   */
+  load(node, camera, lights, gl) {
+    super.load(node, camera, lights, gl); // just load normally
+    // EXCEPT:
+    // set the texture type
+    gl.uniform1i(this.mapping_loc, 1);
   } // end function
 
 } // end class
@@ -338,5 +344,6 @@ export class TexturePhongShader extends Shader {
 
 export const SHADER_MAP = {
   "phong_basic": PhongShader,
-  "texture_phong_basic": TexturePhongShader
+  "texture_bump_mapping_basic": TextureBumpMappingShader,
+  "texture_normal_mapping_basic": TextureNormalMappingShader
 } // end shader map

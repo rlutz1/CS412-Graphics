@@ -106,8 +106,10 @@ export const phong_basic = {
       `
 } // end src
 
-
-export const texture_phong_basic = {
+/**
+ * this works with both TextureBumpMappingShader and TextureNormalMappingShader.
+ */
+export const texture_basic = {
   "vertex_shader": `#version 300 es
       in vec3 aPosition;
       in vec3 aNormal;
