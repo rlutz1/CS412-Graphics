@@ -94,6 +94,7 @@ export class SceneNode {
 
     this.mesh = null; // mesh of the node, encompassing vertices, index mapping, norms, etc...
     this.material = null; // material of this node (ka, kd, ...)
+    this.texture = null; // texture specific to the node; then mesh's can be reused.
 
     this.shader_id = shader_id; // id corresponding to the shader i want to use for this node.
 
@@ -173,6 +174,14 @@ export class SceneNode {
    */
   set_material(material) {
     this.material = material;
+    return this;
+  } // end function
+
+  /**
+   * set the texture of this node
+   */
+  set_texture(texture) {
+    this.texture = texture;
     return this;
   } // end function
 
