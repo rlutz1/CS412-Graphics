@@ -190,10 +190,11 @@
     const daddy = new SceneBuilder.SceneNode("daddy", "texture_bump_mapping_basic"); // set up a simple hierarchy
     const child = new SceneBuilder.SceneNode("ya_sphere", "texture_bump_mapping_basic");
     const gchild = new SceneBuilder.SceneNode("ya_ya_sphere", "texture_normal_mapping_basic");
-    const rando_sphere = new SceneBuilder.SceneNode("rando", "phong_basic"); // just a lil rando in the back for testing
+    const rando = new SceneBuilder.SceneNode("rando", "phong_basic"); // just a lil rando in the back for testing
 
-    const mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_sphere_mesh()); // generate a basic sphere mesh
-
+    const sphere_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_sphere_mesh()); // generate a basic sphere mesh
+    const cone_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_cone_mesh()); // generate a basic sphere mesh
+    console.log(cone_mesh)
     // make some new textures
     const grass = new SceneBuilder.Texture(gl, "./textures/grass.jpg");
     const desert = new SceneBuilder.Texture(gl, "./textures/desert.jpg");
@@ -209,15 +210,15 @@
     });
 
     // add mesh and material to the spheres.
-    daddy.set_mesh(mesh).set_material(material).set_texture(desert);
-    child.set_mesh(mesh).set_material(material).set_texture(grass);
-    gchild.set_mesh(mesh).set_material(material).set_texture(cushion);
-    rando_sphere.set_mesh(mesh).set_material(material);
+    daddy.set_mesh(sphere_mesh).set_material(material).set_texture(desert);
+    child.set_mesh(sphere_mesh).set_material(material).set_texture(grass);
+    gchild.set_mesh(sphere_mesh).set_material(material).set_texture(cushion);
+    rando.set_mesh(cone_mesh).set_material(material);
 
     // gonna add some initial positioning, scaling, etc, prior to render. 
     // at a baseline, the generic node transformation matrix is:
     // M_parent * (position * rotation * scale)
-    rando_sphere.position = [-4, 0, -20];
+    rando.position = [-2, 0, -5];
     daddy.position = [0, 0, -10]; // note that these ones are in a hierarchy
     child.position = [0, 1.5, 0];  // so the transformations carry through.
     child.scale = [0.8, 0.8, 0.8]; // it is up to dev to consider this and manage.
@@ -230,7 +231,7 @@
     // add root nodes to the scene (note the children of daddy
     // are automatically carried through).
     scene.add_node(daddy); 
-    scene.add_node(rando_sphere)
+    scene.add_node(rando)
     
     /**
      * rendering manager is a lightweight, simple
@@ -252,8 +253,10 @@
       const cos = Math.cos(delta_time); // for ease of writing
 
       // feel free to fuck with this and let know if any glaring bugs in the meantime!
-      daddy.rotation = [cos, 0, cos];
-      child.rotation = [0, 0, cos];
+      // daddy.rotation = [cos, 0, cos];
+      // child.rotation = [0, 0, cos];
+
+      rando.rotation = [delta_time, 0, 0]
 
       // ultimate render call 
       renderer.draw(scene);

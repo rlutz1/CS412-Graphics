@@ -256,6 +256,240 @@ export function gen_cylinder_mesh(
   } 
 } // end method
 
+/**
+ * cone mesh (basic)
+ */
+export function gen_cone_mesh(
+  r = 0.5,       // radius of the base
+  h_step = 0.1,  // horizontal angular step
+  v_step = 0.1   // vertical step
+) {
+
+  // how many steps we are taking in that range.
+  let h_steps = Math.round((2 * Math.PI) / h_step);
+  let v_steps = Math.round(1 / v_step);
+
+  const vertices = [];
+  const indices = [];
+  const norms = [];
+  const tangents = [];
+  const texels = [];
+  const colors = [];
+
+  // Actual step sizes after rounding.
+  const h_angle = (2 * Math.PI) / h_steps;
+
+  // ==================================
+  // GENERATE BASE CAP
+  // ==================================
+
+  let curr_index = 0;
+
+  // Base center.
+  vertices.push(0, 0, 0);
+  norms.push(0, -1, 0);
+  tangents.push(1, 0, 0);
+  texels.push(0.5, 0.5);
+  colors.push(0.5, 0.5, 0.5);
+
+  // Base perimeter.
+  for (let h_i = 0; h_i < h_steps; h_i++) {
+
+    const h = h_i * h_angle;
+
+    const cos_h = Math.cos(h);
+    const sin_h = Math.sin(h);
+
+    const x = r * cos_h;
+    const z = r * sin_h;
+
+    vertices.push(x, 0, z);
+
+    // Base normal points downward.
+    norms.push(0, -1, 0);
+
+    tangents.push(1, 0, 0);
+
+    // Planar texture mapping.
+    texels.push(
+      0.5 + 0.5 * cos_h,
+      0.5 + 0.5 * sin_h
+    );
+
+    colors.push(0.5, 0.5, 0.5);
+  }
+
+  // ==================================
+  // GENERATE BASE INDICES
+  // ==================================
+
+  // Triangle fan.
+  for (let h_i = 0; h_i < h_steps - 1; h_i++) {
+    indices.push(
+      curr_index,
+      curr_index + h_i + 2,
+      curr_index + h_i + 1
+    );
+  }
+
+  // Close the base fan.
+  indices.push(
+    curr_index,
+    curr_index + 1,
+    curr_index + h_steps
+  );
+
+  curr_index += h_steps + 1;
+
+  // ==================================
+  // GENERATE CONE SIDES
+  // ==================================
+
+  // Generate vertical rings.
+  // The final ring is the apex.
+  for (let v_i = 0; v_i <= v_steps; v_i++) {
+
+    const v = v_i / v_steps;
+
+    // Radius shrinks linearly toward the apex.
+    const curr_r = r * (1 - v);
+
+    for (let h_i = 0; h_i <= h_steps; h_i++) {
+
+      const h = h_i * h_angle;
+
+      const cos_h = Math.cos(h);
+      const sin_h = Math.sin(h);
+
+      const x = curr_r * cos_h;
+      const z = curr_r * sin_h;
+      const y = v;
+
+      vertices.push(x, y, z);
+
+      // ==================================
+      // SIDE NORMALS
+      // ==================================
+
+      // Cone side normal:
+      // (cos(h), r, sin(h))
+      //
+      // This includes the vertical component
+      // required for correct cone lighting.
+
+      const nx = cos_h;
+      const ny = r;
+      const nz = sin_h;
+
+      const normal_length = Math.sqrt(
+        nx * nx + ny * ny + nz * nz
+      );
+
+      norms.push(
+        nx / normal_length,
+        ny / normal_length,
+        nz / normal_length
+      );
+
+      // ==================================
+      // TANGENTS
+      // ==================================
+
+      // Tangent along the circumference.
+      // This is perpendicular to the side normal.
+
+      tangents.push(
+        -sin_h,
+        0,
+        cos_h
+      );
+
+      // ==================================
+      // TEXTURE COORDINATES
+      // ==================================
+
+      // U travels around the circumference.
+      // V travels from base to apex.
+
+      texels.push(
+        h_i / h_steps,
+        v
+      );
+
+      colors.push(0.5, 0.5, 0.5);
+
+    }
+  }
+
+  // ==================================
+  // GENERATE SIDE INDICES
+  // ==================================
+
+  const vertices_per_ring = h_steps + 1;
+
+  for (let v_i = 0; v_i < v_steps; v_i++) {
+
+    const current_ring_start =
+      curr_index + v_i * vertices_per_ring;
+
+    const next_ring_start =
+      current_ring_start + vertices_per_ring;
+
+    for (let h_i = 0; h_i < h_steps; h_i++) {
+
+      const bottom_left =
+        current_ring_start + h_i;
+
+      const bottom_right =
+        bottom_left + 1;
+
+      const top_left =
+        next_ring_start + h_i;
+
+      const top_right =
+        top_left + 1;
+
+      // Skip degenerate triangles at the apex.
+      if (v_i === v_steps - 1) {
+
+        indices.push(
+          bottom_left,
+          bottom_right,
+          top_left
+        );
+
+      } else {
+
+        indices.push(
+          bottom_left,
+          bottom_right,
+          top_right,
+
+          bottom_left,
+          top_right,
+          top_left
+        );
+
+      }
+    }
+  }
+
+  // ==================================
+  // RETURN MESH
+  // ==================================
+
+  return {
+    "vertices": new Float32Array(vertices),
+    "indices": new Uint16Array(indices),
+    "normals": new Float32Array(norms),
+    "tangents": new Float32Array(tangents),
+    "texels": new Float32Array(texels),
+    "colors": new Float32Array(colors)
+  };
+
+}
+
+
 
 /**
  * TODO

@@ -10,9 +10,9 @@ In this assignment, you are expected to create objects with texture mapping. You
 - [ ] Textures with Animations (2pts)
   - [ ] At least one of the textures has animation (e.g. GIF, video) (can be one of the above three textures)
 
-- [ ] Bump/Normal Mapping (4pts)
-   - [ ] Implement at least one additional normal mapping (you can use the existing brick texture or any texture you like, it can be one of the three objects in task 1)
-   - [ ] Implement at least one additional bump mapping (you can use the existing brick texture or any texture you like, it can be one of the three objects in task 1)
+- [X] Bump/Normal Mapping (4pts)
+   - [X] Implement at least one additional normal mapping (you can use the existing brick texture or any texture you like, it can be one of the three objects in task 1)
+   - [X] Implement at least one additional bump mapping (you can use the existing brick texture or any texture you like, it can be one of the three objects in task 1)
 
 - [ ] Creativity and Design (+1 bonus pt)
   - [ ] Outstanding effects and creativities

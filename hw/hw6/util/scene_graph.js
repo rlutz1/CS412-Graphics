@@ -226,9 +226,6 @@ export class Mesh {
     if (colors) this.color_buff = this.init_buffer(colors, gl);
     if (tangents) this.tangent_buff = this.init_buffer(tangents, gl);
     if (texels) this.tex_buff = this.init_buffer(texels, gl);
-
-    // in case a texture added to this mesh: 
-    this.texture = null;
   }
 
   /**
@@ -280,7 +277,7 @@ export class Texture {
   get_texture() {
     return this.texture_buff;
   } // end function
-  
+
 } // end class
 
 /**
