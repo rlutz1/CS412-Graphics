@@ -190,7 +190,8 @@
     const daddy = new SceneBuilder.SceneNode("daddy", "texture_bump_mapping_basic"); // set up a simple hierarchy
     const child = new SceneBuilder.SceneNode("ya_sphere", "texture_bump_mapping_basic");
     const gchild = new SceneBuilder.SceneNode("ya_ya_sphere", "texture_normal_mapping_basic");
-    const rando = new SceneBuilder.SceneNode("rando", "phong_basic"); // just a lil rando in the back for testing
+    // const rando = new SceneBuilder.SceneNode("rando", "phong_basic"); // just a lil rando in the back for testing
+     const rando = new SceneBuilder.SceneNode("rando", "texture_bump_mapping_basic");
 
     const sphere_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_sphere_mesh()); // generate a basic sphere mesh
     const cone_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_cone_mesh()); // generate a basic sphere mesh
@@ -213,7 +214,8 @@
     daddy.set_mesh(sphere_mesh).set_material(material).set_texture(desert);
     child.set_mesh(sphere_mesh).set_material(material).set_texture(grass);
     gchild.set_mesh(sphere_mesh).set_material(material).set_texture(cushion);
-    rando.set_mesh(cone_mesh).set_material(material);
+    // rando.set_mesh(cone_mesh).set_material(material);
+    rando.set_mesh(cone_mesh).set_material(material).set_texture(desert);
 
     // gonna add some initial positioning, scaling, etc, prior to render. 
     // at a baseline, the generic node transformation matrix is:
