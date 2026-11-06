@@ -18,7 +18,7 @@ export function gen_sphere_mesh(
 
   const vertices = [] // simple js array for collection of vertices
   const indices = [] // js array for collecting indices
-  const norms = []; // norms for the planes
+  const normals = []; // normals for the planes
   const tangents = []; // for texture mapping; tangent to the minisurface
   const texels = []; // texture coordinates for sampling
   const colors = []; // basic colors of the primitive mesh
@@ -28,7 +28,7 @@ export function gen_sphere_mesh(
   // ==================================
 
   vertices.push(0, r, 0) // save the north polar cap
-  norms.push(0, 1, 0); // pointing straight up
+  normals.push(0, 1, 0); // pointing straight up
   tangents.push(-1, 0, 0); // push the tangent at that point
   texels.push(0.5, 0.5); // grab the conversion to the texture map
   colors.push(0.5, 0.5, 0.5); // baseline color
@@ -49,7 +49,7 @@ export function gen_sphere_mesh(
       const y = r * cos_v;
 
       vertices.push(x, y, z); // get vertex
-      norms.push(x, y, z); // norm is just the point here 
+      normals.push(x, y, z); // norm is just the point here 
       tangents.push(-z, 0, x); // basic tangent for this points
       texels.push(h_i / h_steps, v_i / v_steps); // do a very basic mapping pull
       colors.push(0.5, 0.5, 0.5); // baseline color
@@ -57,7 +57,7 @@ export function gen_sphere_mesh(
   } // end loop
 
   vertices.push(0, -r, 0) // save the south polar cap
-  norms.push(0, -1, 0); // pointing straight down
+  normals.push(0, -1, 0); // pointing straight down
   tangents.push(1, 0, 0); // push the tangent at that point
   texels.push(0.5, 0.5); // grab the conversion to the texture map
   colors.push(0.5, 0.5, 0.5); // baseline color
@@ -110,7 +110,7 @@ export function gen_sphere_mesh(
   return {
     "vertices": new Float32Array(vertices), 
     "indices": new Uint16Array(indices),
-    "normals": new Float32Array(norms),
+    "normals": new Float32Array(normals),
     "tangents": new Float32Array(tangents),
     "texels": new Float32Array(texels),
     "colors": new Float32Array(colors)
@@ -133,7 +133,7 @@ export function gen_cylinder_mesh(
 
   const vertices = [] // simple js array for collection of vertices
   const indices = [] // js array for collecting indices
-  const norms = []; // norms for the planes
+  const normals = []; // normals for the planes
   const tangents = []; // for texture mapping; tangent to the minisurface
   const texels = []; // texture coordinates for sampling
   const colors = []; // just some basic coloring for the primitive.
@@ -150,9 +150,9 @@ export function gen_cylinder_mesh(
     // this is the middle point
     vertices.push(0, y, 0) // at the origin
     if (y == 0) {
-      norms.push(0, -1, 0); // pointing straight down
+      normals.push(0, -1, 0); // pointing straight down
     } else {
-      norms.push(0, y, 0); // pointing straight up
+      normals.push(0, y, 0); // pointing straight up
     } // end if
     tangents.push(1, 0, 0); // pointing to the side
     texels.push(0.5, 0.5); // pick the halfway texel
@@ -170,9 +170,9 @@ export function gen_cylinder_mesh(
 
       vertices.push(x, y, z) // save the points
       if (y == 0) {
-        norms.push(0, -1, 0); // pointing straight down
+        normals.push(0, -1, 0); // pointing straight down
       } else {
-        norms.push(0, 1, 0); // pointing straight up
+        normals.push(0, 1, 0); // pointing straight up
       } // end if
       tangents.push(1, 0, 0); // push the tangent at that point
       // texels.push(0.5 + r * Math.cos(tex_theta), 0.5 + r * Math.sin(tex_theta)); // TODO: grab the conversion to the texture max
@@ -212,12 +212,9 @@ export function gen_cylinder_mesh(
       const y = v
 
       vertices.push(x, y, z) // save the points
-      norms.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
+      normals.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
       tangents.push(z, 0, -x); // push the tangent at that point
-      // looks bad:
-      // texels.push((Math.atan(x, z) / (2 * Math.PI)) + 0.5, y + 0.5); // grab the conversion to the texture map
       texels.push((h_i / h_steps) * Math.PI, y); // grab the conversion to the texture map
-      // texels.push((h)  * Math.PI, y); // grab the conversion to the texture map
       colors.push(0.5, 0.5, 0.5); // basic color
     } // end loop
   } // end loop
@@ -249,7 +246,7 @@ export function gen_cylinder_mesh(
   return {
     "vertices": new Float32Array(vertices), 
     "indices": new Uint16Array(indices),
-    "normals": new Float32Array(norms),
+    "normals": new Float32Array(normals),
     "tangents": new Float32Array(tangents),
     "texels": new Float32Array(texels),
     "colors": new Float32Array(colors)
@@ -257,42 +254,43 @@ export function gen_cylinder_mesh(
 } // end method
 
 /**
- * cone mesh (basic)
+ * basic cone mesh using parametrics.
  */
 export function gen_cone_mesh(
-  r = 0.5,       // radius of the base
-  h_step = 0.1,  // horizontal angular step
-  v_step = 0.1   // vertical step
+  r=0.5,       // radius of the base
+  h_step=0.1, // horizontal "resolution"
+  v_step=0.1 // vertical "resolution"
 ) {
 
   // how many steps we are taking in that range.
   let h_steps = Math.round((2 * Math.PI) / h_step);
   let v_steps = Math.round(1 / v_step);
 
+  // all of our collections
   const vertices = [];
   const indices = [];
-  const norms = [];
+  const normals = [];
   const tangents = [];
   const texels = [];
   const colors = [];
 
-  // Actual step sizes after rounding.
+  // step sizes after rounding.
   const h_angle = (2 * Math.PI) / h_steps;
 
   // ==================================
-  // GENERATE BASE CAP
+  // VERTICES
   // ==================================
 
   let curr_index = 0;
 
   // Base center.
   vertices.push(0, 0, 0);
-  norms.push(0, -1, 0);
+  normals.push(0, -1, 0);
   tangents.push(1, 0, 0);
   texels.push(0.5, 0.5);
   colors.push(0.5, 0.5, 0.5);
 
-  // Base perimeter.
+  // the base circle perimeter
   for (let h_i = 0; h_i < h_steps; h_i++) {
 
     const h = h_i * h_angle;
@@ -304,46 +302,13 @@ export function gen_cone_mesh(
     const z = r * sin_h;
 
     vertices.push(x, 0, z);
-
-    // Base normal points downward.
-    norms.push(0, -1, 0);
-
+    normals.push(0, -1, 0);
     tangents.push(1, 0, 0);
+    texels.push(0.5 + 0.5 * cos_h, 0.5 + 0.5 * sin_h); // planar texture mapping
+    colors.push(0.5, 0.5, 0.5); // base coloring
+  } // end loop
 
-    // Planar texture mapping.
-    texels.push(
-      0.5 + 0.5 * cos_h,
-      0.5 + 0.5 * sin_h
-    );
-
-    colors.push(0.5, 0.5, 0.5);
-  }
-
-  // ==================================
-  // GENERATE BASE INDICES
-  // ==================================
-
-  // Triangle fan.
-  for (let h_i = 0; h_i < h_steps - 1; h_i++) {
-    indices.push(
-      curr_index,
-      curr_index + h_i + 2,
-      curr_index + h_i + 1
-    );
-  }
-
-  // Close the base fan.
-  indices.push(
-    curr_index,
-    curr_index + 1,
-    curr_index + h_steps
-  );
-
-  curr_index += h_steps + 1;
-
-  // ==================================
-  // GENERATE CONE SIDES
-  // ==================================
+  // now onto the sides
 
   // Generate vertical rings.
   // The final ring is the apex.
@@ -351,7 +316,7 @@ export function gen_cone_mesh(
 
     const v = v_i / v_steps;
 
-    // Radius shrinks linearly toward the apex.
+    // radius reduction head v step
     const curr_r = r * (1 - v);
 
     for (let h_i = 0; h_i <= h_steps; h_i++) {
@@ -366,113 +331,58 @@ export function gen_cone_mesh(
       const y = v;
 
       vertices.push(x, y, z);
-
-      // ==================================
-      // SIDE NORMALS
-      // ==================================
-
-      // Cone side normal:
-      // (cos(h), r, sin(h))
-      //
-      // This includes the vertical component
-      // required for correct cone lighting.
-
-      const nx = cos_h;
-      const ny = r;
-      const nz = sin_h;
-
-      const normal_length = Math.sqrt(
-        nx * nx + ny * ny + nz * nz
-      );
-
-      norms.push(
-        nx / normal_length,
-        ny / normal_length,
-        nz / normal_length
-      );
-
-      // ==================================
-      // TANGENTS
-      // ==================================
-
-      // Tangent along the circumference.
-      // This is perpendicular to the side normal.
-
-      tangents.push(
-        -sin_h,
-        0,
-        cos_h
-      );
-
-      // ==================================
-      // TEXTURE COORDINATES
-      // ==================================
-
-      // U travels around the circumference.
-      // V travels from base to apex.
-
-      texels.push(
-        h_i / h_steps,
-        v
-      );
-
-      colors.push(0.5, 0.5, 0.5);
-
-    }
-  }
+      normals.push(x, 0, z); // pointing straight out to sides of x, z, but no y value
+      tangents.push(z, 0, -x); // push the tangent at that point
+      texels.push(h_i / h_steps, v); // basic selection, choose from segmented u and v as height
+      colors.push(0.5, 0.5, 0.5); 
+    } // end loop
+  } // end loop
 
   // ==================================
-  // GENERATE SIDE INDICES
+  // GENERATE INDICES
   // ==================================
+
+  // deal with the base first
+
+  // spokes to select from
+  for (let h_i = 0; h_i < h_steps - 1; h_i++) {
+    indices.push(curr_index, curr_index + h_i + 2, curr_index + h_i + 1
+    );
+  } // end loop
+
+  // last step special case wrap around
+  indices.push(curr_index, curr_index + 1, curr_index + h_steps
+  );
+
+  // now handle the sides.
+  curr_index += h_steps + 1;
 
   const vertices_per_ring = h_steps + 1;
 
   for (let v_i = 0; v_i < v_steps; v_i++) {
 
-    const current_ring_start =
-      curr_index + v_i * vertices_per_ring;
-
-    const next_ring_start =
-      current_ring_start + vertices_per_ring;
+    const current_ring_start = curr_index + v_i * vertices_per_ring;
+    const next_ring_start = current_ring_start + vertices_per_ring;
 
     for (let h_i = 0; h_i < h_steps; h_i++) {
 
-      const bottom_left =
-        current_ring_start + h_i;
-
-      const bottom_right =
-        bottom_left + 1;
-
-      const top_left =
-        next_ring_start + h_i;
-
-      const top_right =
-        top_left + 1;
+      const bottom_left = current_ring_start + h_i;
+      const bottom_right = bottom_left + 1;
+      const top_left = next_ring_start + h_i;
+      const top_right = top_left + 1;
 
       // Skip degenerate triangles at the apex.
-      if (v_i === v_steps - 1) {
-
-        indices.push(
-          bottom_left,
-          bottom_right,
-          top_left
-        );
-
+      if (v_i == v_steps - 1) {
+        indices.push(bottom_left, bottom_right, top_left);
       } else {
-
+        // normal sphere index pattern used before
         indices.push(
-          bottom_left,
-          bottom_right,
-          top_right,
-
-          bottom_left,
-          top_right,
-          top_left
+          bottom_left, bottom_right, top_right,
+          bottom_left, top_right, top_left
         );
-
-      }
-    }
-  }
+      } // end if
+    } // end loop
+  } // end loop
 
   // ==================================
   // RETURN MESH
@@ -481,53 +391,60 @@ export function gen_cone_mesh(
   return {
     "vertices": new Float32Array(vertices),
     "indices": new Uint16Array(indices),
-    "normals": new Float32Array(norms),
+    "normals": new Float32Array(normals),
     "tangents": new Float32Array(tangents),
     "texels": new Float32Array(texels),
     "colors": new Float32Array(colors)
   };
 
-}
-
-
+} // end function
 
 /**
- * TODO
+ * make a basic cube mesh
  */
-/**
- * static primitive generation of a cube.
- */
-// export function gen_cube_mesh() {
+function gen_cube_mesh() {
+  const vertices = new Float32Array([
+    -1, -1,  1,   1, -1,  1,   1,  1,  1,  -1,  1,  1,   // front
+     1, -1, -1,  -1, -1, -1,  -1,  1, -1,   1,  1, -1,   // back
+    -1,  1,  1,   1,  1,  1,   1,  1, -1,  -1,  1, -1,   // top
+    -1, -1, -1,   1, -1, -1,   1, -1,  1,  -1, -1,  1,   // bottom
+     1, -1,  1,   1, -1, -1,   1,  1, -1,   1,  1,  1,   // right
+    -1, -1, -1,  -1, -1,  1,  -1,  1,  1,  -1,  1, -1    // left
+  ]);
+  const normals = [0, 0, 1, 0, 0, -1, 0, 1, 0, 0, -1, 0, 1, 0, 0, -1, 0, 0];
 
-//     const vertices = [
-//       -1, -1, -1,  // 0
-//       1, -1, -1,  // 1
-//       1,  1, -1,  // 2
-//       -1,  1, -1,  // 3
-//       -1, -1,  1,  // 4
-//       1, -1,  1,  // 5
-//       1,  1,  1,  // 6
-//       -1,  1,  1   // 7
-//     ];
+  // Tangent; bitangent = cross(N, T)
+  const tangents = [1, 0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 1];
 
-//     const indices = [
-//       // Front
-//       4, 5, 6,   4, 6, 7,
-//       // Back
-//       1, 0, 3,   1, 3, 2,
-//       // Top
-//       3, 7, 6,   3, 6, 2,
-//       // Bottom
-//       0, 1, 5,   0, 5, 4,
-//       // Right
-//       1, 2, 6,   1, 6, 5,
-//       // Left
-//       0, 4, 7,   0, 7, 3,
-//     ];
+  const texels = [
+    0, 0, 1, 0, 1, 1, 0, 1,
+    0, 0, 1, 0, 1, 1, 0, 1,
+    0, 0, 1, 0, 1, 1, 0, 1,
+    0, 0, 1, 0, 1, 1, 0, 1,
+    0, 0, 1, 0, 1, 1, 0, 1,
+    0, 0, 1, 0, 1, 1, 0, 1
+  ];
 
-//     // return as a js dict
-//     return {
-//       "vertices": new Float32Array(vertices), 
-//       "indices": new Uint16Array(indices)
-//     } 
-// } // end function
+  const indices = [
+     0,  1,  2,   0,  2,  3,   // front
+     4,  5,  6,   4,  6,  7,   // back
+     8,  9, 10,   8, 10, 11,   // top
+    12, 13, 14,  12, 14, 15,   // bottom
+    16, 17, 18,  16, 18, 19,   // right
+    20, 21, 22,  20, 22, 23    // left
+  ];
+
+  const colors = []
+  for (let i = 0; i < vertices.length; i += 3) {
+    colors.push(0.5, 0.5, 0.5);
+  } // end loop
+  
+  return {
+    "vertices": new Float32Array(vertices),
+    "indices": new Uint16Array(indices),
+    "normals": new Float32Array(normals),
+    "tangents": new Float32Array(tangents),
+    "texels": new Float32Array(texels),
+    "colors": new Float32Array(colors)
+  };
+} // end function
