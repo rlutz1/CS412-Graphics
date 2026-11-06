@@ -217,7 +217,7 @@ export const texture_basic = {
         } else {
           // Normal mapping: the texture stores the tangent-space normal in [0, 1]
           n = normalize(texture(uTexture, vTexCoord).rgb * 2.0 - 1.0);
-          baseColor = vec3(0.85, 0.65, 0.3);
+          baseColor = vColor;
         }
 
         N = normalize(TBN * n);

@@ -191,16 +191,19 @@
      * simple flow: initialize a node with mesh, material, set up the hierarchy however,
      * add it to the scene.
      */ 
-    const sphere_parent = new SceneBuilder.SceneNode("sphere_parent", "texture_bump_mapping_basic"); // set up a simple hierarchy
-    const sphere_child = new SceneBuilder.SceneNode("ya_sphere", "texture_bump_mapping_basic");
-    const sphere_gchild = new SceneBuilder.SceneNode("ya_ya_sphere", "texture_normal_mapping_basic");
+    const sphere_parent = new SceneBuilder.SceneNode("sphere_parent", "texture_bump_mapping_basic"); 
+    const cyl = new SceneBuilder.SceneNode("cylinder", "texture_bump_mapping_basic");
+    const sphere_gchild = new SceneBuilder.SceneNode("sphere_gchild", "texture_normal_mapping_basic");
     const cone = new SceneBuilder.SceneNode("cone", "texture_normal_mapping_basic");
+    const pyramid = new SceneBuilder.SceneNode("pyramid", "texture_bump_mapping_basic");
     const cube = new SceneBuilder.SceneNode("cone", "texture_bump_mapping_basic");
 
-    // make some mesh's
+    // make some meshs
     const sphere_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_sphere_mesh()); // generate a basic sphere mesh
-    const cone_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_cone_mesh()); // generate a basic sphere mesh
-    const cube_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_cube_mesh());
+    const cone_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_cone_mesh()); // generate a basic cone mesh
+    const cube_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_cube_mesh()); // basic cube mesh
+    const cyl_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_cylinder_mesh()); // basic cylinder mesh
+    const pyramid_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_pyramid_mesh()); // basic pyramid mesh
 
     // make some new textures
     const grass = new SceneBuilder.Texture(gl, "./textures/grass.jpg");
@@ -209,7 +212,7 @@
     const cat = new SceneBuilder.VideoTexture(gl, "./textures/cat_mp4.mp4");
 
     // mesh.use_normal_mapping(); // think on this.
-    const material = new SceneBuilder.Material({ // create a material (this is the constants for silver)
+    const silver = new SceneBuilder.Material({ // create a material (this is the constants for silver)
         "ka": [0.19225, 0.19225, 0.19225],
         "kd": [0.50754, 0.50754, 0.50754],
         "ks": [0.508273, 0.508273, 0.508273],
@@ -217,34 +220,49 @@
         "transparency": 1.0
     });
 
+    const red_rubber = new SceneBuilder.Material({
+      "ka": [0.5, 0.1, 0.1],
+      "kd": [0.2, 0.2, 0.2],
+      "ks": [0.4, 0.4, 0.4],
+      "shininess": 20,
+      "transparency": 1.0
+    });
+
     // add mesh and material to the spheres.
-    sphere_parent.set_mesh(sphere_mesh).set_material(material).set_texture(desert);
-    sphere_child.set_mesh(sphere_mesh).set_material(material).set_texture(grass);
-    sphere_gchild.set_mesh(sphere_mesh).set_material(material).set_texture(cushion);
-    cone.set_mesh(cone_mesh).set_material(material).set_texture(cushion);
-    // cube.set_mesh(cube_mesh).set_material(material);
-    cube.set_mesh(cube_mesh).set_material(material).set_texture(cat);
+    sphere_parent.set_mesh(sphere_mesh).set_material(silver).set_texture(desert);
+    sphere_gchild.set_mesh(sphere_mesh).set_material(red_rubber).set_texture(cushion);
+    cone.set_mesh(cone_mesh).set_material(red_rubber).set_texture(cushion);
+    cube.set_mesh(cube_mesh).set_material(silver).set_texture(cat);
+    pyramid.set_mesh(pyramid_mesh).set_material(silver).set_texture(desert);
+    cyl.set_mesh(cyl_mesh).set_material(silver).set_texture(grass);
 
     // gonna add some initial positioning, scaling, etc, prior to render. 
     // at a baseline, the generic node transformation matrix is:
     // M_parent * (position * rotation * scale)
-    sphere_parent.position = [0, 0, -10]; // note that these ones are in a hierarchy
-    sphere_child.position = [0, 1.5, 0];  // so the transformations carry through.
-    sphere_child.scale = [0.8, 0.8, 0.8]; // it is up to dev to consider this and manage.
-    sphere_gchild.position = [0, 1.5, 0];
-    cone.position = [-2, 0, -5];
-    cube.position = [2, 0, -5]
-    cube.scale = [0.5, 0.5, 0.5]
+    sphere_parent.position = [-2, 1, -5]; 
+    sphere_parent.scale = [0.5, 0.5, 0.5];
+    cyl.position = [0, 0.8, -5];
+    sphere_gchild.position = [2, 1, -5];
+    sphere_gchild.scale = [0.5, 0.5, 0.5];
+
+    cone.position = [-2, -1, -5];
+    pyramid.position = [0, -1, -5]
+    cube.position = [2, -1, -5]
+    cube.scale = [0.5, 0.5, 0.5]    
 
     // setup a basic hierarchy
-    sphere_parent.add_child(sphere_child); // add sphere_child to the sphere_parent
-    sphere_child.add_child(sphere_gchild); // and sphere_gchild -> sphere_child
+    // sphere_parent.add_child(sphere_child); // add sphere_child to the sphere_parent
+    // sphere_child.add_child(sphere_gchild); // and sphere_gchild -> sphere_child
 
     // add root nodes to the scene (note the sphere_children of sphere_parent
     // are automatically carried through).
     scene.add_node(sphere_parent); 
+    scene.add_node(cyl);
+    scene.add_node(sphere_gchild);
     scene.add_node(cone);
+    scene.add_node(pyramid);
     scene.add_node(cube);
+    
     
     /**
      * rendering manager is a lightweight, simple
@@ -265,12 +283,14 @@
       delta_time = (Date.now() - start_time) / 1000
       const cos = Math.cos(delta_time); // for ease of writing
 
-      // feel free to fuck with this and let know if any glaring bugs in the meantime!
-      // sphere_parent.rotation = [cos, 0, cos];
-      // sphere_child.rotation = [0, 0, cos];
+      // basic movement
+      sphere_parent.rotation = [delta_time, 0, 0];
+      cyl.rotation = [delta_time, 0, 0];
+      sphere_gchild.rotation = [delta_time, 0, 0];
 
-      cone.rotation = [delta_time, 0, 0]
-      cube.rotation = [delta_time, 0, delta_time]
+      cone.rotation = [delta_time, 0, 0];
+      pyramid.rotation = [delta_time, 0, 0];
+      cube.rotation = [delta_time, 0, delta_time];
 
       // ultimate render call 
       renderer.draw(scene);

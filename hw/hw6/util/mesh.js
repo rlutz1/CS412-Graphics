@@ -120,6 +120,8 @@ export function gen_sphere_mesh(
 
 /**
  * cylinder mesh (basic)
+ * TODO: would like to center it around origin maybe. we'll see.
+ * right now base is at origin.
  */
 export function gen_cylinder_mesh(
   r=0.5, // radius of the cylinder
@@ -449,6 +451,65 @@ export function gen_cube_mesh() {
     colors.push(0.5, 0.5, 0.5);
   } // end loop
   
+  return {
+    "vertices": new Float32Array(vertices),
+    "indices": new Uint16Array(indices),
+    "normals": new Float32Array(normals),
+    "tangents": new Float32Array(tangents),
+    "texels": new Float32Array(texels),
+    "colors": new Float32Array(colors)
+  };
+} // end function
+
+/**
+ * a basic pyramid.
+ */
+export function gen_pyramid_mesh() {
+  const vertices = [
+    -1, 0, -1, -1, 0, 1, 1, 0, 1, 1, 0, -1, // base
+    -1, 0, -1, -1, 0, 1, 0, 1, 0, // left face
+    -1, 0, 1, 1, 0, 1, 0, 1, 0, // front face
+    1, 0, 1, 1, 0, -1, 0, 1, 0, // right face 
+    1, 0, -1, -1, 0, -1, 0, 1, 0 // back face
+  ]
+
+  const indices = [
+    0, 2, 1, 0, 3, 2, // base
+    4, 5, 6, // left side
+    7, 8, 9, // front side
+    10, 11, 12, // right side
+    13, 14, 15, // back side
+  ]
+
+  const normals = [
+    0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, // all base's facing directly down
+    -1, 1, 0, -1, 1, 0, -1, 1, 0, // left face
+    0, 1, 1, 0, 1, 1, 0, 1, 1, // front face
+    1, 1, 0, 1, 1, 0, 1, 1, 0, // right face
+    0, 1, -1, 0, 1, -1, 0, 1, -1 // back face
+  ]
+
+  const tangents = [
+    0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // base
+    1, 1, 0, 1, 1, 0, 1, 1, 0, // left face
+    0, -1, 1, 0, -1, 1, 0, -1, 1, // front face
+    1, -1, 0, 1, -1, 0, 1, -1, 0, // right face
+    0, -1, -1, 0, -1, -1, 0, -1, -1 // back face
+  ]
+
+  const texels = [
+    0, 0, 1, 0, 1, 1, 0, 1, // base
+    0, 0, 1, 0, 0.5, 1, // sides, clipped
+    0, 0, 1, 0, 0.5, 1,
+    0, 0, 1, 0, 0.5, 1,
+    0, 0, 1, 0, 0.5, 1,
+  ]
+
+  const colors = []
+  for (let i = 0; i < vertices.length; i += 3) {
+    colors.push(0.5, 0.5, 0.5);
+  } // end loop
+
   return {
     "vertices": new Float32Array(vertices),
     "indices": new Uint16Array(indices),
