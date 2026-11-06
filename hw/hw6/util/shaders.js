@@ -207,7 +207,7 @@ export class PhongShader extends Shader {
  */
 export class TexturePhongShader extends Shader {
 
-  bump_mapping = false; // simple control up top
+  bump_mapping = true; // simple control up top
 
   constructor(gl) {
     super(SourceDicts.texture_phong_basic.vertex_shader, SourceDicts.texture_phong_basic.fragment_shader, gl);
@@ -297,7 +297,7 @@ export class TexturePhongShader extends Shader {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, node.mesh.tex_buff);
     gl.enableVertexAttribArray(this.texel_loc);
-    gl.vertexAttribPointer(this.texel_loc, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(this.texel_loc, 2, gl.FLOAT, false, 0, 0);
 
     // index buffer for drawing as triangles
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, node.mesh.ind_buff);
