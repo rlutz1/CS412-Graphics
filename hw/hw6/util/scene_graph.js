@@ -217,6 +217,9 @@ export class Mesh {
     if (colors) this.color_buff = this.init_buffer(colors, gl);
     if (tangents) this.tangent_buff = this.init_buffer(tangents, gl);
     if (texels) this.tex_buff = this.init_buffer(texels, gl);
+
+    // in case a texture added to this mesh: 
+    this.texture = null;
   }
 
   /**
@@ -229,7 +232,66 @@ export class Mesh {
       return buff
   } // end function
 
+  /**
+   * add a loaded texture to this mesh.
+   */
+  add_texture(path, gl) {
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(
+      gl.TEXTURE_2D, 
+      0, 
+      gl.RGBA, 
+      1, 1, 0, 
+      gl.RGBA, 
+      gl.UNSIGNED_BYTE, 
+      new Uint8Array([128, 128, 255, 255])
+    );
+  
+    // shouldn't be adding a texture if the mesh doesnt have all of this info!
+    if (!this.normals || !this.tangents || !this.texels) {
+      throw new Error(`Texture mesh requires normals, tangents, and texel coordinates!`);
+    } // end if
+
+    const image = new Image();
+    image.onload = () => {
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);  // images start at the top row, texture coordinates at the bottom
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    };
+    image.src = path;
+    this.texture = texture;
+  } // end function
+
 } // end class
+
+/**
+ * a texture mesh that loads a texture given
+ */
+// export class TextureMesh extends Mesh {
+
+//   constructor(gl, mesh_dict, texture) {
+//     // these are required for texture mesh's typically. try to avoid whoopsie 
+//     // not having it at all.
+//     if (!mesh_dict.normals || !mesh_dict.tangents || !mesh_dict.texels) {
+//       throw new Error(`Texture mesh requires normals, tangents, and texel coordinates! Got:
+//         normals: ${mesh_dict.normals}, tangents: ${mesh_dict.tangents}, texels: ${mesh_dict.texels}.
+//         `);
+//     } // end if
+//     super(gl, mesh_dict);
+//     this.init_texture(texture); // initialize the texture
+//   }
+
+//   /**
+//    * initialize the texture for this mesh.
+//    */
+//   init_texture(texture) {
+
+//   } // end function
+
+// } // end class
 
 /**
  * ==============================================
