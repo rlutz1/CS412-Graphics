@@ -182,8 +182,8 @@
     }))
 
     // add com light to the scene.
-    const light = new SceneBuilder.PointLight({"position": [0, 5, 5]});
-    const ya_light = new SceneBuilder.PointLight({"position": [-4, -5, 5]});
+    const light = new SceneBuilder.PointLight({"position": [0, 50, 5]});
+    const ya_light = new SceneBuilder.PointLight({"position": [-100, 0, 5]});
     scene.add_light(light);
     scene.add_light(ya_light);
 
@@ -196,17 +196,17 @@
     const gchild = new SceneBuilder.SceneNode("ya_ya_sphere", "texture_normal_mapping_basic");
     // const rando = new SceneBuilder.SceneNode("rando", "phong_basic"); // just a lil rando in the back for testing
     const rando = new SceneBuilder.SceneNode("rando", "texture_bump_mapping_basic");
+    const cube = new SceneBuilder.SceneNode("rando", "phong_basic");
 
+    // make some mesh's
     const sphere_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_sphere_mesh()); // generate a basic sphere mesh
     const cone_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_cone_mesh()); // generate a basic sphere mesh
-    console.log(cone_mesh)
+    const cube_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_cube_mesh());
+
     // make some new textures
     const grass = new SceneBuilder.Texture(gl, "./textures/grass.jpg");
     const desert = new SceneBuilder.Texture(gl, "./textures/desert.jpg");
     const cushion = new SceneBuilder.Texture(gl, "./textures/cushion.jpg");
-
-
-    // const cat_gif = setupVideo("./textures/cat_mp4.mp4");
     const cat = new SceneBuilder.VideoTexture(gl, "./textures/cat_mp4.mp4");
 
     // mesh.use_normal_mapping(); // think on this.
@@ -222,8 +222,9 @@
     daddy.set_mesh(sphere_mesh).set_material(material).set_texture(desert);
     child.set_mesh(sphere_mesh).set_material(material).set_texture(grass);
     gchild.set_mesh(sphere_mesh).set_material(material).set_texture(cushion);
-    // rando.set_mesh(cone_mesh).set_material(material);
-    rando.set_mesh(cone_mesh).set_material(material).set_texture(cat);
+    rando.set_mesh(cone_mesh).set_material(material).set_texture(grass);
+    cube.set_mesh(cube_mesh).set_material(material);
+    // cube.set_mesh(cube_mesh).set_material(material).set_texture(cat);
 
     // gonna add some initial positioning, scaling, etc, prior to render. 
     // at a baseline, the generic node transformation matrix is:
@@ -233,6 +234,8 @@
     child.position = [0, 1.5, 0];  // so the transformations carry through.
     child.scale = [0.8, 0.8, 0.8]; // it is up to dev to consider this and manage.
     gchild.position = [0, 1.5, 0];
+    cube.position = [2, 0, -5]
+    cube.scale = [0.5, 0.5, 0.5]
 
     // setup a basic hierarchy
     daddy.add_child(child); // add child to the daddy
@@ -241,7 +244,9 @@
     // add root nodes to the scene (note the children of daddy
     // are automatically carried through).
     scene.add_node(daddy); 
-    scene.add_node(rando)
+    scene.add_node(rando);
+    scene.add_node(cube);
+
     
     /**
      * rendering manager is a lightweight, simple
@@ -267,6 +272,7 @@
       // child.rotation = [0, 0, cos];
 
       rando.rotation = [delta_time, 0, 0]
+      cube.rotation = [delta_time, 0, delta_time]
 
       // ultimate render call 
       renderer.draw(scene);
