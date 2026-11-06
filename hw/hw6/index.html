@@ -3,163 +3,33 @@
 
 <head>
   <meta charset="utf-8">
-  <title>UNM CS 412/512 HW5</title>
+  <title>UNM CS 412/512 HW6</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <h2>Hierarchical Modeling with Lighting</h2>
+  <h2>Texture Mapping</h2>
 
   <h3>Submission by:</h3>
   <p><b>
     Roxanne Krause <br />
     CS412 <br />
-    10/22/26 <br />
+    11/6/26 <br />
   </b></p>
 
   <h3>General Breakdown of Submission</h3>
   <p>
-   TODO
+   Very basic submission, but left sphere, cylinder, and pyramid all have bump texture mapping. <br />
+   Cube also has nump texture mapping but with a video. <br />
+   The cone and right sphere use normal texture mapping with two different cushion textures. <br />
+   There are 2 point lights illuminating the scene, one to the left, one above. <br />
   </p>
 
   <div style="display: flex; gap: 10px; align-items: flex-start;">
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <canvas id="glcanvas" width="800" height="500"></canvas>
     </div>
-
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-      
-      <!-- slinky mode for funsies. -->
-      <h3>Enable "Animation Mode"</h3>
-      <div>
-        <input type="checkbox" id="animate" name="animate" value="animate">
-        <label for="animate">Animation Mode</label>
-      </div>
-
-      <!-- accordian panel for changing material lighting of the object-->
-      <button class="accordion">Change Material</button>
-      <div class="panel">
-        <!-- changing the materials radio buttons -->
-        <legend>Change to specific material</legend>
-        <fieldset>
-        <div id="material">
-          <input type="radio" id="copper" name="material" value="copper" checked />
-          <label for="copper">Copper</label>
-
-          <input type="radio" id="silver" name="material" value="silver" />
-          <label for="silver">Silver</label>
-
-          <br />
-
-          <input type="radio" id="polished_silver" name="material" value="polished_silver" />
-          <label for="polished_silver">Polished Silver</label>
-
-          <input type="radio" id="black_rubber" name="material" value="black_rubber" />
-          <label for="black_rubber">Black Rubber</label>
-        </div>
-        </fieldset>
-
-        <br />
-
-        <legend>Advanced material customization</legend>
-        <fieldset>
-        <div id="material_sliders">
-          <h4>Ambient Coefficient</h4>
-          <div id="ka">
-            <label for="ka_r">R: </label><input id="ka_r" type="number" min="0" max="1" step="0.1">
-            <label for="ka_g">G: </label><input id="ka_g" type="number" min="0" max="1" step="0.1">
-            <label for="ka_b">B: </label><input id="ka_b" type="number" min="0" max="1" step="0.1">
-          </div>
-
-          <h4>Diffuse Coefficient</h4>
-          <div id="kd">
-            <label for="kd_r">R: </label><input id="kd_r" type="number" min="0" max="1" step="0.1">
-            <label for="kd_g">G: </label><input id="kd_g" type="number" min="0" max="1" step="0.1">
-            <label for="kd_b">B: </label><input id="kd_b" type="number" min="0" max="1" step="0.1">
-          </div>
-
-          <h4>Specular Coefficient</h4>
-          <div id="ks">
-            <label for="ks_r">R: </label><input id="ks_r" type="number" min="0" max="1" step="0.1">
-            <label for="ks_g">G: </label><input id="ks_g" type="number" min="0" max="1" step="0.1">
-            <label for="ks_b">B: </label><input id="ks_b" type="number" min="0" max="1" step="0.1">
-          </div>
-
-          <h4>Specular Exponent</h4>
-          <div id="alpha">
-            <input id="alpha_v" type="number" min="0" max="100" step="1">
-          </div>
-
-          <h4>Transparency</h4>
-          <div id="transparency">
-            <input id="transparency_v" type="number" min="0" max="1" step="0.1">
-          </div>
-        </div>
-        </fieldset>
-      </div>
-      
-      <!-- accordian panel for adding/removing point lights -->
-      <button class="accordion">Adding/Removing Lights</button>
-      <div class="panel">
-        <legend>Add a point light</legend>
-        <fieldset>
-          <div id="point_light_position">
-            <label for="light_x">x: </label><input id="light_x" type="number" min="-100" max="100" step="10" value="0">
-            <label for="light_y">y: </label><input id="light_y" type="number" min="-100" max="100" step="10" value="0">
-            <label for="light_z">z: </label><input id="light_z" type="number" min="-100" max="100" step="10" value="0">
-          </div>
-          <br />
-          <button style="width: 100%;" id="add_point_light">Add Light to Scene</button>
-          <div id="curr_lights"></div>
-        </fieldset>
-      </div>
-
-      <!-- accordian panel for moving the segments of the hierarchy -->
-      <button class="accordion">Move Segments</button>
-      <div class="panel">
-        <!-- move the hierarchical structure by segment -->
-        <div id="cake_slide_container" class="cake_slide_container">
-
-          <div id="base">
-            <h4>Rotation of Base (degrees)</h4>
-            <p id="curr_base_range"></p>
-            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="base_range">
-          </div>
-
-          <div id="seg2">
-            <h4>Rotation of Segment 2 (degrees)</h4>
-            <p id="curr_seg2_range"></p>
-            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg2_range">
-          </div>
-
-          <div id="seg3">
-            <h4>Rotation of Segment 3 (degrees)</h4>
-            <p id="curr_seg3_range"></p>
-            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg3_range">
-          </div>
-
-          <div id="seg4">
-            <h4>Rotation of Segment 4 (degrees)</h4>
-            <p id="curr_seg4_range"></p>
-            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="seg4_range">
-          </div>
-
-          <div id="top">
-            <h4>Rotation of Top (degrees)</h4>
-            <p id="curr_top_range"></p>
-            <input type="range" min="0" max="360" value="0" class="slider" step="1" id="top_range">
-          </div> 
-        </div>
-
-      </div>
-
-    </div>
-     
   </div>
-
-  <!-- <script>
-   
-  </script> -->
 
   <!-- MAIN RENDER ENTRY -->
   <script type="module">
@@ -209,10 +79,12 @@
     const grass = new SceneBuilder.Texture(gl, "./textures/grass.jpg");
     const desert = new SceneBuilder.Texture(gl, "./textures/desert.jpg");
     const cushion = new SceneBuilder.Texture(gl, "./textures/cushion.jpg");
+    const sofa = new SceneBuilder.Texture(gl, "./textures/sofa.jpg");
+    const brick = new SceneBuilder.Texture(gl, "./textures/brick.png");
     const cat = new SceneBuilder.VideoTexture(gl, "./textures/cat_mp4.mp4");
 
-    // mesh.use_normal_mapping(); // think on this.
-    const silver = new SceneBuilder.Material({ // create a material (this is the constants for silver)
+    // make some materials 
+    const silver = new SceneBuilder.Material({ // this is for silver, just for testing
         "ka": [0.19225, 0.19225, 0.19225],
         "kd": [0.50754, 0.50754, 0.50754],
         "ks": [0.508273, 0.508273, 0.508273],
@@ -220,9 +92,9 @@
         "transparency": 1.0
     });
 
-    const red_rubber = new SceneBuilder.Material({
-      "ka": [0.5, 0.1, 0.1],
-      "kd": [0.2, 0.2, 0.2],
+    const red_rubber = new SceneBuilder.Material({ // little bit of a rubbery texture
+      "ka": [0.7, 0.1, 0.1],
+      "kd": [0.3, 0.3, 0.3],
       "ks": [0.4, 0.4, 0.4],
       "shininess": 20,
       "transparency": 1.0
@@ -230,15 +102,13 @@
 
     // add mesh and material to the spheres.
     sphere_parent.set_mesh(sphere_mesh).set_material(silver).set_texture(desert);
-    sphere_gchild.set_mesh(sphere_mesh).set_material(red_rubber).set_texture(cushion);
+    sphere_gchild.set_mesh(sphere_mesh).set_material(red_rubber).set_texture(sofa);
     cone.set_mesh(cone_mesh).set_material(red_rubber).set_texture(cushion);
     cube.set_mesh(cube_mesh).set_material(silver).set_texture(cat);
-    pyramid.set_mesh(pyramid_mesh).set_material(silver).set_texture(desert);
+    pyramid.set_mesh(pyramid_mesh).set_material(silver).set_texture(brick);
     cyl.set_mesh(cyl_mesh).set_material(silver).set_texture(grass);
 
     // gonna add some initial positioning, scaling, etc, prior to render. 
-    // at a baseline, the generic node transformation matrix is:
-    // M_parent * (position * rotation * scale)
     sphere_parent.position = [-2, 1, -5]; 
     sphere_parent.scale = [0.5, 0.5, 0.5];
     cyl.position = [0, 0.8, -5];
@@ -246,13 +116,9 @@
     sphere_gchild.scale = [0.5, 0.5, 0.5];
 
     cone.position = [-2, -1, -5];
-    pyramid.position = [0, -1, -5]
-    cube.position = [2, -1, -5]
-    cube.scale = [0.5, 0.5, 0.5]    
-
-    // setup a basic hierarchy
-    // sphere_parent.add_child(sphere_child); // add sphere_child to the sphere_parent
-    // sphere_child.add_child(sphere_gchild); // and sphere_gchild -> sphere_child
+    pyramid.position = [0, -1, -5];
+    cube.position = [2, -1, -5];
+    cube.scale = [0.5, 0.5, 0.5];
 
     // add root nodes to the scene (note the sphere_children of sphere_parent
     // are automatically carried through).
@@ -290,7 +156,7 @@
 
       cone.rotation = [delta_time, 0, 0];
       pyramid.rotation = [delta_time, 0, 0];
-      cube.rotation = [delta_time, 0, delta_time];
+      cube.rotation = [delta_time, 0, delta_time]; // little more so can see all sides there
 
       // ultimate render call 
       renderer.draw(scene);

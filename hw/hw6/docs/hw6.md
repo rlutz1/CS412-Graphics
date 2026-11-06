@@ -4,8 +4,9 @@
 
 In this assignment, you are expected to create objects with texture mapping. You can create new object, new scene, or keeping use the objects you have created in your previous assignments.
 
-- [ ] Texture Mapping on Different Objects (6 pts)
-  - [ ] Implement at least 3 new geometric primitives with textures (you can use the existing brick texture or any texture you like) on them, including at least 2 curved primitives (choose from cone, sphere, torus).
+- [X] Texture Mapping on Different Objects (6 pts)
+  - [X] Implement at least 3 new geometric primitives with textures (you can use the existing brick texture or any texture you like) on them, including at least 2 curved primitives (choose from cone, sphere, torus).
++ cone sphere pyramid
 
 - [X] Textures with Animations (2pts)
   - [X] At least one of the textures has animation (e.g. GIF, video) (can be one of the above three textures)

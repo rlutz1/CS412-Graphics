@@ -380,7 +380,7 @@ export class VideoTexture {
   get_texture() {
     return this.texture_buff;
   } // end function
-  
+
 } // end class
 
 /**
@@ -571,7 +571,7 @@ export class Renderer {
   clear() {
     // clear things.
     this.gl.enable(this.gl.DEPTH_TEST);
-    this.gl.clearColor(0.5, 0.5, 0.5, 1);
+    this.gl.clearColor(0.2, 0.2, 0.2, 1);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
   } // end function
 
