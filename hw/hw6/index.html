@@ -189,7 +189,7 @@
      */ 
     const daddy = new SceneBuilder.SceneNode("daddy", "texture_bump_mapping_basic"); // set up a simple hierarchy
     const child = new SceneBuilder.SceneNode("ya_sphere", "texture_bump_mapping_basic");
-    const gchild = new SceneBuilder.SceneNode("ya_ya_sphere", "texture_bump_mapping_basic");
+    const gchild = new SceneBuilder.SceneNode("ya_ya_sphere", "texture_normal_mapping_basic");
     const rando_sphere = new SceneBuilder.SceneNode("rando", "phong_basic"); // just a lil rando in the back for testing
 
     const mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_sphere_mesh()); // generate a basic sphere mesh
@@ -197,6 +197,7 @@
     // make some new textures
     const grass = new SceneBuilder.Texture(gl, "./textures/grass.jpg");
     const desert = new SceneBuilder.Texture(gl, "./textures/desert.jpg");
+    const cushion = new SceneBuilder.Texture(gl, "./textures/cushion.jpg");
 
     // mesh.use_normal_mapping(); // think on this.
     const material = new SceneBuilder.Material({ // create a material (this is the constants for silver)
@@ -210,7 +211,7 @@
     // add mesh and material to the spheres.
     daddy.set_mesh(mesh).set_material(material).set_texture(desert);
     child.set_mesh(mesh).set_material(material).set_texture(grass);
-    gchild.set_mesh(mesh).set_material(material).set_texture(desert);
+    gchild.set_mesh(mesh).set_material(material).set_texture(cushion);
     rando_sphere.set_mesh(mesh).set_material(material);
 
     // gonna add some initial positioning, scaling, etc, prior to render. 
