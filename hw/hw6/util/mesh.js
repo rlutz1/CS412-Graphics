@@ -249,7 +249,7 @@ export function gen_cylinder_mesh(
   return {
     "vertices": new Float32Array(vertices), 
     "indices": new Uint16Array(indices),
-    "norms": new Float32Array(norms),
+    "normals": new Float32Array(norms),
     "tangents": new Float32Array(tangents),
     "texels": new Float32Array(texels),
     "colors": new Float32Array(colors)

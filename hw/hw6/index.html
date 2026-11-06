@@ -157,6 +157,10 @@
      
   </div>
 
+  <!-- <script>
+   
+  </script> -->
+
   <!-- MAIN RENDER ENTRY -->
   <script type="module">
     import * as SceneBuilder from "./util/scene_graph.js";
@@ -191,7 +195,7 @@
     const child = new SceneBuilder.SceneNode("ya_sphere", "texture_bump_mapping_basic");
     const gchild = new SceneBuilder.SceneNode("ya_ya_sphere", "texture_normal_mapping_basic");
     // const rando = new SceneBuilder.SceneNode("rando", "phong_basic"); // just a lil rando in the back for testing
-     const rando = new SceneBuilder.SceneNode("rando", "texture_bump_mapping_basic");
+    const rando = new SceneBuilder.SceneNode("rando", "texture_bump_mapping_basic");
 
     const sphere_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_sphere_mesh()); // generate a basic sphere mesh
     const cone_mesh = new SceneBuilder.Mesh(gl, MeshBuilder.gen_cone_mesh()); // generate a basic sphere mesh
@@ -200,6 +204,10 @@
     const grass = new SceneBuilder.Texture(gl, "./textures/grass.jpg");
     const desert = new SceneBuilder.Texture(gl, "./textures/desert.jpg");
     const cushion = new SceneBuilder.Texture(gl, "./textures/cushion.jpg");
+
+
+    // const cat_gif = setupVideo("./textures/cat_mp4.mp4");
+    const cat = new SceneBuilder.VideoTexture(gl, "./textures/cat_mp4.mp4");
 
     // mesh.use_normal_mapping(); // think on this.
     const material = new SceneBuilder.Material({ // create a material (this is the constants for silver)
@@ -215,7 +223,7 @@
     child.set_mesh(sphere_mesh).set_material(material).set_texture(grass);
     gchild.set_mesh(sphere_mesh).set_material(material).set_texture(cushion);
     // rando.set_mesh(cone_mesh).set_material(material);
-    rando.set_mesh(cone_mesh).set_material(material).set_texture(desert);
+    rando.set_mesh(cone_mesh).set_material(material).set_texture(cat);
 
     // gonna add some initial positioning, scaling, etc, prior to render. 
     // at a baseline, the generic node transformation matrix is:
