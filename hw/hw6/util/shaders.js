@@ -269,7 +269,7 @@ export class TextureBumpMappingShader extends Shader {
 
     // set up the texture
     gl.activeTexture(gl.TEXTURE0); 
-    gl.bindTexture(gl.TEXTURE_2D, node.mesh.texture);
+    gl.bindTexture(gl.TEXTURE_2D, node.texture.get_texture());
 
     // vertex/positions buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, node.mesh.vert_buff);
