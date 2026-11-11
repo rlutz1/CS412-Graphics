@@ -98,8 +98,10 @@ void main() {
   const shaderError = document.getElementById("shaderError");
   vertEditor.value = document.getElementById("vertex-shader").textContent;
   // fragEditor.value = document.getElementById("fragment-shader").textContent;
-  fragEditor.value = BASIC;
+  // fragEditor.value = BASIC;
   // fragEditor.value = MONTE;
+  // fragEditor.value = MONTE_MORE_RAYS;
+  fragEditor.value = BASIC_TWO_LIGHTS;
 
   let program;
   function updateProgram() {
