@@ -1044,27 +1044,65 @@ HitData traceScene(Ray ray, bool includeLight) {
     return hit;
 }
 
-/**
- * wrap up the lighting calculation.
- */
+
 vec3 calculateLighting(
     vec3 point,
     vec3 normal,
     vec3 objectColor,
-    Sphere light
+    vec3 cameraPosition,
+    Sphere light,
+    float shininess
 ) {
     vec3 toLight = light.center - point;
     float lightDist = length(toLight);
-    vec3 lightDir = toLight / lightDist;
+    vec3 lightDir = normalize(toLight / lightDist);
+    normal = normalize(normal);
+
+    vec3 viewDir = normalize(cameraPosition - point);
 
     HitData blocker = traceScene(Ray(point + normal * 0.001, lightDir), false);
     float visible = blocker.hit && blocker.t < lightDist ? 0.0 : 1.0;
     float diff = max(dot(normal, lightDir), 0.0);
     float falloff = 1.0 / (1.0 + 0.1 * lightDist * lightDist);
 
-    vec3 shading = objectColor * (LIGHT_POWER * diff * falloff * visible + u_ambientStrength);
-    return shading;
-} // end function
+    float kd = 0.5;
+    float ks = 0.2;
+
+    // basic ambient lighting
+    vec3 ambient = objectColor * u_ambientStrength;
+
+    // diffuse lighting
+    vec3 diffuse = objectColor * kd * max(dot(normal, lightDir), 0.0) * falloff * visible;
+
+    // specular lighting
+    vec3 reflectedLight = reflect(-lightDir, normal);
+    float spec = pow(max(dot(reflectedLight, viewDir), 0.0), shininess);
+    vec3 specular = objectColor * ks * spec * falloff * visible;
+
+    return (ambient + diffuse + specular) * LIGHT_POWER;
+}
+
+// /**
+//  * wrap up the lighting calculation.
+//  */
+// vec3 calculateLighting(
+//     vec3 point,
+//     vec3 normal,
+//     vec3 objectColor,
+//     Sphere light
+// ) {
+//     vec3 toLight = light.center - point;
+//     float lightDist = length(toLight);
+//     vec3 lightDir = toLight / lightDist;
+
+//     HitData blocker = traceScene(Ray(point + normal * 0.001, lightDir), false);
+//     float visible = blocker.hit && blocker.t < lightDist ? 0.0 : 1.0;
+//     float diff = max(dot(normal, lightDir), 0.0);
+//     float falloff = 1.0 / (1.0 + 0.1 * lightDist * lightDist);
+
+//     vec3 shading = objectColor * (LIGHT_POWER * diff * falloff * visible + u_ambientStrength);
+//     return shading;
+// } // end function
 
 vec3 trace(Ray ray) {
     vec3 color = vec3(0.0); 
@@ -1140,14 +1178,18 @@ vec3 trace(Ray ray) {
             hit.point,
             hit.normal,
             hit.color,
-            lightSphere
+            ray.origin,
+            lightSphere,
+            32.0
         );
 
         vec3 lighting2 = calculateLighting(
             hit.point,
             hit.normal,
             hit.color,
-            secondLightSphere
+            ray.origin,
+            secondLightSphere,
+            32.0
         );
 
         vec3 shading = lighting1 + lighting2; // from both lights
