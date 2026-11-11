@@ -162,7 +162,9 @@ bool intersectCube(Ray ray, out float t, out vec3 normal) {
     return true;
 }
 
-//eta = n1 / n2
+// I: incoming ray
+// N: surface normal
+// eta: n1 / n2
 vec3 refraction(vec3 I, vec3 N, float eta) {
   I = normalize(I); N = normalize(N); // ensure normalization
   vec3 T;
@@ -184,7 +186,7 @@ vec3 refraction(vec3 I, vec3 N, float eta) {
 } // end function
 
 // Schlick approximation for fresnel equation
-float schlick(float cosine, float eta, vec3 n, vec3 v) {
+float schlick(float eta, vec3 n, vec3 v) {
   n = normalize(n); v = normalize(v); // normalize just in case
   float f0 = (1.0 - eta) / (1.0 + eta);
   f0 = f0 * f0;
@@ -268,23 +270,48 @@ vec3 trace(Ray ray) {
         // Refraction: (option 1)either reflects or refracts the ray, whichever Schlick says is stronger
         // (option 2): finalColor = hit.color * (F * reflectionColor + (1.0 - F) * refractionColor)
         // (option 3): Monte Carlo Sampling (multiple rays per pixel), reflect with probability F (random() < schlick_value), else refract, and average many samples per pixel
-        //<!-- if (hit.isGlass) {
-        //    <!-- insert your code here -->
+       
+        // if we hit a glass object (glassSphere)
+        if (hit.isGlass) {
+          // see if ray is entering or exiting the glass.
+          // if ray is exiting, the direction widens, on entering, the direction narrows.
+          // this can be represented by changing the index of refraction proportion.
+          vec3 N = hit.normal;
+          float eta = 1.0 / GLASS_IOR; // assume entering
 
-        //    vec3 direction;
-        //    if (total_internal_reflection || schlick_value > 0.5) {
-                //direction = reflection ray
-        //        <!-- insert your code here -->
-        //    } else {
-                //direction = refraction ray
-        //        <!-- insert your code here -->
-        //    }
+          // if the ray is exiting the glass
+          // TODO: more on this, confused.
+          if (dot(ray.direction, N) > 0.0) {
+              N = -N;
+              eta = GLASS_IOR;
+          } // end if
 
-        //    ray = Ray(hit.point + direction * 0.001, direction);
-        ////Use Schlick approximation to determine contributions from reflection and refraction
-        //    attenuation *= hit.color;
-        //    continue;
-        //}
+          // get the refraction vector
+          vec3 refraction_vector = refraction(ray.direction, N, eta);
+          // if zero vector returned, assume total internal reflection
+          // (or close to zero)
+          bool total_internal_reflection = (
+            refraction_vector.x < 0.0001 &&
+            refraction_vector.y < 0.0001 &&
+            refraction_vector.z < 0.0001 
+          );
+
+          // calculate the schlick value
+          float schlick_value = schlick(1.0 / GLASS_IOR, hit.normal, ray.direction);
+      
+          vec3 direction;
+
+          if (total_internal_reflection || schlick_value > 0.5) {
+              direction = reflect(normalize(ray.direction), normalize(hit.normal));
+          } else {
+              direction = refraction_vector;
+          }
+
+            ray = Ray(hit.point + direction * 0.001, direction);
+        //Use Schlick approximation to determine contributions from reflection and refraction
+          attenuation *= hit.color;
+          continue;
+        }
 
         vec3 toLight = lightSphere.center - hit.point;
         float lightDist = length(toLight);
