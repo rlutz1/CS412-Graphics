@@ -163,9 +163,25 @@ bool intersectCube(Ray ray, out float t, out vec3 normal) {
 }
 
 //eta = n1 / n2
-//vec3 refraction(vec3 I, vec3 N, float eta) {
-//    <!-- insert your code here -->
-//}
+vec3 refraction(vec3 I, vec3 N, float eta) {
+  I = normalize(I); N = normalize(N); // ensure normalization
+  vec3 T;
+
+  // calculate the refraction -- k >= 0 -> light passes through
+  // k < 0 -> no refraction
+  float k = 1.0 - eta * eta * (1.0 - dot(N, I) * dot(N, I));
+  
+  if (k < 0.0) {
+    T = vec3(0.0); // just return 0 vec
+  } else {
+    // otherwise, light passes through the medium. 
+    // calculate the refraction vector.
+    T = eta * I - (eta * dot(N, I) + sqrt(k)) * N;
+  } // end if
+      
+  return T;
+  // return refract(I, N, eta); // built in does above
+}
 
 // Schlick approximation
 //float schlick(float cosine, float ref_idx) {
@@ -206,9 +222,11 @@ HitData traceScene(Ray ray, bool includeLight) {
         hit = HitData(true, t, p, (p - sphere.center) / sphere.radius, sphere.color, 0.0, false, false);
     }
 
+    // adding the test for the glass sphere.
     if (intersectSphere(ray, glassSphere, t) && t < hit.t) {
         vec3 p = ray.origin + ray.direction * t;
-        hit = HitData(true, t, p, (p - glassSphere.center) / glassSphere.radius, glassSphere.color, 0.0, false, false);
+        // return information for glass sphere, isGlass -> true
+        hit = HitData(true, t, p, (p - glassSphere.center) / glassSphere.radius, glassSphere.color, 0.0, false, true);
     }
 
     return hit;
@@ -224,6 +242,7 @@ vec3 trace(Ray ray) {
 
         if (!hit.hit) {
             float t = 0.5 * (ray.direction.y + 1.0);
+            // linear interpolation of those two values... -> mix, interp with value t
             color += attenuation * mix(vec3(0.09, 0.12, 0.18), vec3(0.18, 0.21, 0.27), t);  // sky
             break;
         }
