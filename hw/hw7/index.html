@@ -181,12 +181,25 @@ vec3 refraction(vec3 I, vec3 N, float eta) {
       
   return T;
   // return refract(I, N, eta); // built in does above
-}
+} // end function
 
-// Schlick approximation
-//float schlick(float cosine, float ref_idx) {
-//    <!-- insert your code here -->
-//}
+// Schlick approximation for fresnel equation
+float schlick(float cosine, float eta, vec3 n, vec3 v) {
+  n = normalize(n); v = normalize(v); // normalize just in case
+  float f0 = (1.0 - eta) / (1.0 + eta);
+  f0 = f0 * f0;
+
+  return f0 + (1.0 - f0) * pow(1.0 - dot(n, v), 5.0);
+} // end function
+
+/*
+float schlick(float cosine, float ref_idx) {
+  float r0 = (1.0 - ref_idx) / (1.0 + ref_idx);
+  r0 = r0 * r0;
+
+  return r0 + (1.0 - r0) * pow(1.0 - cosine, 5.0);
+} // end function
+*/
 
 bool intersectFloor(Ray ray, out float t) {
     if (abs(ray.direction.y) < 0.0001) return false;
